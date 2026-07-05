@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pulse SA - Kasi Economy Ontology & Data Platform</title>
+    <!-- Google Fonts: Plus Jakarta Sans for premium typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome for modern icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js for data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Leaflet.js for ward boundary mapping -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <!-- PWA: Manifest + Mobile Meta -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#a855f7">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Pulse SA">
+    <!-- Offline banner style -->
+    <style>
+        #offline-banner {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            background: #ff6b35;
+            color: white;
+            text-align: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 6px;
+            z-index: 9999;
+            letter-spacing: 0.5px;
+        }
+        body.offline #offline-banner { display: block; }
+    </style>
+</head>
+<body>
+    <!-- Offline mode banner — shows automatically when no data connection -->
+    <div id="offline-banner">⚡ OFFLINE MODE — All your data is saved locally. Submit when back online.</div>
+
+    <header class="app-header">
+        <div class="logo-area">
+            <div class="pulse-indicator"></div>
+            <h1>Pulse <span class="accent-text">SA</span></h1>
+            <span class="badge">Intelligence Layer Prototype v3.0</span>
+        </div>
+        <div class="stats-sa-tagline">
+            <i class="fa-solid fa-circle-check"></i>
+            <span>The First Structured Dataset of South Africa's Informal Economy — 30+ Verified Data Points Per Trader</span>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <!-- LEFT: Mobile PWA Simulator -->
+        <section class="simulator-section">
+            <div class="section-header">
+                <h2><i class="fa-solid fa-mobile-screen-button"></i> Mobile PWA Simulator</h2>
+                <p>Simulating the gig-worker app used by township youth & traders on the ground</p>
+            </div>
+            
+            <!-- Simulated Smartphone Wrapper -->
+            <div class="phone-frame">
+                <div class="phone-screen">
+                    <!-- Phone Status Bar -->
+                    <div class="status-bar">
+                        <span class="time" id="phone-time">16:30</span>
+                        <div class="connections">
+                            <i class="fa-solid fa-signal"></i>
+                            <span class="network-type">LTE</span>
+                            <i class="fa-solid fa-battery-three-quarters"></i>
+                        </div>
+                    </div>
+
+                    <!-- Phone App Header -->
+                    <div class="pwa-header">
+                        <div class="pwa-logo" onclick="showScreen('home')">
+                            <i class="fa-solid fa-heart-pulse"></i>
+                            <span>Pulse SA</span>
+                        </div>
+                        <div class="header-actions">
+                            <button class="merchant-portal-btn" onclick="showScreen('merchant-portal')" title="Merchant SME Portal">
+                                <i class="fa-solid fa-store"></i> SME
+                            </button>
+                            <div class="pwa-wallet" id="wallet-btn" onclick="showScreen('wallet')">
+                                <span class="currency">R</span><span id="pwa-balance">25.00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Screen: Home / Gigs -->
+                    <div class="pwa-screen active" id="screen-home">
+                        <div class="screen-hero">
+                            <h3>Awe, Champ! 👋</h3>
+                            <p>Complete quick gigs in your hood to earn instant airtime & cash rewards.</p>
+                        </div>
+                        
+                        <div class="section-title">Available Data Gigs</div>
+                        <div class="gigs-list">
+                            <!-- Gig 1: Full Trader Profile -->
+                            <div class="gig-card" onclick="showScreen('survey-vendor')">
+                                <div class="gig-icon trader"><i class="fa-solid fa-id-card-clip"></i></div>
+                                <div class="gig-details">
+                                    <h4>Full Trader Profile Visit</h4>
+                                    <p>37-point profile: any street/spaza/salon trader</p>
+                                    <span class="gig-reward">+R25.00 Airtime</span>
+                                </div>
+                                <i class="fa-solid fa-chevron-right arrow"></i>
+                            </div>
+
+                            <!-- Gig 2: Spaza Shelf Audit -->
+                            <div class="gig-card" onclick="showScreen('survey-fmcg')">
+                                <div class="gig-icon brand"><i class="fa-solid fa-cart-shopping"></i></div>
+                                <div class="gig-details">
+                                    <h4>Spaza Shelf Audit</h4>
+                                    <p>Log brands, stock levels &amp; shelf prices</p>
+                                    <span class="gig-reward">+R10.00 Airtime</span>
+                                </div>
+                                <i class="fa-solid fa-chevron-right arrow"></i>
+                            </div>
+
+                            <!-- Gig 3: Price Basket Monitor -->
+                            <div class="gig-card" onclick="showScreen('survey-basket')">
+                                <div class="gig-icon pos"><i class="fa-solid fa-basket-shopping"></i></div>
+                                <div class="gig-details">
+                                    <h4>Price Basket Monitor</h4>
+                                    <p>Log prices of 8 staple goods (3 min)</p>
+                                    <span class="gig-reward">+R8.00 Airtime</span>
+                                </div>
+                                <i class="fa-solid fa-chevron-right arrow"></i>
+                            </div>
+
+                            <!-- Gig 4: Foot-Traffic Verification -->
+                            <div class="gig-card" onclick="showScreen('survey-foottraffic')">
+                                <div class="gig-icon taxi"><i class="fa-solid fa-person-walking"></i></div>
+                                <div class="gig-details">
+                                    <h4>Foot-Traffic Verification</h4>
+                                    <p>Confirm a known trader is open &amp; trading</p>
+                                    <span class="gig-reward">+R3.00 Airtime</span>
+                                </div>
+                                <i class="fa-solid fa-chevron-right arrow"></i>
+                            </div>
+
+                            <!-- Gig 5: Infrastructure Report -->
+                            <div class="gig-card" onclick="showScreen('survey-water')">
+                                <div class="gig-icon water"><i class="fa-solid fa-droplet"></i></div>
+                                <div class="gig-details">
+                                    <h4>Infrastructure Report</h4>
+                                    <p>Report water, electricity or road disruptions</p>
+                                    <span class="gig-reward">+R2.00 Airtime</span>
+                                </div>
+                                <i class="fa-solid fa-chevron-right arrow"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Screen: Survey Taxi -->
+                    <div class="pwa-screen" id="screen-survey-taxi">
+                        <div class="screen-back" onclick="showScreen('home')">
+                            <i class="fa-solid fa-arrow-left"></i> Back to Gigs
+                        </div>
+                        <h3 class="screen-title">Commute Log</h3>
+                        <form id="form-taxi" onsubmit="submitTaxiSurvey(event)">
+                            <div class="form-group">
+                                <label for="taxi-township">Your Township (Origin)</label>
+                                <select id="taxi-township" required onchange="updateTaxiDestinations()">
+                                    <option value="Soweto">Soweto (Gauteng)</option>
+                                    <option value="Khayelitsha">Khayelitsha (Western Cape)</option>
+                                    <option value="Tembisa">Tembisa (Gauteng)</option>
+                                    <option value="Mitchells Plain">Mitchells Plain (Western Cape)</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="taxi-destination">Work/Study Hub (Destination)</label>
+                                <select id="taxi-destination" required>
+                                    <!-- Populated via JS -->
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="taxi-fare">Return Minibus Taxi Fare (Rands)</label>
+                                <div class="input-with-currency">
+                                    <span>R</span>
+                                    <input type="number" id="taxi-fare" min="20" max="200" value="50" required>
+                                </div>
+                                <small>What did you pay total for the return trip today?</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="taxi-wait">Queue Time at Rank (Minutes)</label>
+                                <input type="range" id="taxi-wait" min="0" max="90" value="15" oninput="document.getElementById('wait-val').innerText = this.value">
+                                <span class="slider-value"><span id="wait-val">15</span> mins</span>
+                            </div>
+
+                            <button type="submit" class="btn btn-submit">Submit Survey & Earn R5</button>
+                        </form>
+                    </div>
+
+                    <!-- Screen: Trader Profile Visit -->
+                    <div class="pwa-screen" id="screen-survey-vendor">
+                        <div class="screen-back" onclick="showScreen('home')">
+                            <i class="fa-solid fa-arrow-left"></i> Back to Gigs
+                        </div>
+                        <h3 class="screen-title">Trader Profile Visit</h3>
+                        
+                        <!-- Step Progress Bar -->
+                        <div class="profile-step-bar">
+                            <div class="step-dot active" id="step-dot-1">1</div>
+                            <div class="step-line"></div>
+                            <div class="step-dot" id="step-dot-2">2</div>
+                            <div class="step-line"></div>
+                            <div class="step-dot" id="step-dot-3">3</div>
+                            <div class="step-line"></div>
+                            <div class="step-dot" id="step-dot-4">4</div>
+                            <div class="step-line"></div>
+                            <div class="step-dot" id="step-dot-5">5</div>
+                            <div class="step-line"></div>
+                            <div class="step-dot" id="step-dot-6">6</div>
+                        </div>
+                        <div class="step-label" id="step-label">Step 1 of 6: Identity & Profile</div>
+                        
+                        <form id="form-vendor" onsubmit="submitTraderProfile(event)">
+                            <!-- Step 1: Identity -->
+                            <div class="profile-step active" id="profile-step-1">
+                                <div class="form-group">
+                                    <label>Trader Name</label>
+                                    <input type="text" id="tp-name" placeholder="e.g. Thandi Mokoena" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Business Type</label>
+                                    <select id="tp-type">
+                                        <optgroup label="Fixed Location">
+                                            <option value="Spaza Shop">Spaza Shop</option>
+                                            <option value="Hair Salon">Hair Salon / Barber</option>
+                                            <option value="Tavern/Shebeen">Tavern / Shebeen</option>
+                                            <option value="Mechanic">Mechanic / Panel Beater</option>
+                                            <option value="Tuck Shop">Tuck Shop (home-based)</option>
+                                        </optgroup>
+                                        <optgroup label="Street &amp; Mobile Traders">
+                                            <option value="Hawker / Street Seller">Hawker / General Street Seller</option>
+                                            <option value="Prepared Food Vendor">Prepared Food Vendor (achar, vetkoek, braai)</option>
+                                            <option value="Street Food">Street Food (inhloko, tripe, umqombothi)</option>
+                                            <option value="Fruit Vendor">Fruit &amp; Veg Vendor</option>
+                                            <option value="Clothing Hawker">Clothing &amp; Textile Hawker</option>
+                                        </optgroup>
+                                        <optgroup label="Services">
+                                            <option value="Roadside Service">Roadside Service (phone charging, shoe repair, key cutting)</option>
+                                            <option value="Childcare">Childcare / Crèche</option>
+                                            <option value="Tutoring">Tutoring / Skills Training</option>
+                                            <option value="Domestic Worker">Domestic / Cleaning Services</option>
+                                        </optgroup>
+                                        <optgroup label="Informal Finance">
+                                            <option value="Stokvel Organiser">Stokvel Organiser</option>
+                                            <option value="Mashonisa">Informal Lender (Mashonisa)</option>
+                                        </optgroup>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Township</label>
+                                    <select id="tp-township">
+                                        <option value="Soweto">Soweto</option>
+                                        <option value="Khayelitsha">Khayelitsha</option>
+                                        <option value="Tembisa">Tembisa</option>
+                                        <option value="Mitchells Plain">Mitchells Plain</option>
+                                        <option value="Alexandra">Alexandra</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Years Operating</label>
+                                    <input type="number" id="tp-years" min="0" max="50" value="3">
+                                </div>
+                                <div class="form-group">
+                                    <label>Premises Type</label>
+                                    <select id="tp-premises">
+                                        <option value="Shipping container (rented)">Shipping container (rented)</option>
+                                        <option value="Shipping container (owned)">Shipping container (owned)</option>
+                                        <option value="Brick structure (owned)">Brick structure (owned)</option>
+                                        <option value="House extension">House extension</option>
+                                        <option value="Open-air stall">Open-air stall / Table</option>
+                                        <option value="Shack">Shack / Informal structure</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Number of Employees (including self)</label>
+                                    <input type="number" id="tp-employees" min="1" max="20" value="1">
+                                </div>
+                                <div class="form-group">
+                                    <label>Number of Dependents</label>
+                                    <input type="number" id="tp-dependents" min="0" max="15" value="3">
+                                </div>
+                                <div class="form-group">
+                                    <label>ID Verified by Agent?</label>
+                                    <select id="tp-id-verified">
+                                        <option value="Yes">Yes — SA ID confirmed</option>
+                                        <option value="No">No — not available</option>
+                                    </select>
+                                </div>
+                                <button type="button" class="btn btn-submit" onclick="nextProfileStep(2)">Next → Financial Behaviour</button>
+                            </div>
+                            
+                            <!-- Step 2: Financial Behaviour -->
+                            <div class="profile-step" id="profile-step-2">
+                                <div class="form-group">
+                                    <label>Bank Account</label>
+                                    <select id="tp-bank">
+                                        <option value="Capitec Savings">Capitec Savings</option>
+                                        <option value="FNB Easy Account">FNB Easy Account</option>
+                                        <option value="Standard Bank">Standard Bank</option>
+                                        <option value="Nedbank">Nedbank</option>
+                                        <option value="TymeBank">TymeBank</option>
+                                        <option value="None (Unbanked)">None (Unbanked)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Mobile Money</label>
+                                    <select id="tp-mobile-money">
+                                        <option value="None">None</option>
+                                        <option value="MoMo (MTN)">MoMo (MTN)</option>
+                                        <option value="Vodacom M-Pesa">Vodacom M-Pesa</option>
+                                        <option value="Capitec Pay">Capitec Pay</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Stokvel Membership</label>
+                                    <select id="tp-stokvel">
+                                        <option value="Yes">Yes</option>
+                                        <option value="No">No</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Existing Loans / Debt</label>
+                                    <select id="tp-loans">
+                                        <option value="None">None</option>
+                                        <option value="Mashonisa (informal)">Mashonisa (informal lender)</option>
+                                        <option value="Bank personal loan">Bank personal loan</option>
+                                        <option value="Retail account (Edgars etc)">Retail account</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Payment Methods Accepted</label>
+                                    <select id="tp-payments">
+                                        <option value="Cash Only">Cash Only</option>
+                                        <option value="Cash + Capitec Pay">Cash + Capitec Pay/CashSend</option>
+                                        <option value="Cash + Card (Yoco)">Cash + Card (Yoco/iKhokha)</option>
+                                        <option value="Cash + MoMo">Cash + Mobile Money</option>
+                                    </select>
+                                </div>
+                                <div class="btn-row">
+                                    <button type="button" class="btn btn-back" onclick="nextProfileStep(1)">← Back</button>
+                                    <button type="button" class="btn btn-submit" onclick="nextProfileStep(3)">Next → Stock & Products</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Step 3: Stock & Product -->
+                            <div class="profile-step" id="profile-step-3">
+                                <div class="form-group">
+                                    <label>Top 5 Products Stocked</label>
+                                    <input type="text" id="tp-top-products" placeholder="e.g. Omo, Coke, Simba, Bread, Airtime">
+                                </div>
+                                <div class="form-group">
+                                    <label>Restock Frequency</label>
+                                    <select id="tp-restock">
+                                        <option value="Daily">Daily</option>
+                                        <option value="Every 2-3 days">Every 2-3 days</option>
+                                        <option value="Weekly">Weekly</option>
+                                        <option value="Fortnightly">Fortnightly</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Fastest Selling Item</label>
+                                    <input type="text" id="tp-fastest" placeholder="e.g. Airtime">
+                                </div>
+                                <div class="form-group">
+                                    <label>Product Wanted but Can't Afford to Stock</label>
+                                    <input type="text" id="tp-wanted" placeholder="e.g. Bulk cooking oil (R200+ upfront)">
+                                </div>
+                                <div class="form-group">
+                                    <label>Primary Supplier / Wholesaler</label>
+                                    <input type="text" id="tp-supplier" placeholder="e.g. Metro Cash & Carry">
+                                </div>
+                                <div class="btn-row">
+                                    <button type="button" class="btn btn-back" onclick="nextProfileStep(2)">← Back</button>
+                                    <button type="button" class="btn btn-submit" onclick="nextProfileStep(4)">Next → Transaction Patterns</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Step 4: Transaction Patterns -->
+                            <div class="profile-step" id="profile-step-4">
+                                <div class="form-group">
+                                    <label>Daily Turnover — Good Day (Rands)</label>
+                                    <div class="input-with-currency"><span>R</span>
+                                        <input type="number" id="tp-turnover-good" min="100" max="50000" value="3000">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Daily Turnover — Bad Day (Rands)</label>
+                                    <div class="input-with-currency"><span>R</span>
+                                        <input type="number" id="tp-turnover-bad" min="0" max="50000" value="800">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Busiest Trading Hours</label>
+                                    <input type="text" id="tp-busiest" placeholder="e.g. 6-8am & 4-7pm">
+                                </div>
+                                <div class="form-group">
+                                    <label>Wholesaler Payment Terms</label>
+                                    <select id="tp-terms">
+                                        <option value="Cash on delivery">Cash on delivery</option>
+                                        <option value="7-day account">7-day account</option>
+                                        <option value="30-day account">30-day account</option>
+                                        <option value="Runs a tab">Runs a tab (informal credit)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Estimated Customers Per Day</label>
+                                    <input type="number" id="tp-customers" min="1" max="500" value="50">
+                                </div>
+                                <div class="btn-row">
+                                    <button type="button" class="btn btn-back" onclick="nextProfileStep(3)">← Back</button>
+                                    <button type="button" class="btn btn-submit" onclick="nextProfileStep(5)">Next → Location</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Step 5: Location & Infrastructure -->
+                            <div class="profile-step" id="profile-step-5">
+                                <div class="form-group">
+                                    <label>Water Supply</label>
+                                    <select id="tp-water">
+                                        <option value="Municipal (working)">Municipal tap (working)</option>
+                                        <option value="Municipal (outage)">Municipal tap (currently OFF)</option>
+                                        <option value="Communal tap">Communal tap (shared)</option>
+                                        <option value="Borehole">Borehole</option>
+                                        <option value="None">No water access</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Electricity Source</label>
+                                    <select id="tp-electricity">
+                                        <option value="Prepaid Eskom">Prepaid Eskom meter</option>
+                                        <option value="Municipal prepaid">Municipal prepaid</option>
+                                        <option value="Solar">Solar panel</option>
+                                        <option value="Generator">Generator</option>
+                                        <option value="None">No electricity</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Distance to Nearest Wholesaler (km)</label>
+                                    <input type="number" id="tp-distance" min="0" max="100" value="8" step="0.5">
+                                </div>
+                                <div class="form-group">
+                                    <label>Transport for Restocking</label>
+                                    <select id="tp-transport">
+                                        <option value="Minibus taxi">Minibus taxi</option>
+                                        <option value="Own vehicle">Own vehicle / bakkie</option>
+                                        <option value="Wholesaler delivers">Wholesaler delivers</option>
+                                        <option value="Walking/Bicycle">Walking / Bicycle</option>
+                                    </select>
+                                </div>
+                                <div class="btn-row">
+                                    <button type="button" class="btn btn-back" onclick="nextProfileStep(4)">← Back</button>
+                                    <button type="button" class="btn btn-submit" onclick="nextProfileStep(6)">Next → Risk & History</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Step 6: Risk & Loss History -->
+                            <div class="profile-step" id="profile-step-6">
+                                <div class="form-group">
+                                    <label>Previous Stock Losses</label>
+                                    <select id="tp-losses">
+                                        <option value="None">None</option>
+                                        <option value="Fire">Fire damage</option>
+                                        <option value="Theft/Robbery">Theft / Robbery</option>
+                                        <option value="Flood/Weather">Flood / Weather damage</option>
+                                        <option value="Spoilage">Stock spoilage (power cuts)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Insurance Status</label>
+                                    <select id="tp-insurance">
+                                        <option value="None">None — "too expensive"</option>
+                                        <option value="Funeral policy only">Funeral policy only</option>
+                                        <option value="Basic cover">Has basic business cover</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Biggest Business Challenge Right Now</label>
+                                    <input type="text" id="tp-challenge" placeholder="e.g. Cash flow gaps between restock days">
+                                </div>
+                                <div class="form-group">
+                                    <label>Crime/Theft Incidents (Last 12 Months)</label>
+                                    <select id="tp-crime">
+                                        <option value="None">None</option>
+                                        <option value="1 incident">1 incident</option>
+                                        <option value="2+ incidents">2 or more incidents</option>
+                                    </select>
+                                </div>
+                                <div class="btn-row">
+                                    <button type="button" class="btn btn-back" onclick="nextProfileStep(5)">← Back</button>
+                                    <button type="submit" class="btn btn-submit">Submit Profile & Earn R25</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Screen: Survey FMCG Retail Audit -->
+                    <div class="pwa-screen" id="screen-survey-fmcg">
+                        <div class="screen-back" onclick="showScreen('home')">
+                            <i class="fa-solid fa-arrow-left"></i> Back to Gigs
+                        </div>
+                        <h3 class="screen-title">Spaza Retail Audit</h3>
+                        <form id="form-fmcg" onsubmit="submitBrandSurvey(event)">
+                            <div class="form-group">
+                                <label for="fmcg-township">Spaza Location</label>
+                                <select id="fmcg-township" required>
+                                    <option value="Soweto">Soweto</option>
+                                    <option value="Khayelitsha">Khayelitsha</option>
+                                    <option value="Tembisa">Tembisa</option>
+                                    <option value="Mitchells Plain">Mitchells Plain</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="fmcg-spaza-name">Spaza Name</label>
+                                <input type="text" id="fmcg-spaza-name" placeholder="e.g. Sizwe's Spaza Shop" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="fmcg-oil-brand">Primary Sunflower Oil Brand in Stock</label>
+                                <select id="fmcg-oil-brand" required>
+                                    <option value="Sunfoil">Sunfoil</option>
+                                    <option value="D'lite">D'lite</option>
+                                    <option value="Excella">Excella</option>
+                                    <option value="Generic/Other">Generic/Other Brand</option>
+                                    <option value="Out of Stock">Entirely Out of Stock</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="fmcg-oil-price">Retail Price for 2 Liters (Rands)</label>
+                                <div class="input-with-currency">
+                                    <span>R</span>
+                                    <input type="number" id="fmcg-oil-price" min="40" max="150" value="75" required>
+                                </div>
+                                <small>What is the shelf price for a standard 2L bottle?</small>
+                            </div>
+
+                            <button type="submit" class="btn btn-submit">Submit Audit & Earn R10</button>
+                        </form>
+                    </div>
+
+                    <!-- Screen: Survey POS Merchant Census -->
+                    <div class="pwa-screen" id="screen-survey-pos">
+                        <div class="screen-back" onclick="showScreen('home')">
+                            <i class="fa-solid fa-arrow-left"></i> Back to Gigs
+                        </div>
+                        <h3 class="screen-title">POS Terminal Census</h3>
+                        <form id="form-pos" onsubmit="submitPosSurvey(event)">
+                            <div class="form-group">
+                                <label for="pos-township">Location</label>
+                                <select id="pos-township" required>
+                                    <option value="Soweto">Soweto</option>
+                                    <option value="Khayelitsha">Khayelitsha</option>
+                                    <option value="Tembisa">Tembisa</option>
+                                    <option value="Mitchells Plain">Mitchells Plain</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="pos-vendor-name">Business Name</label>
+                                <input type="text" id="pos-vendor-name" placeholder="e.g. Nomsa's Salon" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="pos-terminal-brand">Card Reader / POS Brand Detected</label>
+                                <select id="pos-terminal-brand" required>
+                                    <option value="Yoco">Yoco (Wireless/Go)</option>
+                                    <option value="iKhokha">iKhokha Shaker</option>
+                                    <option value="Kazang">Kazang (Prepaid/POS)</option>
+                                    <option value="None">None (Pure Cash Only)</option>
+                                </select>
+                            </div>
+
+                            <button type="submit" class="btn btn-submit">Submit POS Census & Earn R5</button>
+                        </form>
+                    </div>
+
+                    <!-- Screen: Survey Water -->
+                    <div class="pwa-screen" id="screen-survey-water">
+                        <div class="screen-back" onclick="showScreen('home')">
+                            <i class="fa-solid fa-arrow-left"></i> Back to Gigs
+                        </div>
+                        <h3 class="screen-title">Water Outage Report</h3>
+                        <form id="form-water" onsubmit="submitWaterSurvey(event)">
+                            <div class="form-group">
+                                <label for="water-township">Township Location</label>
+                                <select id="water-township" required>
+                                    <option value="Soweto">Soweto</option>
+                                    <option value="Khayelitsha">Khayelitsha</option>
+                                    <option value="Tembisa">Tembisa</option>
+                                    <option value="Mitchells Plain">Mitchells Plain</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="water-duration">How long has water been cut today?</label>
+                                <select id="water-duration" required>
+                                    <option value="Less than 2 hours">Less than 2 hours</option>
+                                    <option value="2 to 8 hours">2 to 8 hours</option>
+                                    <option value="Entire day / Multiple days">Entire day / Multiple days</option>
+                                </select>
+                            </div>
+
+                            <button type="submit" class="btn btn-submit">Submit Survey & Earn R2</button>
+                        </form>
+                    </div>
+
+                    <!-- Screen: Price Basket Monitor -->
+                    <div class="pwa-screen" id="screen-survey-basket">
+                        <div class="screen-back" onclick="showScreen('home')">
+                            <i class="fa-solid fa-arrow-left"></i> Back to Gigs
+                        </div>
+                        <h3 class="screen-title">Price Basket Monitor</h3>
+                        <p style="font-size:0.7rem;color:var(--text-secondary);padding:0 15px 10px;">Log the shelf price of each item at this spaza/street seller. Leave blank if not stocked.</p>
+                        <form id="form-basket" onsubmit="submitBasketSurvey(event)">
+                            <div class="form-group">
+                                <label>Location</label>
+                                <select id="basket-township">
+                                    <option value="Soweto">Soweto</option>
+                                    <option value="Khayelitsha">Khayelitsha</option>
+                                    <option value="Tembisa">Tembisa</option>
+                                    <option value="Mitchells Plain">Mitchells Plain</option>
+                                    <option value="Alexandra">Alexandra</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Trader / Shop Name</label>
+                                <input type="text" id="basket-name" placeholder="e.g. Sizwe's Spaza">
+                            </div>
+                            <div class="basket-grid">
+                                <div class="basket-item">
+                                    <span>White bread (700g)</span>
+                                    <div class="input-with-currency"><span>R</span><input type="number" id="b-bread" min="0" max="100" step="0.50" placeholder="—"></div>
+                                </div>
+                                <div class="basket-item">
+                                    <span>Maize meal (2.5kg)</span>
+                                    <div class="input-with-currency"><span>R</span><input type="number" id="b-maize" min="0" max="200" step="0.50" placeholder="—"></div>
+                                </div>
+                                <div class="basket-item">
+                                    <span>Cooking oil (750ml)</span>
+                                    <div class="input-with-currency"><span>R</span><input type="number" id="b-oil" min="0" max="200" step="0.50" placeholder="—"></div>
+                                </div>
+                                <div class="basket-item">
+                                    <span>Full cream milk (1L)</span>
+                                    <div class="input-with-currency"><span>R</span><input type="number" id="b-milk" min="0" max="100" step="0.50" placeholder="—"></div>
+                                </div>
+                                <div class="basket-item">
+                                    <span>Eggs (6-pack)</span>
+                                    <div class="input-with-currency"><span>R</span><input type="number" id="b-eggs" min="0" max="100" step="0.50" placeholder="—"></div>
+                                </div>
+                                <div class="basket-item">
+                                    <span>Sugar (1kg)</span>
+                                    <div class="input-with-currency"><span>R</span><input type="number" id="b-sugar" min="0" max="100" step="0.50" placeholder="—"></div>
+                                </div>
+                                <div class="basket-item">
+                                    <span>Airtime voucher (R10)</span>
+                                    <div class="input-with-currency"><span>R</span><input type="number" id="b-airtime" min="0" max="20" step="0.50" placeholder="—"></div>
+                                </div>
+                                <div class="basket-item">
+                                    <span>Sunflower oil (2L)</span>
+                                    <div class="input-with-currency"><span>R</span><input type="number" id="b-sunoil" min="0" max="200" step="0.50" placeholder="—"></div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-submit">Submit Prices &amp; Earn R8</button>
+                        </form>
+                    </div>
+
+                    <!-- Screen: Foot-Traffic Verification -->
+                    <div class="pwa-screen" id="screen-survey-foottraffic">
+                        <div class="screen-back" onclick="showScreen('home')">
+                            <i class="fa-solid fa-arrow-left"></i> Back to Gigs
+                        </div>
+                        <h3 class="screen-title">Foot-Traffic Verification</h3>
+                        <p style="font-size:0.7rem;color:var(--text-secondary);padding:0 15px 10px;">You are walking past a known trader. Confirm they are open and trading. Takes 30 seconds — GPS is captured automatically.</p>
+                        <form id="form-foottraffic" onsubmit="submitFootTrafficSurvey(event)">
+                            <div class="form-group">
+                                <label>Trader Being Verified</label>
+                                <select id="ft-trader">
+                                    <option value="sizwe_spaza">Sizwe's Spaza Shop (Ward 15, Soweto)</option>
+                                    <option value="mkhize_inhloko">Bab' uMkhize's Inhloko (Ward 15, Soweto)</option>
+                                    <option value="nomsa_salon">Nomsa's Hair Salon (Khayelitsha)</option>
+                                    <option value="gary_fruit">Uncle Gary's Fruits (Mitchells Plain)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Is the trader currently open and trading?</label>
+                                <div class="radio-group">
+                                    <label class="radio-container">
+                                        <input type="radio" name="ft-status" value="Open" required> ✅ Yes — open, stock visible, customers present
+                                    </label>
+                                    <label class="radio-container">
+                                        <input type="radio" name="ft-status" value="Closed"> ❌ No — closed / nobody there
+                                    </label>
+                                    <label class="radio-container">
+                                        <input type="radio" name="ft-status" value="Partially Open"> ⚠️ Partially — open but very low activity
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Approximate Customer Count Visible Right Now</label>
+                                <select id="ft-customers">
+                                    <option value="0">0 — nobody there</option>
+                                    <option value="1-5">1–5 customers</option>
+                                    <option value="6-15" selected>6–15 customers</option>
+                                    <option value="15+">15+ customers (very busy)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Any notable observation? (optional)</label>
+                                <input type="text" id="ft-note" placeholder="e.g. Water outage, new stock delivery, price increase">
+                            </div>
+                            <div class="verify-gps-badge">
+                                <i class="fa-solid fa-location-crosshairs"></i>
+                                <span>GPS timestamp will be auto-captured on submit</span>
+                            </div>
+                            <button type="submit" class="btn btn-submit">Confirm &amp; Earn R3</button>
+                        </form>
+                    </div>
+
+                    <!-- Screen: Wallet -->
+                    <div class="pwa-screen" id="screen-wallet">
+                        <div class="screen-back" onclick="showScreen('home')">
+                            <i class="fa-solid fa-arrow-left"></i> Back to Gigs
+                        </div>
+                        <h3 class="screen-title">My Wallet</h3>
+                        
+                        <div class="wallet-card">
+                            <span class="wallet-lbl">Available Balance</span>
+                            <div class="wallet-bal">R <span id="wallet-balance-display">25.00</span></div>
+                        </div>
+
+                        <div class="section-title">Withdraw Rewards</div>
+                        <div class="withdraw-options">
+                            <div class="withdraw-option-card" onclick="simulateWithdrawal('Airtime')">
+                                <i class="fa-solid fa-phone"></i>
+                                <span>Instant Airtime (MTN/Vodacom/CellC)</span>
+                            </div>
+                            <div class="withdraw-option-card" onclick="simulateWithdrawal('CashSend')">
+                                <i class="fa-solid fa-money-bill-transfer"></i>
+                                <span>Capitec CashSend / Mukuru</span>
+                            </div>
+                        </div>
+
+                        <div class="section-title">Earning History</div>
+                        <div class="history-list" id="earning-history">
+                            <div class="history-item">
+                                <div class="item-desc">Logged Inhloko Price (Soweto Rank)</div>
+                                <div class="item-amt positive">+R15.00</div>
+                            </div>
+                            <div class="history-item">
+                                <div class="item-desc">Logged Soweto to Sandton Taxi Fare</div>
+                                <div class="item-amt positive">+R10.00</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Screen: SME Merchant Portal -->
+                    <div class="pwa-screen" id="screen-merchant-portal">
+                        <div class="screen-back" onclick="showScreen('home')">
+                            <i class="fa-solid fa-arrow-left"></i> Switch to Youth Gigs
+                        </div>
+                        
+                        <div class="merchant-header-profile">
+                            <div class="merchant-avatar"><i class="fa-solid fa-store"></i></div>
+                            <div>
+                                <h3 id="merchant-name-display">Bab' uMkhize's Food</h3>
+                                <span class="merchant-status-badge">Vetted Pulse Partner</span>
+                            </div>
+                        </div>
+
+                        <!-- Credit Score Section -->
+                        <div class="section-title">Kasi Credit Profile</div>
+                        <div class="merchant-credit-score-card">
+                            <div class="score-radial">
+                                <svg class="progress-ring" width="70" height="70">
+                                    <circle class="progress-ring-circle-bg" stroke="rgba(255,255,255,0.05)" stroke-width="6" fill="transparent" r="28" cx="35" cy="35" />
+                                    <circle class="progress-ring-circle" id="credit-circle" stroke="var(--accent-gold)" stroke-width="6" fill="transparent" r="28" cx="35" cy="35" stroke-dasharray="175" stroke-dashoffset="40" />
+                                </svg>
+                                <div class="score-num" id="credit-score-num">735</div>
+                            </div>
+                            <div class="score-details">
+                                <h4>Capitec & Mukuru Credit Score</h4>
+                                <p class="score-rating text-gold">Vetted (Low Risk)</p>
+                                <small>Score is generated based on daily trade transaction logs.</small>
+                            </div>
+                        </div>
+
+                        <!-- Audit & Verification Badges -->
+                        <div class="section-title">Underwriting Verifications</div>
+                        <div class="merchant-audit-badges-card">
+                            <div class="audit-badge-row">
+                                <span><i class="fa-solid fa-file-invoice-dollar text-blue"></i> Wholesaler Invoice Sync</span>
+                                <strong id="val-audit-invoice" class="text-blue">94% Match</strong>
+                            </div>
+                            <div class="audit-badge-row">
+                                <span><i class="fa-solid fa-street-view text-gold"></i> Foot-Traffic Verification</span>
+                                <strong id="val-audit-traffic" class="text-gold">88% Verified</strong>
+                            </div>
+                            <div class="audit-badge-row">
+                                <span><i class="fa-solid fa-shield text-purple"></i> Payment Trust Class</span>
+                                <strong id="val-audit-trust" class="text-purple">A (High Trust)</strong>
+                            </div>
+                        </div>
+
+                        <!-- Active Credit Limit / Stock Loan -->
+                        <div class="merchant-finance-card">
+                            <div class="finance-header">
+                                <span>Capitec Working Capital Stock Loan</span>
+                                <strong class="limit-status">AVAILABLE</strong>
+                            </div>
+                            <div class="loan-amount">R5,000.00</div>
+                            <button class="btn btn-finance-claim" onclick="alert('Mock stock loan of R5,000 processed! Sent to Capitec Merchant Account.')">Claim Stock-Advance Loan</button>
+                        </div>
+
+                        <!-- Price Advisories Hub -->
+                        <div class="section-title">Wholesale Price Advisories</div>
+                        <div class="advisories-container" id="merchant-advisories">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
+                </div>
+                <!-- Simulated Home Button -->
+                <div class="phone-home-btn" onclick="showScreen('home')"></div>
+            </div>
+        </section>
+
+        <!-- RIGHT: Palantir KasiOntology Dashboard -->
+        <section class="dashboard-section">
+            <div class="section-header">
+                <h2><i class="fa-solid fa-circle-nodes"></i> KasiOntology Analytics Hub</h2>
+                <p>Palantir-style workspace aggregating granular youth reports into operational models</p>
+            </div>
+
+            <!-- Workspace Tabs -->
+            <div class="workspace-tabs">
+                <button class="tab-btn active" id="tab-datagap" onclick="switchTab('datagap')"><i class="fa-solid fa-magnifying-glass-chart"></i> Data-Gap Explorer</button>
+                <button class="tab-btn" id="tab-analytics" onclick="switchTab('analytics')"><i class="fa-solid fa-chart-line"></i> Micro Analytics</button>
+                <button class="tab-btn" id="tab-ontology" onclick="switchTab('ontology')"><i class="fa-solid fa-diagram-project"></i> KasiOntology Explorer</button>
+                <button class="tab-btn" id="tab-simulator" onclick="switchTab('simulator')"><i class="fa-solid fa-shield-halved"></i> Impact Simulator</button>
+                <button class="tab-btn" id="tab-wardmap" onclick="switchTab('wardmap')"><i class="fa-solid fa-map-location-dot"></i> Ward Map</button>
+                <button class="tab-btn" id="tab-profile" onclick="switchTab('profile')"><i class="fa-solid fa-id-card-clip"></i> Trader Profile</button>
+            </div>
+
+            <!-- TAB CONTENT: Data-Gap Explorer (DEFAULT LANDING) -->
+            <div class="tab-content active" id="content-datagap">
+                <div class="datagap-workspace">
+                    <!-- Hero Header -->
+                    <div class="datagap-hero">
+                        <div class="hero-text">
+                            <h3><i class="fa-solid fa-bullseye"></i> SA Informal Economy Credit & Data-Gap Map</h3>
+                            <p>Stitching StatsSA SESE 2023, FinScope MSME 2024, and constructed fintech coverage scores to surface <strong>under-served, high-growth informal sectors</strong> invisible to any single data source.</p>
+                        </div>
+                        <div class="confidence-legend">
+                            <div class="confidence-tag verified"><i class="fa-solid fa-badge-check"></i> <span class="conf-dot verified-dot"></span> National Survey Data</div>
+                            <div class="confidence-tag estimated"><i class="fa-solid fa-flask"></i> <span class="conf-dot estimated-dot"></span> Pulse Estimated</div>
+                        </div>
+                    </div>
+
+                    <!-- Row 1: Macro KPIs -->
+                    <div class="datagap-kpi-row">
+                        <div class="kpi-card">
+                            <span class="kpi-source-tag verified">FinScope 2024</span>
+                            <span class="kpi-val">3.0M</span>
+                            <span class="kpi-lbl">Total MSMEs in SA</span>
+                        </div>
+                        <div class="kpi-card">
+                            <span class="kpi-source-tag verified">FinScope 2024</span>
+                            <span class="kpi-val">R5.3T</span>
+                            <span class="kpi-lbl">Combined Annual Turnover</span>
+                        </div>
+                        <div class="kpi-card">
+                            <span class="kpi-source-tag verified">StatsSA SESE 2023</span>
+                            <span class="kpi-val">1.9M</span>
+                            <span class="kpi-lbl">Non-VAT Informal Businesses</span>
+                        </div>
+                        <div class="kpi-card">
+                            <span class="kpi-source-tag verified">FinScope 2024</span>
+                            <span class="kpi-val">56%</span>
+                            <span class="kpi-lbl">Share that is Informal</span>
+                        </div>
+                    </div>
+
+                    <!-- Row 2: Bubble Chart + Opportunity Cards -->
+                    <div class="datagap-main-grid">
+                        <!-- The Hero Scatter/Bubble Chart -->
+                        <div class="datagap-chart-card">
+                            <div class="chart-card-header">
+                                <h4>Sector Growth vs. Fintech Coverage</h4>
+                                <p>Opportunity zones = <strong>Top-Left</strong> (High Growth, Low Coverage). Bubble size = sector share of informal economy.</p>
+                            </div>
+                            <div class="datagap-chart-area">
+                                <canvas id="chart-datagap-bubble"></canvas>
+                                <!-- Opportunity Zone Overlay Label -->
+                                <div class="opportunity-zone-label" id="opp-zone-label">
+                                    <i class="fa-solid fa-gem"></i> Opportunity Zone
+                                </div>
+                            </div>
+                            <div class="chart-source-footer">
+                                <span><strong>Y-Axis:</strong> % point growth since 2017 <span class="conf-dot verified-dot"></span> StatsSA SESE 2023</span>
+                                <span><strong>X-Axis:</strong> Fintech/Analytics coverage (0–10) <span class="conf-dot estimated-dot"></span> Pulse Constructed</span>
+                                <span><strong>Bubble:</strong> Sector share of informal economy <span class="conf-dot verified-dot"></span> StatsSA SESE 2023</span>
+                            </div>
+                        </div>
+
+                        <!-- Side Panel: Sector Breakdown Cards -->
+                        <div class="datagap-side-panel">
+                            <h4><i class="fa-solid fa-layer-group"></i> Sector Deep-Dive</h4>
+                            <p class="panel-subtitle">Click a sector to inspect its data lineage and gap analysis</p>
+                            <div class="sector-cards-list" id="sector-cards-list">
+                                <!-- Populated dynamically by JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Row 3: FinScope Employment Multipliers -->
+                    <div class="datagap-multiplier-card">
+                        <div class="multiplier-header">
+                            <h4><i class="fa-solid fa-people-group"></i> FinScope Job Multiplier Index</h4>
+                            <span class="kpi-source-tag verified">FinScope MSME 2024</span>
+                        </div>
+                        <p class="card-subtitle">Employment multiplier per sector owner — the hidden value invisible if you only look at StatsSA SESE headcount data.</p>
+                        <div class="multiplier-bars" id="multiplier-bars">
+                            <!-- Populated dynamically by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Row 4: What's Missing (Honest Gaps) -->
+                    <div class="datagap-missing-card">
+                        <h4><i class="fa-solid fa-triangle-exclamation"></i> Honest Data Gaps & Next Steps</h4>
+                        <div class="missing-items">
+                            <div class="missing-item">
+                                <span class="missing-icon"><i class="fa-solid fa-lock"></i></span>
+                                <div>
+                                    <strong>FinScope Microdata (Sector-Level Credit Access)</strong>
+                                    <p>Exact % of Service vs. Trade sector MSMEs with bank credit. Sits in the raw FinScope dataset, requires formal request to FinMark Trust. Would convert our estimated coverage scores to verified ones.</p>
+                                </div>
+                            </div>
+                            <div class="missing-item">
+                                <span class="missing-icon"><i class="fa-solid fa-database"></i></span>
+                                <div>
+                                    <strong>SARS Tax Compliance Overlay</strong>
+                                    <p>Mapping turnover-tax registered informal businesses vs. those operating below the VAT threshold. Would sharpen the formalization readiness score per sector.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB CONTENT: Analytics -->
+            <div class="tab-content" id="content-analytics">
+                <div class="dashboard-grid">
+                    <!-- Metric Card 1: Taxi Cost vs Stats SA -->
+                    <div class="metric-card double">
+                        <h3><i class="fa-solid fa-bus-simple"></i> Spatial Commute Cost Index (Minibus Taxis)</h3>
+                        <p class="card-subtitle">Real-time local taxi fares compared to Stats SA consumer price indices</p>
+                        <div class="chart-container">
+                            <canvas id="chart-taxi"></canvas>
+                        </div>
+                        <div class="comparison-footer">
+                            <div class="sub-metric">
+                                <span class="val" id="text-avg-fare">R47.50</span>
+                                <span class="lbl">Pulse Avg return Commute</span>
+                            </div>
+                            <div class="sub-metric border-left">
+                                <span class="val">R22.50</span>
+                                <span class="lbl">Stats SA National Transit Cost Baseline</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Metric Card 2: FMCG Sunflower Oil Brand Share (NEW) -->
+                    <div class="metric-card">
+                        <h3><i class="fa-solid fa-cart-flatbed-suitcases"></i> Spaza Sunflower Oil Brand Share</h3>
+                        <p class="card-subtitle">FMCG retail audit brand velocity in informal shops</p>
+                        <div class="chart-container-small">
+                            <canvas id="chart-fmcg-brand"></canvas>
+                        </div>
+                        <div class="data-callout positive">
+                            <span class="highlight-val" id="text-top-brand">Sunfoil</span>
+                            <span class="desc">Most available oil brand logged in spazas</span>
+                        </div>
+                    </div>
+
+                    <!-- Metric Card 3: POS Device Merchant census (NEW) -->
+                    <div class="metric-card">
+                        <h3><i class="fa-solid fa-credit-card"></i> Kasi Payment Terminal Share</h3>
+                        <p class="card-subtitle">Payment terminal penetration across mapped informal merchants</p>
+                        <div class="chart-container-small">
+                            <canvas id="chart-pos-share"></canvas>
+                        </div>
+                        <div class="sub-stats">
+                            <div class="stat-row">
+                                <span>Cash Dominance (No POS)</span>
+                                <strong id="val-cash-dominance">55.0%</strong>
+                            </div>
+                            <div class="stat-row">
+                                <span>Card Acceptance (Yoco/iKhokha)</span>
+                                <strong id="val-pos-penetration">45.0%</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Metric Card 4: Food Inflation -->
+                    <div class="metric-card">
+                        <h3><i class="fa-solid fa-bowl-food"></i> Kasi Food Inflation Index</h3>
+                        <p class="card-subtitle">Local informal food markup trends (Inhloko & Spaza Staples)</p>
+                        <div class="chart-container-small">
+                            <canvas id="chart-food-inflation"></canvas>
+                        </div>
+                        <div class="data-callout positive">
+                            <span class="highlight-val" id="text-margin">31.2%</span>
+                            <span class="desc">Average gross profit margin logged for informal vendors</span>
+                        </div>
+                    </div>
+
+                    <!-- Metric Card 5: Financial Inclusion & Cash Flow -->
+                    <div class="metric-card">
+                        <h3><i class="fa-solid fa-wallet"></i> Cash vs. Digital Velocity</h3>
+                        <p class="card-subtitle">Primary transaction types in the mapped informal SME pool</p>
+                        <div class="chart-container-small">
+                            <canvas id="chart-cash-velocity"></canvas>
+                        </div>
+                        <div class="sub-stats">
+                            <div class="stat-row">
+                                <span>Pure Cash Volume</span>
+                                <strong id="val-pure-cash">64.5%</strong>
+                            </div>
+                            <div class="stat-row">
+                                <span>Mobile Wallet/Card (Yoco, etc.)</span>
+                                <strong id="val-digital">35.5%</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Metric Card 6: Water Outage Infrastructure Map -->
+                    <div class="metric-card double">
+                        <h3><i class="fa-solid fa-droplet-slash"></i> Municipal Water Infrastructure Outages</h3>
+                        <p class="card-subtitle">High-frequency local reports compared to municipal status reports</p>
+                        <div class="water-grid-container">
+                            <div class="townships-water-list" id="water-list">
+                                <!-- Populated dynamically -->
+                            </div>
+                            <div class="water-summary-card">
+                                <span class="title">Active Water Cuts Mapped</span>
+                                <div class="value" id="active-water-cuts">2 Wards</div>
+                                <p class="explanation">Unlike city-wide bulletins, this maps specific sub-wards where water pressure or supply is down, causing immediate trade shutdowns.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB CONTENT: Ontology Explorer -->
+            <div class="tab-content" id="content-ontology">
+                <div class="ontology-workspace">
+                    <div class="graph-viewport">
+                        <div class="viewport-header">
+                            <span><i class="fa-solid fa-network-wired"></i> Semantic Digital Twin: Soweto & Khayelitsha Township Nodes</span>
+                            <div class="legend">
+                                <span class="legend-item"><span class="legend-dot trader"></span> Trader</span>
+                                <span class="legend-item"><span class="legend-dot route"></span> Transit</span>
+                                <span class="legend-item"><span class="legend-dot infrastructure"></span> Infra</span>
+                            </div>
+                        </div>
+                        
+                        <!-- SVG / Canvas Graph Visualization Area -->
+                        <div class="svg-wrapper">
+                            <svg id="ontology-graph" width="100%" height="450">
+                                <!-- Rendered dynamically by app.js -->
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Sidebar inspector panel (Palantir Gotham Style) -->
+                    <div class="node-inspector" id="node-inspector">
+                        <div class="empty-state" id="inspector-empty">
+                            <i class="fa-solid fa-fingerprint"></i>
+                            <h4>Ontology Node Inspector</h4>
+                            <p>Click on any node in the semantic graph to inspect its properties, cash flow ledgers, and downstream risks.</p>
+                        </div>
+                        <div class="inspector-details hidden" id="inspector-details">
+                            <h3 id="inspect-node-title">Bab' uMkhize's Inhloko</h3>
+                            <span class="node-type-tag" id="inspect-node-type">Trader</span>
+                            
+                            <div class="detail-section">
+                                <h4>Entity Properties</h4>
+                                <table class="properties-table">
+                                    <tbody id="inspect-properties">
+                                        <!-- Populated dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="detail-section">
+                                <h4>Direct Dependencies</h4>
+                                <div class="relation-links" id="inspect-relations">
+                                    <!-- Populated dynamically -->
+                                </div>
+                            </div>
+
+                            <div class="detail-section risk-card" id="inspect-risk-box">
+                                <h4><i class="fa-solid fa-triangle-exclamation"></i> Real-Time Downstream Risk</h4>
+                                <p id="inspect-risk-text">No active risk markers detected on this node.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB CONTENT: Impact Simulator -->
+            <div class="tab-content" id="content-simulator">
+                <div class="simulator-workspace">
+                    <div class="simulator-controls">
+                        <h3><i class="fa-solid fa-sliders"></i> Scenario Controller</h3>
+                        <p class="subtitle">Simulate infrastructural or logistical disruptions and watch the ripple effects cascade across the KasiOntology network.</p>
+
+                        <div class="control-card">
+                            <div class="control-header">
+                                <i class="fa-solid fa-droplet-slash text-blue"></i>
+                                <div>
+                                    <h4>Simulate Water Grid Failure</h4>
+                                    <small>Shuts down water supply in key wards</small>
+                                </div>
+                            </div>
+                            <div class="control-row">
+                                <span>Target Region:</span>
+                                <select id="sim-water-location" onchange="runSimulation()">
+                                    <option value="Soweto">Soweto (Ward 15)</option>
+                                    <option value="Khayelitsha">Khayelitsha (Site C)</option>
+                                    <option value="All">All Townships</option>
+                                </select>
+                            </div>
+                            <div class="control-row">
+                                <span>Outage State:</span>
+                                <label class="switch">
+                                    <input type="checkbox" id="sim-water-outage" onchange="runSimulation()">
+                                    <span class="slider-round"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="control-card">
+                            <div class="control-header">
+                                <i class="fa-solid fa-taxi text-gold"></i>
+                                <div>
+                                    <h4>Simulate Taxi Fare Hike</h4>
+                                    <small>Simulates a sudden hike in commuting transport cost</small>
+                                </div>
+                            </div>
+                            <div class="control-row">
+                                <span>Fare Increase:</span>
+                                <select id="sim-taxi-hike" onchange="runSimulation()">
+                                    <option value="0">No Increase (Base rate)</option>
+                                    <option value="15">15% Fare Hike</option>
+                                    <option value="35">35% Route Fare Hike</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="simulator-results">
+                        <h3><i class="fa-solid fa-computer"></i> Predictive Cascade Analytics</h3>
+                        <p class="subtitle">System-generated predictive outcomes based on ontology relationship rules</p>
+                        
+                        <div class="outcomes-grid">
+                            <div class="outcome-card" id="out-traders">
+                                <span class="val">0</span>
+                                <span class="lbl">Businesses Disabled</span>
+                                <p class="desc">Informal traders experiencing critical operating shutdowns due to resources/infrastructure.</p>
+                            </div>
+                            <div class="outcome-card" id="out-cash">
+                                <span class="val">R0.00</span>
+                                <span class="lbl">Daily Cash At Risk</span>
+                                <p class="desc">Estimated township economic velocity lost at mapped SME level.</p>
+                            </div>
+                            <div class="outcome-card" id="out-commute">
+                                <span class="val">0%</span>
+                                <span class="lbl">Commute Budget Spike</span>
+                                <p class="desc">Average percentage increase in transport cost relative to low-income wages.</p>
+                            </div>
+                            <div class="outcome-card double-width" id="out-alert">
+                                <h4><i class="fa-solid fa-circle-info"></i> Simulation Status: Base Case</h4>
+                                <p id="out-alert-text">The network is currently operating at base baseline values. No simulation shocks are active. The Kasi cash flow remains stable.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB CONTENT: Ward Map -->
+            <div class="tab-content" id="content-wardmap">
+                <div class="wardmap-workspace">
+                    <!-- Header with metro selector -->
+                    <div class="wardmap-header">
+                        <div class="wardmap-title">
+                            <h3><i class="fa-solid fa-map-location-dot"></i> Live Ward Boundary Map</h3>
+                            <p>Official MDB Wards 2026 boundaries (4,488 wards) — sourced live from the Municipal Demarcation Board ArcGIS Feature Service for the upcoming 2026 Local Government Elections.</p>
+                        </div>
+                        <div class="wardmap-controls">
+                            <div class="wardmap-source-badge">
+                                <span class="conf-dot verified-dot"></span>
+                                MDB Official Data (June 2026)
+                            </div>
+                            <select id="metro-selector" onchange="loadMetroWards(this.value)">
+                                <option value="">Select a Metro / Municipality / District</option>
+                                <option value="MUNICNAME='City of Johannesburg'" selected>City of Johannesburg (Soweto)</option>
+                                <option value="MUNICNAME='City of Cape Town'">City of Cape Town (Khayelitsha)</option>
+                                <option value="MUNICNAME='eThekwini'">eThekwini (Durban)</option>
+                                <option value="MUNICNAME='City of Tshwane'">City of Tshwane (Pretoria)</option>
+                                <option value="MUNICNAME='City of Ekurhuleni'">City of Ekurhuleni</option>
+                                <option value="DISTRICT='West Rand'">West Rand (District)</option>
+                                <option value="MUNICNAME='Mogale City'">- Mogale City</option>
+                                <option value="MUNICNAME='Rand West City'">- Rand West City</option>
+                                <option value="MUNICNAME='Merafong City'">- Merafong City</option>
+                                <option value="MUNICNAME='Nelson Mandela Bay'">Nelson Mandela Bay</option>
+                                <option value="MUNICNAME='Buffalo City'">Buffalo City</option>
+                                <option value="MUNICNAME='Mangaung'">Mangaung</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- Map Container -->
+                    <div id="ward-map" style="height: 500px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.06);"></div>
+                    <!-- Map Info Footer -->
+                    <div class="wardmap-info-bar">
+                        <span id="ward-count-label"><i class="fa-solid fa-layer-group"></i> Select a metro to load wards</span>
+                        <span id="ward-selected-label"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB CONTENT: Trader Profile Output -->
+            <div class="tab-content" id="content-profile">
+                <div class="profile-output-workspace">
+                    <div class="profile-output-hero">
+                        <h3><i class="fa-solid fa-id-card-clip"></i> Institutional Profile Output</h3>
+                        <p>This is what institutional buyers receive via API. Same underlying data, different lenses for different customers.</p>
+                    </div>
+                    
+                    <!-- Lens Selector -->
+                    <div class="lens-selector">
+                        <button class="lens-btn active" id="lens-bank" onclick="switchLens('bank')"><i class="fa-solid fa-building-columns"></i> What Capitec Sees</button>
+                        <button class="lens-btn" id="lens-fmcg" onclick="switchLens('fmcg')"><i class="fa-solid fa-cart-shopping"></i> What Unilever Sees</button>
+                        <button class="lens-btn" id="lens-insurer" onclick="switchLens('insurer')"><i class="fa-solid fa-shield-halved"></i> What Hollard Sees</button>
+                    </div>
+                    
+                    <!-- Trader Selector -->
+                    <div class="profile-trader-selector">
+                        <label>Select Trader:</label>
+                        <select id="profile-trader-select" onchange="renderProfileOutput()">
+                            <option value="sizwe_spaza">Sizwe's Spaza Shop</option>
+                            <option value="mkhize_inhloko">Bab' uMkhize's Inhloko</option>
+                            <option value="nomsa_salon">Nomsa's Hair Salon</option>
+                            <option value="gary_fruit">Uncle Gary's Fruits</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Profile Card -->
+                    <div class="profile-card" id="profile-output-card">
+                        <!-- Rendered dynamically by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Simulated SMS Notification Popups -->
+    <div class="sms-notification-wrapper" id="sms-wrapper">
+        <!-- Injected via JS -->
+    </div>
+
+    <script src="app.js"></script>
+
+    <!-- Service Worker Registration + Offline Detection -->
+    <script>
+        // Register Service Worker for offline use
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('[Pulse SA] Service Worker registered:', reg.scope))
+                    .catch(err => console.warn('[Pulse SA] SW registration failed:', err));
+            });
+        }
+
+        // Offline / online detection banner
+        function updateOnlineStatus() {
+            if (!navigator.onLine) {
+                document.body.classList.add('offline');
+            } else {
+                document.body.classList.remove('offline');
+            }
+        }
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+        updateOnlineStatus();
+    </script>
+</body>
+</html>
