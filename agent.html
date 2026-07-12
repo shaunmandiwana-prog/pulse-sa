@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pulse SA — Earn Airtime by Helping Your Community</title>
-    <meta name="description" content="Complete quick data gigs in your area and earn instant airtime rewards with Pulse SA.">
+    <title>Pulse SA — Earn Rewards by Helping Your Community</title>
+    <meta name="description" content="Complete quick data gigs in your area and earn Pulse Points redeemable for airtime, vouchers or cash.">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#a855f7">
     <meta name="mobile-web-app-capable" content="yes">
@@ -423,8 +423,9 @@
             <h1>Pulse <span>SA</span></h1>
         </div>
         <div class="wallet-chip" onclick="goTo('wallet')">
-            <span class="currency">R</span>
-            <span id="balance-display">25.00</span>
+            <i class="fa-solid fa-star" style="color:var(--orange);font-size:0.7rem;"></i>
+            <span id="balance-display">2,500</span>
+            <span style="font-size:0.6rem;color:var(--text-muted);font-weight:600;">pts</span>
         </div>
     </header>
 
@@ -434,12 +435,12 @@
         <div class="screen active" id="screen-home">
             <div class="hero">
                 <h2>Awe, Champ! 👋</h2>
-                <p>Complete quick gigs in your hood to earn instant airtime rewards. Every profile you log helps build your community's economic future.</p>
+                <p>Complete quick gigs in your hood to earn <strong style="color:var(--orange)">Pulse Points</strong>. Cash them out as airtime, vouchers or bank transfer — 100 pts = R1.</p>
             </div>
             <div class="earnings-today">
                 <div>
-                    <div class="label">Earned Today</div>
-                    <div class="amount" id="today-amount">R0.00</div>
+                    <div class="label">Points Earned Today</div>
+                    <div class="amount" id="today-amount" style="color:var(--orange)">0 pts</div>
                 </div>
                 <i class="fa-solid fa-chart-line" style="color:var(--teal);font-size:1.4rem;"></i>
             </div>
@@ -451,7 +452,7 @@
                         <h4>Full Trader Profile Visit</h4>
                         <p>37-point profile: spaza, street vendor, salon &amp; more</p>
                     </div>
-                    <span class="gig-reward">+R25</span>
+                    <span class="gig-reward">+500 pts</span>
                     <i class="fa-solid fa-chevron-right gig-arrow"></i>
                 </div>
                 <div class="gig-card" onclick="goTo('gig-audit')">
@@ -460,7 +461,7 @@
                         <h4>Spaza Shelf Audit</h4>
                         <p>Log brands, stock levels &amp; shelf prices</p>
                     </div>
-                    <span class="gig-reward">+R10</span>
+                    <span class="gig-reward">+200 pts</span>
                     <i class="fa-solid fa-chevron-right gig-arrow"></i>
                 </div>
                 <div class="gig-card" onclick="goTo('gig-basket')">
@@ -469,7 +470,7 @@
                         <h4>Price Basket Monitor</h4>
                         <p>Log prices of 8 staple goods (takes 3 min)</p>
                     </div>
-                    <span class="gig-reward">+R8</span>
+                    <span class="gig-reward">+150 pts</span>
                     <i class="fa-solid fa-chevron-right gig-arrow"></i>
                 </div>
                 <div class="gig-card" onclick="goTo('gig-verify')">
@@ -478,7 +479,7 @@
                         <h4>Foot-Traffic Verification</h4>
                         <p>Confirm a known trader is open &amp; trading</p>
                     </div>
-                    <span class="gig-reward">+R3</span>
+                    <span class="gig-reward">+60 pts</span>
                     <i class="fa-solid fa-chevron-right gig-arrow"></i>
                 </div>
                 <div class="gig-card" onclick="goTo('gig-infra')">
@@ -487,7 +488,7 @@
                         <h4>Infrastructure Report</h4>
                         <p>Report water, electricity or road disruptions</p>
                     </div>
-                    <span class="gig-reward">+R2</span>
+                    <span class="gig-reward">+40 pts</span>
                     <i class="fa-solid fa-chevron-right gig-arrow"></i>
                 </div>
             </div>
@@ -753,16 +754,27 @@
                 <h3>My Wallet</h3>
             </div>
             <div class="wallet-hero">
-                <div class="bal-label">Total Airtime Balance</div>
-                <div class="bal-amount">R<span id="wallet-bal">25.00</span></div>
-                <div class="bal-sub">Redeemable as airtime on any SA network</div>
+                <div class="bal-label">⭐ My Pulse Points</div>
+                <div class="bal-amount" style="font-size:2rem;"><span id="wallet-bal">2,500</span> <span style="font-size:1rem;color:var(--orange);font-weight:800;">pts</span></div>
+                <div class="bal-sub">100 pts = R1 &nbsp;·&nbsp; Redeem as airtime, voucher or bank transfer</div>
+                <div style="margin-top:10px;font-size:0.72rem;color:var(--teal);font-weight:700;">≈ R<span id="rand-value">25.00</span> value</div>
             </div>
-            <button class="cashout-btn">💸 Cash Out Airtime</button>
-            <div class="section-label">Earning History</div>
+            <button class="cashout-btn">💸 Redeem Points</button>
+            <div style="margin:0 18px 14px;background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.15);border-radius:10px;padding:10px 14px;">
+                <div style="font-size:0.6rem;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Point Values</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;font-size:0.65rem;color:var(--text-muted);">
+                    <span>📋 Full Profile</span><span style="color:var(--text)">500 pts (+100 bonus)</span>
+                    <span>🛒 Shelf Audit</span><span style="color:var(--text)">200 pts</span>
+                    <span>🧺 Price Basket</span><span style="color:var(--text)">150 pts</span>
+                    <span>👀 Foot Traffic</span><span style="color:var(--text)">60 pts</span>
+                    <span>💧 Infra Report</span><span style="color:var(--text)">40 pts</span>
+                </div>
+            </div>
+            <div class="section-label">Points History</div>
             <div class="history-list" id="history-list">
                 <div class="history-item">
                     <span class="desc">Welcome bonus — first sign-in</span>
-                    <span class="amt">+R25.00</span>
+                    <span class="amt">+2,500 pts</span>
                 </div>
             </div>
         </div>
@@ -782,9 +794,21 @@
     <div class="toast" id="toast"></div>
 
     <script>
-        let balance = 25.00;
-        let todayEarned = 0;
+        // Points system: 100 pts = R1
+        const PTS_PER_RAND = 100;
+        let points = 2500;   // welcome bonus = R25 equivalent
+        let todayPts = 0;
         let currentStep = 1;
+
+        function fmtPts(n) {
+            return n.toLocaleString('en-ZA');
+        }
+        function updateDisplays() {
+            document.getElementById('balance-display').textContent = fmtPts(points);
+            document.getElementById('wallet-bal').textContent = fmtPts(points);
+            document.getElementById('rand-value').textContent = (points / PTS_PER_RAND).toFixed(2);
+            document.getElementById('today-amount').textContent = fmtPts(todayPts) + ' pts';
+        }
 
         // ── Navigation ──
         function goTo(screenId) {
@@ -794,7 +818,6 @@
             if (screenId === 'home') document.getElementById('nav-home').classList.add('active');
             if (screenId === 'wallet') document.getElementById('nav-wallet').classList.add('active');
             window.scrollTo(0, 0);
-            // Reset profile steps when going to profile gig
             if (screenId === 'gig-profile') { profileStep(1); }
         }
 
@@ -823,19 +846,19 @@
             window.scrollTo(0, 0);
         }
 
-        // ── Payout helper ──
-        function payout(amount, description) {
-            balance += amount;
-            todayEarned += amount;
-            document.getElementById('balance-display').textContent = balance.toFixed(2);
-            document.getElementById('wallet-bal').textContent = balance.toFixed(2);
-            document.getElementById('today-amount').textContent = 'R' + todayEarned.toFixed(2);
+        // ── Points award helper ──
+        function award(pts, description, bonusPts = 0) {
+            const total = pts + bonusPts;
+            points += total;
+            todayPts += total;
+            updateDisplays();
             const list = document.getElementById('history-list');
             const item = document.createElement('div');
             item.className = 'history-item';
-            item.innerHTML = `<span class="desc">${description}</span><span class="amt">+R${amount.toFixed(2)}</span>`;
+            const bonusTag = bonusPts > 0 ? ` <span style="color:var(--orange);font-size:0.6rem;">(+${bonusPts} quality bonus)</span>` : '';
+            item.innerHTML = `<span class="desc">${description}${bonusTag}</span><span class="amt">+${fmtPts(total)} pts</span>`;
             list.prepend(item);
-            showToast(`🎉 R${amount.toFixed(2)} earned! ${description}`);
+            showToast(`⭐ ${fmtPts(total)} points earned! ${description}`);
         }
 
         function showToast(msg) {
@@ -849,13 +872,15 @@
         function submitProfile() {
             const name = document.getElementById('a-name').value || 'Unknown Trader';
             const type = document.getElementById('a-type').value;
-            payout(25, `Trader Profile: ${name} (${type})`);
+            const idVerified = document.getElementById('a-id-verified').value.startsWith('Yes');
+            // Base 500 pts + 100 bonus if ID was verified
+            award(500, `Trader Profile: ${name} (${type})`, idVerified ? 100 : 0);
             goTo('home');
         }
         function submitAudit() {
             const name = document.getElementById('au-name').value || 'Unnamed Spaza';
             const location = document.getElementById('au-township').value;
-            payout(10, `Shelf Audit: ${name}, ${location}`);
+            award(200, `Shelf Audit: ${name}, ${location}`);
             goTo('home');
         }
         function submitBasket() {
@@ -863,7 +888,8 @@
             const location = document.getElementById('bk-township').value;
             const ids = ['bk-bread','bk-maize','bk-oil','bk-milk','bk-eggs','bk-sugar','bk-airtime','bk-sunoil'];
             const logged = ids.filter(id => document.getElementById(id).value !== '').length;
-            payout(8, `Price Basket: ${name}, ${location} — ${logged} items`);
+            // Bonus 30 pts if all 8 items logged (complete basket)
+            award(150, `Price Basket: ${name}, ${location} — ${logged}/8 items`, logged === 8 ? 30 : 0);
             goTo('home');
         }
         function submitVerify() {
@@ -871,14 +897,13 @@
             if (!status) { showToast('Please select the trader status first'); return; }
             const name = document.getElementById('ft-name').value || 'Unknown trader';
             const icons = { Open: '✅', Closed: '❌', Partial: '⚠️' };
-            payout(3, `${icons[status.value]} Verified: ${name} — ${status.value}`);
-            document.getElementById('form-foottraffic-reset') && document.getElementById('form-foottraffic-reset').reset();
+            award(60, `${icons[status.value]} Verified: ${name} — ${status.value}`);
             goTo('home');
         }
         function submitInfra() {
             const type = document.getElementById('ir-type').value;
             const location = document.getElementById('ir-location').value;
-            payout(2, `Infrastructure: ${type} in ${location}`);
+            award(40, `Infrastructure: ${type} in ${location}`);
             goTo('home');
         }
 
@@ -895,12 +920,12 @@
             navigator.serviceWorker.register('./sw.js').catch(() => {});
         }
 
-        // ── Clock ──
+        // ── Clock / title ──
         function updateClock() {
-            const now = new Date();
-            document.title = `Pulse SA — R${balance.toFixed(2)} Balance`;
+            document.title = `Pulse SA — ${fmtPts(points)} pts`;
         }
         setInterval(updateClock, 60000);
+        updateDisplays();
     </script>
 </body>
 </html>
