@@ -45,6 +45,68 @@
     <!-- Offline mode banner — shows automatically when no data connection -->
     <div id="offline-banner">⚡ OFFLINE MODE — All your data is saved locally. Submit when back online.</div>
 
+    <!-- ══ PASSWORD GATE ══ -->
+    <div id="password-gate" style="
+        display:none;
+        position:fixed;inset:0;
+        background:rgba(8,10,18,0.97);
+        backdrop-filter:blur(12px);
+        z-index:99999;
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        justify-content:center;
+        gap:20px;
+        font-family:'Plus Jakarta Sans',sans-serif;
+    ">
+        <div style="text-align:center;margin-bottom:8px;">
+            <div style="width:52px;height:52px;border-radius:50%;background:rgba(168,85,247,0.15);border:2px solid rgba(168,85,247,0.3);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">
+                <i class="fa-solid fa-lock" style="color:#a855f7;font-size:1.2rem;"></i>
+            </div>
+            <h2 style="font-size:1.1rem;font-weight:800;color:#f0f2ff;">Intelligence Dashboard</h2>
+            <p style="font-size:0.72rem;color:#8b8fa8;margin-top:4px;">Enter your access code to continue</p>
+        </div>
+        <div style="width:100%;max-width:320px;display:flex;flex-direction:column;gap:12px;padding:0 24px;">
+            <input id="gate-input" type="password" placeholder="Access code" autocomplete="current-password"
+                style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:13px 16px;color:#f0f2ff;font-family:inherit;font-size:0.9rem;outline:none;text-align:center;letter-spacing:4px;"
+                onkeydown="if(event.key==='Enter')checkPassword()">
+            <div id="gate-error" style="display:none;font-size:0.68rem;color:#f87171;text-align:center;">Incorrect code. Try again.</div>
+            <button onclick="checkPassword()" style="width:100%;padding:13px;border-radius:12px;border:none;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;font-family:inherit;font-size:0.85rem;font-weight:800;cursor:pointer;">
+                Unlock Dashboard
+            </button>
+        </div>
+        <p style="font-size:0.62rem;color:#8b8fa8;margin-top:8px;">
+            <a href="./agent.html" style="color:#00f2fe;text-decoration:none;">← I'm a field agent — take me to the gig app</a>
+        </p>
+    </div>
+
+    <script>
+        // Simple session-based password gate
+        // Change the password below — store it somewhere safe
+        const DASHBOARD_PASSWORD = 'pulsesa2026';
+
+        function checkPassword() {
+            const input = document.getElementById('gate-input').value;
+            if (input === DASHBOARD_PASSWORD) {
+                sessionStorage.setItem('pulse_auth', '1');
+                document.getElementById('password-gate').style.display = 'none';
+            } else {
+                document.getElementById('gate-error').style.display = 'block';
+                document.getElementById('gate-input').value = '';
+                document.getElementById('gate-input').focus();
+            }
+        }
+
+        // On load: show gate if not authenticated
+        (function() {
+            if (!sessionStorage.getItem('pulse_auth')) {
+                document.getElementById('password-gate').style.display = 'flex';
+            } else {
+                document.getElementById('password-gate').style.display = 'none';
+            }
+        })();
+    </script>
+
     <header class="app-header">
         <div class="logo-area">
             <div class="pulse-indicator"></div>

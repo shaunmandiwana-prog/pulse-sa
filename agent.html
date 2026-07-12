@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pulse SA — Earn Airtime by Helping Your Community</title>
+    <meta name="description" content="Complete quick data gigs in your area and earn instant airtime rewards with Pulse SA.">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#a855f7">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Pulse SA">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg: #080a12;
+            --bg-card: #0f1120;
+            --border: rgba(255,255,255,0.07);
+            --text: #f0f2ff;
+            --text-muted: #8b8fa8;
+            --teal: #00f2fe;
+            --purple: #a855f7;
+            --green: #10b981;
+            --orange: #f59e0b;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* ── OFFLINE BANNER ── */
+        #offline-banner {
+            display: none;
+            width: 100%;
+            background: #f59e0b;
+            color: #000;
+            text-align: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 6px;
+            letter-spacing: 0.4px;
+        }
+        body.offline #offline-banner { display: block; }
+
+        /* ── APP HEADER ── */
+        .app-header {
+            width: 100%;
+            max-width: 480px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 18px 10px;
+            border-bottom: 1px solid var(--border);
+        }
+        .logo { display: flex; align-items: center; gap: 8px; }
+        .pulse-dot {
+            width: 10px; height: 10px;
+            background: var(--purple);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%,100% { box-shadow: 0 0 0 0 rgba(168,85,247,0.4); }
+            50% { box-shadow: 0 0 0 6px rgba(168,85,247,0); }
+        }
+        .logo h1 { font-size: 1.1rem; font-weight: 800; }
+        .logo h1 span { color: var(--purple); }
+        .wallet-chip {
+            display: flex; align-items: center; gap: 5px;
+            background: rgba(168,85,247,0.12);
+            border: 1px solid rgba(168,85,247,0.25);
+            border-radius: 20px;
+            padding: 5px 12px;
+            font-size: 0.8rem; font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .wallet-chip:hover { background: rgba(168,85,247,0.2); }
+        .wallet-chip .currency { color: var(--teal); font-size: 0.7rem; }
+
+        /* ── MAIN CONTENT ── */
+        .agent-app {
+            width: 100%;
+            max-width: 480px;
+            flex: 1;
+            padding: 0 0 80px;
+            overflow-x: hidden;
+        }
+
+        /* ── SCREENS ── */
+        .screen { display: none; flex-direction: column; }
+        .screen.active { display: flex; }
+
+        /* ── HOME SCREEN ── */
+        .hero {
+            padding: 20px 18px 14px;
+            background: linear-gradient(180deg, rgba(168,85,247,0.06) 0%, transparent 100%);
+            border-bottom: 1px solid var(--border);
+        }
+        .hero h2 { font-size: 1.15rem; font-weight: 800; margin-bottom: 4px; }
+        .hero p { font-size: 0.75rem; color: var(--text-muted); line-height: 1.5; }
+        .earnings-today {
+            margin: 14px 18px;
+            background: linear-gradient(135deg, rgba(0,242,254,0.06), rgba(168,85,247,0.06));
+            border: 1px solid rgba(0,242,254,0.12);
+            border-radius: 12px;
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .earnings-today .label { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        .earnings-today .amount { font-size: 1.2rem; font-weight: 800; color: var(--teal); }
+        .section-label {
+            padding: 14px 18px 8px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+        }
+        .gigs-list { display: flex; flex-direction: column; gap: 1px; }
+        .gig-card {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 18px;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: background 0.2s;
+            -webkit-tap-highlight-color: rgba(168,85,247,0.1);
+        }
+        .gig-card:active { background: rgba(168,85,247,0.08); }
+        .gig-icon {
+            width: 42px; height: 42px;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+        .gig-icon.profile { background: rgba(168,85,247,0.15); color: var(--purple); }
+        .gig-icon.audit { background: rgba(0,242,254,0.1); color: var(--teal); }
+        .gig-icon.basket { background: rgba(16,185,129,0.1); color: var(--green); }
+        .gig-icon.verify { background: rgba(245,158,11,0.1); color: var(--orange); }
+        .gig-icon.infra { background: rgba(59,130,246,0.1); color: #60a5fa; }
+        .gig-info { flex: 1; }
+        .gig-info h4 { font-size: 0.85rem; font-weight: 700; margin-bottom: 2px; }
+        .gig-info p { font-size: 0.65rem; color: var(--text-muted); }
+        .gig-reward {
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: var(--green);
+            flex-shrink: 0;
+        }
+        .gig-arrow { color: var(--text-muted); font-size: 0.75rem; margin-left: 4px; }
+
+        /* ── SCREEN HEADER ── */
+        .screen-nav {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            background: var(--bg);
+            z-index: 10;
+        }
+        .back-btn {
+            width: 34px; height: 34px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            color: var(--text);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+        .screen-nav h3 { font-size: 0.95rem; font-weight: 800; }
+
+        /* ── FORMS ── */
+        .form-body { padding: 16px 18px; display: flex; flex-direction: column; gap: 14px; }
+        .form-hint { font-size: 0.68rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 4px; }
+        .field { display: flex; flex-direction: column; gap: 5px; }
+        .field label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+        .field input, .field select, .field textarea {
+            width: 100%;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 11px 14px;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.82rem;
+            outline: none;
+            transition: border-color 0.2s;
+            -webkit-appearance: none;
+        }
+        .field input:focus, .field select:focus { border-color: var(--purple); }
+        .field textarea { resize: none; min-height: 70px; line-height: 1.5; }
+        .field select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%238b8fa8' d='M1 1l5 5 5-5'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+        .field optgroup { background: var(--bg-card); color: var(--text-muted); font-size: 0.65rem; }
+        .field option { background: var(--bg-card); }
+        .currency-row { display: flex; align-items: center; gap: 8px; }
+        .currency-row .curr-sym {
+            font-size: 0.9rem; font-weight: 800; color: var(--teal);
+            flex-shrink: 0;
+        }
+        .currency-row input { flex: 1; }
+
+        /* Step progress */
+        .step-bar {
+            display: flex;
+            align-items: center;
+            padding: 14px 18px 0;
+            gap: 0;
+        }
+        .step-node {
+            width: 26px; height: 26px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.06);
+            border: 2px solid rgba(255,255,255,0.1);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.65rem; font-weight: 800;
+            color: var(--text-muted);
+            flex-shrink: 0;
+            transition: all 0.3s;
+        }
+        .step-node.active { background: var(--purple); border-color: var(--purple); color: #fff; }
+        .step-node.done { background: var(--green); border-color: var(--green); color: #fff; }
+        .step-line { flex: 1; height: 2px; background: rgba(255,255,255,0.08); }
+        .step-line.done { background: var(--green); }
+        .step-caption { padding: 6px 18px 0; font-size: 0.65rem; color: var(--text-muted); font-weight: 600; }
+
+        .profile-step { display: none; flex-direction: column; gap: 14px; }
+        .profile-step.active { display: flex; }
+
+        /* Radio group */
+        .radio-group { display: flex; flex-direction: column; gap: 8px; }
+        .radio-opt {
+            display: flex; align-items: center; gap: 10px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 11px 14px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+        .radio-opt:active { background: rgba(168,85,247,0.08); border-color: rgba(168,85,247,0.3); }
+        .radio-opt input { accent-color: var(--purple); }
+
+        /* Basket grid */
+        .basket-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .basket-cell {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 12px;
+            display: flex; flex-direction: column; gap: 6px;
+        }
+        .basket-cell .item-name { font-size: 0.62rem; color: var(--text-muted); line-height: 1.3; }
+        .basket-cell .price-row { display: flex; align-items: center; gap: 5px; }
+        .basket-cell .price-row span { font-size: 0.7rem; font-weight: 800; color: var(--teal); }
+        .basket-cell input {
+            flex: 1; background: transparent; border: none;
+            border-bottom: 1px solid rgba(255,255,255,0.12);
+            color: var(--text); font-size: 0.8rem; font-family: inherit;
+            padding: 2px 0; outline: none;
+        }
+        .basket-cell input:focus { border-bottom-color: var(--teal); }
+
+        /* GPS badge */
+        .gps-badge {
+            display: flex; align-items: center; gap: 8px;
+            background: rgba(0,242,254,0.06);
+            border: 1px solid rgba(0,242,254,0.15);
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 0.68rem;
+            color: var(--teal);
+        }
+
+        /* Buttons */
+        .btn-row { display: flex; gap: 10px; }
+        .btn {
+            flex: 1;
+            padding: 13px;
+            border-radius: 12px;
+            border: none;
+            font-family: inherit;
+            font-size: 0.82rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #a855f7, #7c3aed);
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(168,85,247,0.3);
+        }
+        .btn-primary:active { transform: scale(0.98); box-shadow: none; }
+        .btn-secondary {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+        }
+        .earn-btn {
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            border: none;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #fff;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(16,185,129,0.3);
+            transition: all 0.2s;
+        }
+        .earn-btn:active { transform: scale(0.98); }
+
+        /* ── WALLET SCREEN ── */
+        .wallet-hero {
+            margin: 20px 18px;
+            background: linear-gradient(135deg, rgba(168,85,247,0.12), rgba(0,242,254,0.08));
+            border: 1px solid rgba(168,85,247,0.2);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+        }
+        .wallet-hero .bal-label { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+        .wallet-hero .bal-amount { font-size: 2.4rem; font-weight: 800; color: var(--teal); }
+        .wallet-hero .bal-sub { font-size: 0.7rem; color: var(--text-muted); margin-top: 4px; }
+        .cashout-btn {
+            display: block; width: calc(100% - 36px); margin: 0 18px 18px;
+            padding: 14px; border-radius: 12px; border: none;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: #000; font-family: inherit; font-size: 0.85rem; font-weight: 800;
+            cursor: pointer;
+        }
+        .history-list { padding: 0 18px; display: flex; flex-direction: column; gap: 8px; }
+        .history-item {
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 14px;
+        }
+        .history-item .desc { font-size: 0.72rem; color: var(--text-muted); flex: 1; }
+        .history-item .amt { font-size: 0.8rem; font-weight: 800; color: var(--green); }
+
+        /* ── SUCCESS TOAST ── */
+        .toast {
+            position: fixed;
+            bottom: 90px;
+            left: 50%; transform: translateX(-50%);
+            background: rgba(16,185,129,0.95);
+            color: #fff;
+            border-radius: 12px;
+            padding: 12px 20px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            max-width: 90vw;
+            text-align: center;
+            z-index: 9999;
+            display: none;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+        }
+        .toast.show { display: block; animation: slideUp 0.3s ease; }
+        @keyframes slideUp { from { opacity:0; transform: translateX(-50%) translateY(10px); } to { opacity:1; transform: translateX(-50%) translateY(0); } }
+
+        /* ── BOTTOM NAV ── */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+            width: 100%; max-width: 480px;
+            background: rgba(15,17,32,0.95);
+            border-top: 1px solid var(--border);
+            display: flex;
+            backdrop-filter: blur(12px);
+            z-index: 100;
+        }
+        .nav-btn {
+            flex: 1; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            padding: 10px 0 14px;
+            gap: 3px; cursor: pointer;
+            font-size: 0.58rem; font-weight: 600;
+            color: var(--text-muted);
+            border: none; background: transparent;
+            transition: color 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .nav-btn i { font-size: 1.1rem; }
+        .nav-btn.active { color: var(--purple); }
+    </style>
+</head>
+<body>
+    <div id="offline-banner">⚡ Offline Mode — data saved, submit when connected</div>
+
+    <header class="app-header">
+        <div class="logo">
+            <div class="pulse-dot"></div>
+            <h1>Pulse <span>SA</span></h1>
+        </div>
+        <div class="wallet-chip" onclick="goTo('wallet')">
+            <span class="currency">R</span>
+            <span id="balance-display">25.00</span>
+        </div>
+    </header>
+
+    <div class="agent-app">
+
+        <!-- ══ HOME SCREEN ══ -->
+        <div class="screen active" id="screen-home">
+            <div class="hero">
+                <h2>Awe, Champ! 👋</h2>
+                <p>Complete quick gigs in your hood to earn instant airtime rewards. Every profile you log helps build your community's economic future.</p>
+            </div>
+            <div class="earnings-today">
+                <div>
+                    <div class="label">Earned Today</div>
+                    <div class="amount" id="today-amount">R0.00</div>
+                </div>
+                <i class="fa-solid fa-chart-line" style="color:var(--teal);font-size:1.4rem;"></i>
+            </div>
+            <div class="section-label">Available Gigs</div>
+            <div class="gigs-list">
+                <div class="gig-card" onclick="goTo('gig-profile')">
+                    <div class="gig-icon profile"><i class="fa-solid fa-id-card-clip"></i></div>
+                    <div class="gig-info">
+                        <h4>Full Trader Profile Visit</h4>
+                        <p>37-point profile: spaza, street vendor, salon &amp; more</p>
+                    </div>
+                    <span class="gig-reward">+R25</span>
+                    <i class="fa-solid fa-chevron-right gig-arrow"></i>
+                </div>
+                <div class="gig-card" onclick="goTo('gig-audit')">
+                    <div class="gig-icon audit"><i class="fa-solid fa-cart-shopping"></i></div>
+                    <div class="gig-info">
+                        <h4>Spaza Shelf Audit</h4>
+                        <p>Log brands, stock levels &amp; shelf prices</p>
+                    </div>
+                    <span class="gig-reward">+R10</span>
+                    <i class="fa-solid fa-chevron-right gig-arrow"></i>
+                </div>
+                <div class="gig-card" onclick="goTo('gig-basket')">
+                    <div class="gig-icon basket"><i class="fa-solid fa-basket-shopping"></i></div>
+                    <div class="gig-info">
+                        <h4>Price Basket Monitor</h4>
+                        <p>Log prices of 8 staple goods (takes 3 min)</p>
+                    </div>
+                    <span class="gig-reward">+R8</span>
+                    <i class="fa-solid fa-chevron-right gig-arrow"></i>
+                </div>
+                <div class="gig-card" onclick="goTo('gig-verify')">
+                    <div class="gig-icon verify"><i class="fa-solid fa-person-walking"></i></div>
+                    <div class="gig-info">
+                        <h4>Foot-Traffic Verification</h4>
+                        <p>Confirm a known trader is open &amp; trading</p>
+                    </div>
+                    <span class="gig-reward">+R3</span>
+                    <i class="fa-solid fa-chevron-right gig-arrow"></i>
+                </div>
+                <div class="gig-card" onclick="goTo('gig-infra')">
+                    <div class="gig-icon infra"><i class="fa-solid fa-droplet"></i></div>
+                    <div class="gig-info">
+                        <h4>Infrastructure Report</h4>
+                        <p>Report water, electricity or road disruptions</p>
+                    </div>
+                    <span class="gig-reward">+R2</span>
+                    <i class="fa-solid fa-chevron-right gig-arrow"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══ TRADER PROFILE GIG (6 Steps) ══ -->
+        <div class="screen" id="screen-gig-profile">
+            <div class="screen-nav">
+                <div class="back-btn" onclick="goTo('home')"><i class="fa-solid fa-arrow-left"></i></div>
+                <h3>Trader Profile Visit</h3>
+            </div>
+            <div class="step-bar">
+                <div class="step-node active" id="sn1">1</div><div class="step-line" id="sl1"></div>
+                <div class="step-node" id="sn2">2</div><div class="step-line" id="sl2"></div>
+                <div class="step-node" id="sn3">3</div><div class="step-line" id="sl3"></div>
+                <div class="step-node" id="sn4">4</div><div class="step-line" id="sl4"></div>
+                <div class="step-node" id="sn5">5</div><div class="step-line" id="sl5"></div>
+                <div class="step-node" id="sn6">6</div>
+            </div>
+            <div class="step-caption" id="step-caption">Step 1 of 6 — Identity &amp; Profile</div>
+            <form onsubmit="return false;">
+                <div class="form-body">
+                    <!-- Step 1 -->
+                    <div class="profile-step active" id="ps1">
+                        <div class="field"><label>Trader Name</label><input type="text" id="a-name" placeholder="e.g. Thandi Mokoena"></div>
+                        <div class="field"><label>Business Type</label>
+                            <select id="a-type">
+                                <optgroup label="Fixed Location">
+                                    <option>Spaza Shop</option><option>Hair Salon / Barber</option>
+                                    <option>Tavern / Shebeen</option><option>Mechanic / Panel Beater</option>
+                                    <option>Tuck Shop (home-based)</option>
+                                </optgroup>
+                                <optgroup label="Street &amp; Mobile Traders">
+                                    <option>Hawker / General Street Seller</option>
+                                    <option>Prepared Food Vendor (achar, vetkoek, braai)</option>
+                                    <option>Street Food (inhloko, tripe, umqombothi)</option>
+                                    <option>Fruit &amp; Veg Vendor</option>
+                                    <option>Clothing &amp; Textile Hawker</option>
+                                </optgroup>
+                                <optgroup label="Services">
+                                    <option>Roadside Service (phone charging, shoe repair, key cutting)</option>
+                                    <option>Childcare / Crèche</option><option>Tutoring / Skills Training</option>
+                                    <option>Domestic / Cleaning Services</option>
+                                </optgroup>
+                                <optgroup label="Informal Finance">
+                                    <option>Stokvel Organiser</option><option>Informal Lender (Mashonisa)</option>
+                                </optgroup>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        <div class="field"><label>Township / Area</label>
+                            <select id="a-township"><option>Soweto</option><option>Khayelitsha</option><option>Tembisa</option><option>Mitchells Plain</option><option>Alexandra</option><option>Other</option></select>
+                        </div>
+                        <div class="field"><label>Years in Business</label><input type="number" id="a-years" min="0" max="50" value="3"></div>
+                        <div class="field"><label>Premises Type</label>
+                            <select id="a-premises"><option>Open-air stall / Table</option><option>Shipping container (rented)</option><option>Shipping container (owned)</option><option>House extension</option><option>Brick structure</option><option>Shack / Informal structure</option></select>
+                        </div>
+                        <div class="field"><label>Number of Employees (incl. self)</label><input type="number" id="a-employees" min="1" max="20" value="1"></div>
+                        <div class="field"><label>ID Verified by You?</label>
+                            <select id="a-id-verified"><option>Yes — SA ID confirmed</option><option>No — not available</option></select>
+                        </div>
+                        <button class="btn btn-primary" onclick="profileStep(2)">Next → Financial Info</button>
+                    </div>
+                    <!-- Step 2 -->
+                    <div class="profile-step" id="ps2">
+                        <div class="field"><label>Bank Account</label>
+                            <select id="a-bank"><option>Capitec Savings</option><option>FNB Easy Account</option><option>Standard Bank</option><option>TymeBank</option><option>Nedbank</option><option>None (Unbanked)</option></select>
+                        </div>
+                        <div class="field"><label>Mobile Money</label>
+                            <select id="a-mobile-money"><option>None</option><option>MoMo (MTN)</option><option>Vodacom M-Pesa</option><option>Capitec Pay</option></select>
+                        </div>
+                        <div class="field"><label>Stokvel Member?</label>
+                            <select id="a-stokvel"><option>Yes</option><option>No</option></select>
+                        </div>
+                        <div class="field"><label>Existing Loans / Debt</label>
+                            <select id="a-loans"><option>None</option><option>Mashonisa (informal lender)</option><option>Bank personal loan</option><option>Retail account (Edgars etc)</option></select>
+                        </div>
+                        <div class="field"><label>Payments Accepted</label>
+                            <select id="a-payments"><option>Cash Only</option><option>Cash + Capitec Pay/CashSend</option><option>Cash + Card (Yoco/iKhokha)</option><option>Cash + Mobile Money</option></select>
+                        </div>
+                        <div class="btn-row">
+                            <button class="btn btn-secondary" onclick="profileStep(1)">← Back</button>
+                            <button class="btn btn-primary" onclick="profileStep(3)">Next → Stock &amp; Products</button>
+                        </div>
+                    </div>
+                    <!-- Step 3 -->
+                    <div class="profile-step" id="ps3">
+                        <div class="field"><label>Top 5 Products / Services Sold</label><input type="text" id="a-products" placeholder="e.g. Omo, Coke, Simba, Bread, Airtime"></div>
+                        <div class="field"><label>Restock Frequency</label>
+                            <select id="a-restock"><option>Daily</option><option>Every 2-3 days</option><option>Weekly</option><option>Fortnightly</option></select>
+                        </div>
+                        <div class="field"><label>Fastest Selling Item</label><input type="text" id="a-fastest" placeholder="e.g. Airtime vouchers"></div>
+                        <div class="field"><label>Product Wanted But Can't Afford to Stock</label><input type="text" id="a-wanted" placeholder="e.g. Bulk cooking oil (needs R200 upfront)"></div>
+                        <div class="field"><label>Primary Wholesaler / Supplier</label><input type="text" id="a-supplier" placeholder="e.g. Metro Cash &amp; Carry"></div>
+                        <div class="btn-row">
+                            <button class="btn btn-secondary" onclick="profileStep(2)">← Back</button>
+                            <button class="btn btn-primary" onclick="profileStep(4)">Next → Transactions</button>
+                        </div>
+                    </div>
+                    <!-- Step 4 -->
+                    <div class="profile-step" id="ps4">
+                        <div class="field"><label>Daily Turnover — Good Day</label>
+                            <div class="currency-row"><span class="curr-sym">R</span><input type="number" id="a-good-day" min="0" max="100000" value="2500"></div>
+                        </div>
+                        <div class="field"><label>Daily Turnover — Bad Day</label>
+                            <div class="currency-row"><span class="curr-sym">R</span><input type="number" id="a-bad-day" min="0" max="100000" value="700"></div>
+                        </div>
+                        <div class="field"><label>Busiest Trading Hours</label><input type="text" id="a-hours" placeholder="e.g. 6-8am &amp; 4-7pm"></div>
+                        <div class="field"><label>Wholesaler Payment Terms</label>
+                            <select id="a-terms"><option>Cash on delivery</option><option>7-day account</option><option>30-day account</option><option>Runs a tab (informal credit)</option></select>
+                        </div>
+                        <div class="field"><label>Customers Per Day (estimate)</label><input type="number" id="a-customers" min="1" max="1000" value="40"></div>
+                        <div class="btn-row">
+                            <button class="btn btn-secondary" onclick="profileStep(3)">← Back</button>
+                            <button class="btn btn-primary" onclick="profileStep(5)">Next → Location</button>
+                        </div>
+                    </div>
+                    <!-- Step 5 -->
+                    <div class="profile-step" id="ps5">
+                        <div class="field"><label>Water Supply</label>
+                            <select id="a-water"><option>Municipal tap (working)</option><option>Municipal tap (currently OFF)</option><option>Communal tap (shared)</option><option>Borehole</option><option>No water access</option></select>
+                        </div>
+                        <div class="field"><label>Electricity</label>
+                            <select id="a-electricity"><option>Prepaid Eskom meter</option><option>Municipal prepaid</option><option>Solar panel</option><option>Generator</option><option>No electricity</option></select>
+                        </div>
+                        <div class="field"><label>Distance to Nearest Wholesaler (km)</label><input type="number" id="a-distance" min="0" max="200" step="0.5" value="8"></div>
+                        <div class="field"><label>How Do They Get to Wholesaler?</label>
+                            <select id="a-transport"><option>Minibus taxi</option><option>Own vehicle / bakkie</option><option>Wholesaler delivers</option><option>Walking / Bicycle</option></select>
+                        </div>
+                        <div class="btn-row">
+                            <button class="btn btn-secondary" onclick="profileStep(4)">← Back</button>
+                            <button class="btn btn-primary" onclick="profileStep(6)">Next → Risk History</button>
+                        </div>
+                    </div>
+                    <!-- Step 6 -->
+                    <div class="profile-step" id="ps6">
+                        <div class="field"><label>Previous Stock Losses</label>
+                            <select id="a-losses"><option>None</option><option>Fire damage</option><option>Theft / Robbery</option><option>Flood / Weather damage</option><option>Stock spoilage (power cuts)</option></select>
+                        </div>
+                        <div class="field"><label>Insurance Status</label>
+                            <select id="a-insurance"><option>None — "too expensive"</option><option>Funeral policy only</option><option>Has basic business cover</option></select>
+                        </div>
+                        <div class="field"><label>Biggest Business Challenge Right Now</label><input type="text" id="a-challenge" placeholder="e.g. Cash flow gaps between restock days"></div>
+                        <div class="field"><label>Crime / Theft Incidents (last 12 months)</label>
+                            <select id="a-crime"><option>None</option><option>1 incident</option><option>2 or more incidents</option></select>
+                        </div>
+                        <div class="btn-row">
+                            <button class="btn btn-secondary" onclick="profileStep(5)">← Back</button>
+                        </div>
+                        <button class="earn-btn" onclick="submitProfile()">✓ Submit Profile &amp; Earn R25</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- ══ SPAZA SHELF AUDIT ══ -->
+        <div class="screen" id="screen-gig-audit">
+            <div class="screen-nav">
+                <div class="back-btn" onclick="goTo('home')"><i class="fa-solid fa-arrow-left"></i></div>
+                <h3>Spaza Shelf Audit</h3>
+            </div>
+            <div class="form-body">
+                <p class="form-hint">Walk into the spaza and record what you see on the shelves. Takes about 5 minutes.</p>
+                <div class="field"><label>Spaza Location</label>
+                    <select id="au-township"><option>Soweto</option><option>Khayelitsha</option><option>Tembisa</option><option>Mitchells Plain</option><option>Alexandra</option></select>
+                </div>
+                <div class="field"><label>Spaza / Shop Name</label><input type="text" id="au-name" placeholder="e.g. Sizwe's Spaza Shop"></div>
+                <div class="field"><label>Primary Sunflower Oil Brand in Stock</label>
+                    <select id="au-oil"><option>Sunfoil</option><option>D'lite</option><option>Excella</option><option>Generic / Other</option><option>Out of Stock</option></select>
+                </div>
+                <div class="field"><label>Price for Sunflower Oil 2L</label>
+                    <div class="currency-row"><span class="curr-sym">R</span><input type="number" id="au-oil-price" min="30" max="200" value="72"></div>
+                </div>
+                <div class="field"><label>Other Brands Visible on Shelves</label><input type="text" id="au-brands" placeholder="e.g. Koo beans, Omo washing powder, Lucky Star tuna"></div>
+                <div class="field"><label>Overall Stock Level</label>
+                    <select id="au-stock-level"><option>Well-stocked (full shelves)</option><option>Moderate (some gaps)</option><option>Low (many empty shelves)</option></select>
+                </div>
+                <button class="earn-btn" onclick="submitAudit()">✓ Submit Audit &amp; Earn R10</button>
+            </div>
+        </div>
+
+        <!-- ══ PRICE BASKET MONITOR ══ -->
+        <div class="screen" id="screen-gig-basket">
+            <div class="screen-nav">
+                <div class="back-btn" onclick="goTo('home')"><i class="fa-solid fa-arrow-left"></i></div>
+                <h3>Price Basket Monitor</h3>
+            </div>
+            <div class="form-body">
+                <p class="form-hint">Log the shelf price of each item. Leave blank if the trader doesn't stock it.</p>
+                <div class="field"><label>Location</label>
+                    <select id="bk-township"><option>Soweto</option><option>Khayelitsha</option><option>Tembisa</option><option>Mitchells Plain</option><option>Alexandra</option></select>
+                </div>
+                <div class="field"><label>Trader / Shop Name</label><input type="text" id="bk-name" placeholder="e.g. Mama Thandi's table"></div>
+                <div class="basket-grid">
+                    <div class="basket-cell"><span class="item-name">White bread (700g)</span><div class="price-row"><span>R</span><input type="number" id="bk-bread" min="0" step="0.5" placeholder="—"></div></div>
+                    <div class="basket-cell"><span class="item-name">Maize meal (2.5kg)</span><div class="price-row"><span>R</span><input type="number" id="bk-maize" min="0" step="0.5" placeholder="—"></div></div>
+                    <div class="basket-cell"><span class="item-name">Cooking oil (750ml)</span><div class="price-row"><span>R</span><input type="number" id="bk-oil" min="0" step="0.5" placeholder="—"></div></div>
+                    <div class="basket-cell"><span class="item-name">Full cream milk (1L)</span><div class="price-row"><span>R</span><input type="number" id="bk-milk" min="0" step="0.5" placeholder="—"></div></div>
+                    <div class="basket-cell"><span class="item-name">Eggs (6-pack)</span><div class="price-row"><span>R</span><input type="number" id="bk-eggs" min="0" step="0.5" placeholder="—"></div></div>
+                    <div class="basket-cell"><span class="item-name">Sugar (1kg)</span><div class="price-row"><span>R</span><input type="number" id="bk-sugar" min="0" step="0.5" placeholder="—"></div></div>
+                    <div class="basket-cell"><span class="item-name">Airtime voucher (R10)</span><div class="price-row"><span>R</span><input type="number" id="bk-airtime" min="0" step="0.5" placeholder="—"></div></div>
+                    <div class="basket-cell"><span class="item-name">Sunflower oil (2L)</span><div class="price-row"><span>R</span><input type="number" id="bk-sunoil" min="0" step="0.5" placeholder="—"></div></div>
+                </div>
+                <button class="earn-btn" onclick="submitBasket()">✓ Submit Prices &amp; Earn R8</button>
+            </div>
+        </div>
+
+        <!-- ══ FOOT-TRAFFIC VERIFICATION ══ -->
+        <div class="screen" id="screen-gig-verify">
+            <div class="screen-nav">
+                <div class="back-btn" onclick="goTo('home')"><i class="fa-solid fa-arrow-left"></i></div>
+                <h3>Foot-Traffic Verification</h3>
+            </div>
+            <div class="form-body">
+                <p class="form-hint">You are walking past a trader. Confirm if they are open and trading. Takes 30 seconds.</p>
+                <div class="field"><label>Trader Name or Description</label><input type="text" id="ft-name" placeholder="e.g. Mama at Orlando taxi rank"></div>
+                <div class="field"><label>Location</label><input type="text" id="ft-location" placeholder="e.g. Corner Khumalo &amp; Vilakazi, Soweto"></div>
+                <div class="field"><label>Is the trader currently open and trading?</label>
+                    <div class="radio-group">
+                        <label class="radio-opt"><input type="radio" name="ft-status" value="Open"> ✅ Yes — open, stock visible, customers present</label>
+                        <label class="radio-opt"><input type="radio" name="ft-status" value="Closed"> ❌ No — closed / nobody there</label>
+                        <label class="radio-opt"><input type="radio" name="ft-status" value="Partial"> ⚠️ Partially — open but very quiet</label>
+                    </div>
+                </div>
+                <div class="field"><label>Approx Customers Visible Right Now</label>
+                    <select id="ft-customers"><option value="0">0 — nobody</option><option value="1-5">1–5</option><option value="6-15" selected>6–15</option><option value="15+">15+ (very busy)</option></select>
+                </div>
+                <div class="field"><label>Any observation? (optional)</label><input type="text" id="ft-note" placeholder="e.g. Price increase on bread, new stock delivery"></div>
+                <div class="gps-badge"><i class="fa-solid fa-location-crosshairs"></i> GPS timestamp auto-captured on submit</div>
+                <button class="earn-btn" onclick="submitVerify()">✓ Confirm &amp; Earn R3</button>
+            </div>
+        </div>
+
+        <!-- ══ INFRASTRUCTURE REPORT ══ -->
+        <div class="screen" id="screen-gig-infra">
+            <div class="screen-nav">
+                <div class="back-btn" onclick="goTo('home')"><i class="fa-solid fa-arrow-left"></i></div>
+                <h3>Infrastructure Report</h3>
+            </div>
+            <div class="form-body">
+                <p class="form-hint">Report any service delivery disruptions in your area.</p>
+                <div class="field"><label>Your Location / Ward</label>
+                    <select id="ir-location"><option>Soweto</option><option>Khayelitsha</option><option>Tembisa</option><option>Mitchells Plain</option><option>Alexandra</option><option>Other</option></select>
+                </div>
+                <div class="field"><label>Type of Disruption</label>
+                    <select id="ir-type"><option>Water outage</option><option>Load shedding / Power outage</option><option>Road closure / Pothole</option><option>Sewage overflow</option><option>Refuse not collected</option></select>
+                </div>
+                <div class="field"><label>How Long Has It Been?</label>
+                    <select id="ir-duration"><option>Less than 2 hours</option><option>2–8 hours</option><option>All day</option><option>Multiple days</option></select>
+                </div>
+                <div class="field"><label>How Many Households / Businesses Affected?</label>
+                    <select id="ir-scale"><option>Just my place</option><option>My street</option><option>My block / section</option><option>Whole area</option></select>
+                </div>
+                <div class="field"><label>Additional Details (optional)</label><textarea id="ir-notes" placeholder="e.g. The water was cut at 6am with no warning. Traders can't operate."></textarea></div>
+                <button class="earn-btn" onclick="submitInfra()">✓ Submit Report &amp; Earn R2</button>
+            </div>
+        </div>
+
+        <!-- ══ WALLET SCREEN ══ -->
+        <div class="screen" id="screen-wallet">
+            <div class="screen-nav">
+                <div class="back-btn" onclick="goTo('home')"><i class="fa-solid fa-arrow-left"></i></div>
+                <h3>My Wallet</h3>
+            </div>
+            <div class="wallet-hero">
+                <div class="bal-label">Total Airtime Balance</div>
+                <div class="bal-amount">R<span id="wallet-bal">25.00</span></div>
+                <div class="bal-sub">Redeemable as airtime on any SA network</div>
+            </div>
+            <button class="cashout-btn">💸 Cash Out Airtime</button>
+            <div class="section-label">Earning History</div>
+            <div class="history-list" id="history-list">
+                <div class="history-item">
+                    <span class="desc">Welcome bonus — first sign-in</span>
+                    <span class="amt">+R25.00</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Bottom Nav -->
+    <nav class="bottom-nav">
+        <button class="nav-btn active" id="nav-home" onclick="goTo('home')">
+            <i class="fa-solid fa-house"></i>Gigs
+        </button>
+        <button class="nav-btn" id="nav-wallet" onclick="goTo('wallet')">
+            <i class="fa-solid fa-wallet"></i>Wallet
+        </button>
+    </nav>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        let balance = 25.00;
+        let todayEarned = 0;
+        let currentStep = 1;
+
+        // ── Navigation ──
+        function goTo(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('screen-' + screenId).classList.add('active');
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            if (screenId === 'home') document.getElementById('nav-home').classList.add('active');
+            if (screenId === 'wallet') document.getElementById('nav-wallet').classList.add('active');
+            window.scrollTo(0, 0);
+            // Reset profile steps when going to profile gig
+            if (screenId === 'gig-profile') { profileStep(1); }
+        }
+
+        // ── Trader Profile Steps ──
+        const stepLabels = {
+            1: 'Step 1 of 6 — Identity & Profile',
+            2: 'Step 2 of 6 — Financial Behaviour',
+            3: 'Step 3 of 6 — Stock & Products',
+            4: 'Step 4 of 6 — Transaction Patterns',
+            5: 'Step 5 of 6 — Location & Infrastructure',
+            6: 'Step 6 of 6 — Risk & Loss History'
+        };
+        function profileStep(n) {
+            currentStep = n;
+            document.querySelectorAll('.profile-step').forEach(s => s.classList.remove('active'));
+            document.getElementById('ps' + n).classList.add('active');
+            document.getElementById('step-caption').textContent = stepLabels[n];
+            for (let i = 1; i <= 6; i++) {
+                const node = document.getElementById('sn' + i);
+                node.className = 'step-node' + (i < n ? ' done' : i === n ? ' active' : '');
+                if (i < 6) {
+                    const line = document.getElementById('sl' + i);
+                    line.className = 'step-line' + (i < n ? ' done' : '');
+                }
+            }
+            window.scrollTo(0, 0);
+        }
+
+        // ── Payout helper ──
+        function payout(amount, description) {
+            balance += amount;
+            todayEarned += amount;
+            document.getElementById('balance-display').textContent = balance.toFixed(2);
+            document.getElementById('wallet-bal').textContent = balance.toFixed(2);
+            document.getElementById('today-amount').textContent = 'R' + todayEarned.toFixed(2);
+            const list = document.getElementById('history-list');
+            const item = document.createElement('div');
+            item.className = 'history-item';
+            item.innerHTML = `<span class="desc">${description}</span><span class="amt">+R${amount.toFixed(2)}</span>`;
+            list.prepend(item);
+            showToast(`🎉 R${amount.toFixed(2)} earned! ${description}`);
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3500);
+        }
+
+        // ── Submit handlers ──
+        function submitProfile() {
+            const name = document.getElementById('a-name').value || 'Unknown Trader';
+            const type = document.getElementById('a-type').value;
+            payout(25, `Trader Profile: ${name} (${type})`);
+            goTo('home');
+        }
+        function submitAudit() {
+            const name = document.getElementById('au-name').value || 'Unnamed Spaza';
+            const location = document.getElementById('au-township').value;
+            payout(10, `Shelf Audit: ${name}, ${location}`);
+            goTo('home');
+        }
+        function submitBasket() {
+            const name = document.getElementById('bk-name').value || 'Unnamed trader';
+            const location = document.getElementById('bk-township').value;
+            const ids = ['bk-bread','bk-maize','bk-oil','bk-milk','bk-eggs','bk-sugar','bk-airtime','bk-sunoil'];
+            const logged = ids.filter(id => document.getElementById(id).value !== '').length;
+            payout(8, `Price Basket: ${name}, ${location} — ${logged} items`);
+            goTo('home');
+        }
+        function submitVerify() {
+            const status = document.querySelector('input[name="ft-status"]:checked');
+            if (!status) { showToast('Please select the trader status first'); return; }
+            const name = document.getElementById('ft-name').value || 'Unknown trader';
+            const icons = { Open: '✅', Closed: '❌', Partial: '⚠️' };
+            payout(3, `${icons[status.value]} Verified: ${name} — ${status.value}`);
+            document.getElementById('form-foottraffic-reset') && document.getElementById('form-foottraffic-reset').reset();
+            goTo('home');
+        }
+        function submitInfra() {
+            const type = document.getElementById('ir-type').value;
+            const location = document.getElementById('ir-location').value;
+            payout(2, `Infrastructure: ${type} in ${location}`);
+            goTo('home');
+        }
+
+        // ── Offline detection ──
+        function updateOnline() {
+            document.body.classList.toggle('offline', !navigator.onLine);
+        }
+        window.addEventListener('online', updateOnline);
+        window.addEventListener('offline', updateOnline);
+        updateOnline();
+
+        // ── Service Worker ──
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js').catch(() => {});
+        }
+
+        // ── Clock ──
+        function updateClock() {
+            const now = new Date();
+            document.title = `Pulse SA — R${balance.toFixed(2)} Balance`;
+        }
+        setInterval(updateClock, 60000);
+    </script>
+</body>
+</html>
