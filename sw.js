@@ -1,12 +1,13 @@
 // Pulse SA — Service Worker
 // Caches everything on first load. Works fully offline after that.
 
-const CACHE_NAME = 'pulse-sa-v1';
+const CACHE_NAME = 'pulse-sa-v3';
 
 // Everything we need to cache for full offline use
 const STATIC_ASSETS = [
     './',
     './index.html',
+    './agent.html',
     './style.css',
     './app.js',
     // Google Fonts — cache them so no data needed after first load
@@ -24,7 +25,7 @@ self.addEventListener('install', event => {
         caches.open(CACHE_NAME).then(cache => {
             console.log('[SW] Caching static assets...');
             // Cache local files first (must succeed), then try external
-            const localAssets = ['./', './index.html', './style.css', './app.js'];
+            const localAssets = ['./', './index.html', './agent.html', './style.css', './app.js'];
             const externalAssets = STATIC_ASSETS.filter(a => !localAssets.includes(a));
             return cache.addAll(localAssets).then(() => {
                 // External assets: try each individually, don't fail if one is unavailable
