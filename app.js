@@ -1,4 +1,4 @@
-// Pulse SA Core Logic (Extended version with FMCG & POS Gigs)
+﻿// Pulse SA Core Logic (Extended version with FMCG & POS Gigs)
 
 // --- GLOBAL STATE MANAGER ---
 const globalState = {
@@ -2104,147 +2104,199 @@ function renderProfileOutput() {
     const traderId = selectEl.value;
     const trader = ontologyData.nodes.find(n => n.id === traderId);
     if (!trader) return;
-    
+
     const card = document.getElementById('profile-output-card');
     const p = trader.properties;
-    
-    // Compute verification scores (simulated but varied per trader)
-    const verifyScores = {
-        'sizwe_spaza': { wholesale: 94, footTraffic: 88, consistency: 91, riskTier: 'B+ (Low-Medium)', loanRange: 'R5,000–R10,000', premium: 'R120–R180', stockVal: 'R12,000–R18,000' },
-        'mkhize_inhloko': { wholesale: 91, footTraffic: 85, consistency: 88, riskTier: 'B (Medium)', loanRange: 'R3,000–R8,000', premium: 'R150–R220', stockVal: 'R5,000–R8,000' },
-        'nomsa_salon': { wholesale: 82, footTraffic: 78, consistency: 85, riskTier: 'B (Medium)', loanRange: 'R2,000–R5,000', premium: 'R80–R120', stockVal: 'R4,000–R7,000' },
-        'gary_fruit': { wholesale: 72, footTraffic: 90, consistency: 68, riskTier: 'C+ (Medium-High)', loanRange: 'R1,000–R3,000', premium: 'R60–R100', stockVal: 'R2,000–R4,000' }
+    const today = new Date().toLocaleDateString('en-ZA', { year: 'numeric', month: 'long', day: 'numeric' });
+    const refId = 'PSA-' + traderId.toUpperCase().slice(0,4) + '-' + Math.floor(1000 + Math.random() * 9000);
+
+    const vs = {
+        'sizwe_spaza':    { wholesale:94, footTraffic:88, consistency:91, overall:91, riskTier:'B+', riskLabel:'Low-Medium Risk',    riskColor:'#10b981', decision:'APPROVE',      loanMin:'R5,000',  loanMax:'R10,000', premium:'R120-R180', stockVal:'R12,000-R18,000', coverType:'Stock + Business Interruption', shelfScore:87, distOpp:'HIGH',   compGap:'Cooking oil (bulk), cold drinks' },
+        'mkhize_inhloko': { wholesale:91, footTraffic:85, consistency:88, overall:88, riskTier:'B',  riskLabel:'Medium Risk',         riskColor:'#f59e0b', decision:'APPROVE',      loanMin:'R3,000',  loanMax:'R8,000',  premium:'R150-R220', stockVal:'R5,000-R8,000',   coverType:'Stock + Fire Cover',            shelfScore:74, distOpp:'MEDIUM', compGap:'Cold drinks, packaged snacks' },
+        'nomsa_salon':    { wholesale:82, footTraffic:78, consistency:85, overall:82, riskTier:'B',  riskLabel:'Medium Risk',         riskColor:'#f59e0b', decision:'CONDITIONAL', loanMin:'R2,000',  loanMax:'R5,000',  premium:'R80-R120',  stockVal:'R4,000-R7,000',   coverType:'Equipment + Liability',         shelfScore:68, distOpp:'MEDIUM', compGap:'Professional hair products, retail-pack dye' },
+        'gary_fruit':     { wholesale:72, footTraffic:90, consistency:68, overall:73, riskTier:'C+', riskLabel:'Medium-High Risk',   riskColor:'#ef4444', decision:'CONDITIONAL', loanMin:'R1,000',  loanMax:'R3,000',  premium:'R60-R100',  stockVal:'R2,000-R4,000',   coverType:'Stock Only (Perishables)',      shelfScore:61, distOpp:'LOW',    compGap:'Packaged produce, value-add juices' }
     };
-    const v = verifyScores[traderId] || verifyScores['sizwe_spaza'];
-    
+    const v = vs[traderId] || vs['sizwe_spaza'];
+    const decisionColour = v.decision === 'APPROVE' ? '#10b981' : '#f59e0b';
+    const decisionBg     = v.decision === 'APPROVE' ? 'rgba(16,185,129,0.08)' : 'rgba(245,158,11,0.08)';
+    const decisionBorder = v.decision === 'APPROVE' ? 'rgba(16,185,129,0.25)' : 'rgba(245,158,11,0.25)';
+
+    function scoreMeter(label, val, color) {
+        return '<div style="margin-bottom:12px;">'
+            + '<div style="display:flex;justify-content:space-between;margin-bottom:4px;">'
+            + '<span style="font-size:0.68rem;color:var(--text-secondary);">' + label + '</span>'
+            + '<span style="font-size:0.72rem;font-weight:800;color:' + color + ';">' + val + '%</span></div>'
+            + '<div style="background:rgba(255,255,255,0.05);border-radius:4px;height:6px;overflow:hidden;">'
+            + '<div style="width:' + val + '%;height:100%;background:' + color + ';border-radius:4px;"></div>'
+            + '</div></div>';
+    }
+
+    /* ── BANK LENS ── */
     if (activeLens === 'bank') {
-        card.innerHTML = `
-            <div class="profile-header">
-                <div class="profile-avatar"><i class="fa-solid fa-store"></i></div>
-                <div>
-                    <h3>${p['Name'] || trader.label}</h3>
-                    <span class="profile-badge bank">Pulse Credit Profile — API v1.0</span>
-                </div>
-            </div>
-            <div class="profile-section">
-                <h4><i class="fa-solid fa-fingerprint"></i> Identity & KYC</h4>
-                <div class="profile-grid">
-                    <div class="pg-item"><span>Business Type</span><strong>${p['Type']}</strong></div>
-                    <div class="pg-item"><span>Years Operating</span><strong>${p['Years Operating']}</strong></div>
-                    <div class="pg-item"><span>Premises</span><strong>${p['Premises']}</strong></div>
-                    <div class="pg-item"><span>ID Verified</span><strong>${p['ID Verified']}</strong></div>
-                    <div class="pg-item"><span>Bank Account</span><strong>${p['Bank Account']}</strong></div>
-                    <div class="pg-item"><span>Employees</span><strong>${p['Employees']}</strong></div>
-                </div>
-            </div>
-            <div class="profile-section">
-                <h4><i class="fa-solid fa-chart-line"></i> Revenue & Transaction Data</h4>
-                <div class="profile-grid">
-                    <div class="pg-item highlight"><span>Monthly Turnover (Reconciled)</span><strong>${p['Monthly Turnover (Reconciled)']}</strong></div>
-                    <div class="pg-item"><span>Good Day</span><strong>${p['Turnover (Good Day)']}</strong></div>
-                    <div class="pg-item"><span>Bad Day</span><strong>${p['Turnover (Bad Day)']}</strong></div>
-                    <div class="pg-item"><span>Customers/Day</span><strong>${p['Customers Per Day']}</strong></div>
-                    <div class="pg-item"><span>Wholesaler Terms</span><strong>${p['Wholesaler Terms']}</strong></div>
-                    <div class="pg-item"><span>Payment Methods</span><strong>${p['Payment Methods']}</strong></div>
-                </div>
-            </div>
-            <div class="profile-section">
-                <h4><i class="fa-solid fa-shield-halved"></i> Verification & Risk</h4>
-                <div class="profile-grid">
-                    <div class="pg-item"><span>Wholesaler Match</span><strong class="text-teal">${v.wholesale}%</strong></div>
-                    <div class="pg-item"><span>Foot-Traffic Verified</span><strong class="text-gold">${v.footTraffic}%</strong></div>
-                    <div class="pg-item"><span>Consistency Score</span><strong class="text-purple">${v.consistency}%</strong></div>
-                    <div class="pg-item"><span>Existing Debt</span><strong>${p['Existing Loans']}</strong></div>
-                    <div class="pg-item"><span>Insurance</span><strong>${p['Insurance Status']}</strong></div>
-                    <div class="pg-item"><span>Risk Tier</span><strong class="text-teal">${v.riskTier}</strong></div>
-                </div>
-            </div>
-            <div class="profile-recommendation">
-                <i class="fa-solid fa-circle-check"></i>
-                <div>
-                    <strong>Recommendation: APPROVE — Stock Loan ${v.loanRange}</strong>
-                    <p>Reconciled monthly turnover of ${p['Monthly Turnover (Reconciled)']} with ${v.wholesale}% wholesaler match rate supports working capital facility. Recommend closed-loop stock voucher redeemable at ${p['Primary Supplier']}.</p>
-                </div>
-            </div>
-        `;
+        card.innerHTML =
+        '<div style="background:linear-gradient(135deg,rgba(0,242,254,0.06),rgba(168,85,247,0.06));border:1px solid rgba(0,242,254,0.12);border-radius:16px;padding:18px 20px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">'
+            + '<div><div style="font-size:0.58rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent-teal);margin-bottom:4px;">Pulse SA \u00b7 Credit Intelligence Unit</div>'
+            + '<div style="font-size:1rem;font-weight:800;color:var(--text-primary);">' + (p['Name']||trader.label) + '</div>'
+            + '<div style="font-size:0.68rem;color:var(--text-secondary);margin-top:2px;">' + p['Type'] + ' \u00b7 ' + p['Township'] + ' \u00b7 ' + p['Ward'] + '</div></div>'
+            + '<div style="text-align:right;flex-shrink:0;">'
+            + '<div style="font-size:0.58rem;color:var(--text-secondary);">Ref: <span style="color:var(--accent-teal);font-weight:700;">' + refId + '</span></div>'
+            + '<div style="font-size:0.58rem;color:var(--text-secondary);margin-top:2px;">Generated: ' + today + '</div>'
+            + '<div style="margin-top:6px;background:rgba(0,242,254,0.08);border:1px solid rgba(0,242,254,0.2);border-radius:6px;padding:3px 8px;font-size:0.58rem;font-weight:800;color:var(--accent-teal);">Pulse Credit Profile \u00b7 API v1.0</div>'
+            + '</div></div>'
+
+        + '<div style="background:' + decisionBg + ';border:2px solid ' + decisionBorder + ';border-radius:14px;padding:16px 20px;margin-bottom:16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">'
+            + '<div style="width:52px;height:52px;border-radius:50%;background:' + decisionColour + ';display:flex;align-items:center;justify-content:center;flex-shrink:0;">'
+            + '<i class="fa-solid ' + (v.decision==='APPROVE'?'fa-circle-check':'fa-circle-exclamation') + '" style="color:#fff;font-size:1.3rem;"></i></div>'
+            + '<div style="flex:1;">'
+            + '<div style="font-size:0.6rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:' + decisionColour + ';">Pulse Credit Decision</div>'
+            + '<div style="font-size:1.05rem;font-weight:800;color:var(--text-primary);margin:2px 0;">' + v.decision + ' \u2014 Stock Working Capital Loan</div>'
+            + '<div style="font-size:0.72rem;color:var(--text-secondary);">Recommended facility: <strong style="color:var(--text-primary);">' + v.loanMin + ' \u2013 ' + v.loanMax + '</strong> \u00b7 Risk Tier: <strong style="color:' + v.riskColor + ';">' + v.riskTier + ' (' + v.riskLabel + ')</strong></div></div>'
+            + '<div style="text-align:right;flex-shrink:0;"><div style="font-size:1.6rem;font-weight:900;color:' + v.riskColor + ';">' + v.overall + '<span style="font-size:0.7rem;">/100</span></div>'
+            + '<div style="font-size:0.58rem;color:var(--text-secondary);">Pulse Score</div></div></div>'
+
+        + '<div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:14px;padding:16px 20px;margin-bottom:16px;">'
+            + '<div style="font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-secondary);margin-bottom:12px;"><i class="fa-solid fa-shield-halved" style="color:var(--accent-teal);margin-right:6px;"></i>3-Factor Verification Audit</div>'
+            + scoreMeter('Wholesaler Cross-Check Match Rate', v.wholesale, '#00f2fe')
+            + scoreMeter('Foot-Traffic Confirmation Score', v.footTraffic, '#a855f7')
+            + scoreMeter('Longitudinal Consistency (6-month)', v.consistency, '#10b981')
+            + '<div style="font-size:0.65rem;color:var(--text-secondary);margin-top:8px;padding-top:8px;border-top:1px solid var(--border-color);">Auditable arithmetic reconciliation \u2014 no black-box AI. Available for bank compliance review on request.</div></div>'
+
+        + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">'
+            + '<div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:14px;padding:16px;">'
+            + '<div style="font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-secondary);margin-bottom:10px;"><i class="fa-solid fa-fingerprint" style="color:var(--accent-teal);margin-right:6px;"></i>Identity & KYC</div>'
+            + '<div style="display:flex;flex-direction:column;gap:7px;font-size:0.72rem;">'
+            + '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Business Type</span><span style="font-weight:700;">' + p['Type'] + '</span></div>'
+            + '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Years Operating</span><span style="font-weight:700;">' + p['Years Operating'] + '</span></div>'
+            + '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Premises</span><span style="font-weight:700;">' + p['Premises'] + '</span></div>'
+            + '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">SA ID Verified</span><span style="font-weight:700;color:#10b981;">' + p['ID Verified'] + '</span></div>'
+            + '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Bank Account</span><span style="font-weight:700;">' + p['Bank Account'] + '</span></div>'
+            + '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Employees</span><span style="font-weight:700;">' + p['Employees'] + '</span></div>'
+            + '</div></div>'
+            + '<div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:14px;padding:16px;">'
+            + '<div style="font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-secondary);margin-bottom:10px;"><i class="fa-solid fa-chart-line" style="color:#a855f7;margin-right:6px;"></i>Revenue & Cashflow</div>'
+            + '<div style="display:flex;flex-direction:column;gap:7px;font-size:0.72rem;">'
+            + '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Monthly Turnover</span><span style="font-weight:700;color:#00f2fe;">' + p['Monthly Turnover (Reconciled)'] + '</span></div>'
+            + '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Good Day</span><span style="font-weight:700;">' + p['Turnover (Good Day)'] + '</span></div>'
+            + '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Bad Day</span><span style="font-weight:700;">' + p['Turnover (Bad Day)'] + '</span></div>'
+            + '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Customers/Day</span><span style="font-weight:700;">' + p['Customers Per Day'] + '</span></div>'
+            + '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Existing Debt</span><span style="font-weight:700;">' + p['Existing Loans'] + '</span></div>'
+            + '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Wholesaler Terms</span><span style="font-weight:700;">' + p['Wholesaler Terms'] + '</span></div>'
+            + '</div></div></div>'
+
+        + '<div style="background:' + decisionBg + ';border:1px solid ' + decisionBorder + ';border-radius:14px;padding:16px 20px;margin-bottom:16px;">'
+            + '<div style="font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:' + decisionColour + ';margin-bottom:8px;"><i class="fa-solid fa-file-circle-check" style="margin-right:6px;"></i>Credit Officer Recommendation</div>'
+            + '<p style="font-size:0.75rem;line-height:1.65;color:var(--text-primary);">Reconciled monthly turnover of <strong>' + p['Monthly Turnover (Reconciled)'] + '</strong> with <strong>' + v.wholesale + '% wholesaler match rate</strong> supports a working capital facility. Recommend <strong>closed-loop stock voucher</strong> redeemable exclusively at <strong>' + p['Primary Supplier'] + '</strong> \u2014 eliminates cash diversion risk and creates a verifiable audit trail.</p></div>'
+
+        + '<div style="background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:16px 20px;">'
+            + '<div style="font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-secondary);margin-bottom:10px;"><i class="fa-solid fa-code" style="color:var(--accent-teal);margin-right:6px;"></i>API Payload \u2014 What Your Credit Engine Receives</div>'
+            + '<pre style="font-size:0.6rem;color:#00f2fe;line-height:1.6;overflow-x:auto;margin:0;white-space:pre-wrap;">{"pulse_ref":"' + refId + '","trader":"' + (p['Name']||trader.label) + '","decision":"' + v.decision + '","risk_tier":"' + v.riskTier + '","pulse_score":' + v.overall + ',"loan_range":{"min":"' + v.loanMin + '","max":"' + v.loanMax + '"},"monthly_turnover_verified":"' + p['Monthly Turnover (Reconciled)'] + '","wholesaler_match":' + v.wholesale + ',"verification":"3-factor_reconciliation","generated":"' + today + '"}</pre></div>';
+
+    /* ── FMCG LENS ── */
     } else if (activeLens === 'fmcg') {
-        card.innerHTML = `
-            <div class="profile-header">
-                <div class="profile-avatar fmcg"><i class="fa-solid fa-cart-shopping"></i></div>
-                <div>
-                    <h3>${p['Name'] || trader.label}</h3>
-                    <span class="profile-badge fmcg">Pulse Shelf Intelligence — Report</span>
-                </div>
-            </div>
-            <div class="profile-section">
-                <h4><i class="fa-solid fa-boxes-stacked"></i> Stock & Distribution</h4>
-                <div class="profile-grid">
-                    <div class="pg-item highlight"><span>Top Products Stocked</span><strong>${p['Top Products']}</strong></div>
-                    <div class="pg-item"><span>Restock Frequency</span><strong>${p['Restock Frequency']}</strong></div>
-                    <div class="pg-item"><span>Fastest Seller</span><strong>${p['Fastest Seller']}</strong></div>
-                    <div class="pg-item"><span>Primary Supplier</span><strong>${p['Primary Supplier']}</strong></div>
-                    <div class="pg-item"><span>Wanted But Can't Afford</span><strong>${p['Wanted But Unaffordable']}</strong></div>
-                    <div class="pg-item"><span>Restock Transport</span><strong>${p['Restock Transport']}</strong></div>
-                </div>
-            </div>
-            <div class="profile-section">
-                <h4><i class="fa-solid fa-users"></i> Market Reach</h4>
-                <div class="profile-grid">
-                    <div class="pg-item"><span>Location</span><strong>${p['Township']}</strong></div>
-                    <div class="pg-item"><span>Daily Foot Traffic</span><strong>${p['Customers Per Day']}</strong></div>
-                    <div class="pg-item"><span>Busiest Hours</span><strong>${p['Busiest Hours']}</strong></div>
-                    <div class="pg-item"><span>Payment Methods</span><strong>${p['Payment Methods']}</strong></div>
-                    <div class="pg-item"><span>Distance to Wholesaler</span><strong>${p['Distance to Wholesaler']}</strong></div>
-                    <div class="pg-item"><span>Monthly Revenue</span><strong>${p['Monthly Turnover (Reconciled)']}</strong></div>
-                </div>
-            </div>
-            <div class="profile-recommendation fmcg">
-                <i class="fa-solid fa-lightbulb"></i>
-                <div>
-                    <strong>Distribution Opportunity</strong>
-                    <p>High-traffic outlet (${p['Customers Per Day']}) in ${p['Township']} restocking ${(p['Restock Frequency'] || '').toLowerCase()}. Currently cannot afford ${p['Wanted But Unaffordable']}. Direct delivery could increase brand presence and capture unmet demand.</p>
-                </div>
-            </div>
-        `;
+        const oppColor = v.distOpp==='HIGH' ? '#10b981' : v.distOpp==='MEDIUM' ? '#f59e0b' : '#ef4444';
+        card.innerHTML =
+        '<div style="background:linear-gradient(135deg,rgba(16,185,129,0.06),rgba(245,158,11,0.04));border:1px solid rgba(16,185,129,0.15);border-radius:16px;padding:18px 20px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">'
+            + '<div><div style="font-size:0.58rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:#10b981;margin-bottom:4px;">Pulse SA \u00b7 Shelf Intelligence Unit</div>'
+            + '<div style="font-size:1rem;font-weight:800;color:var(--text-primary);">' + (p['Name']||trader.label) + '</div>'
+            + '<div style="font-size:0.68rem;color:var(--text-secondary);margin-top:2px;">' + p['Type'] + ' \u00b7 ' + p['Township'] + ' \u00b7 ' + p['Ward'] + '</div></div>'
+            + '<div style="text-align:right;flex-shrink:0;"><div style="font-size:0.58rem;color:var(--text-secondary);">Ref: <span style="color:#10b981;font-weight:700;">' + refId + '</span></div>'
+            + '<div style="font-size:0.58rem;color:var(--text-secondary);margin-top:2px;">Generated: ' + today + '</div>'
+            + '<div style="margin-top:6px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:6px;padding:3px 8px;font-size:0.58rem;font-weight:800;color:#10b981;">Pulse Shelf Intelligence \u00b7 Report</div></div></div>'
+
+        + '<div style="background:rgba(16,185,129,0.06);border:2px solid rgba(16,185,129,0.2);border-radius:14px;padding:16px 20px;margin-bottom:16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">'
+            + '<div style="width:52px;height:52px;border-radius:12px;background:' + oppColor + ';display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="fa-solid fa-bullseye" style="color:#fff;font-size:1.2rem;"></i></div>'
+            + '<div style="flex:1;"><div style="font-size:0.6rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:' + oppColor + ';">Distribution Opportunity</div>'
+            + '<div style="font-size:1rem;font-weight:800;color:var(--text-primary);margin:2px 0;">' + v.distOpp + ' PRIORITY OUTLET</div>'
+            + '<div style="font-size:0.72rem;color:var(--text-secondary);">Shelf score: <strong style="color:' + oppColor + ';">' + v.shelfScore + '/100</strong> \u00b7 Daily foot traffic: <strong>' + p['Customers Per Day'] + '</strong> \u00b7 Busiest: <strong>' + p['Busiest Hours'] + '</strong></div></div></div>'
+
+        + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">'
+            + '<div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:14px;padding:16px;">'
+            + '<div style="font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-secondary);margin-bottom:10px;"><i class="fa-solid fa-boxes-stacked" style="color:#10b981;margin-right:6px;"></i>Current Shelf Presence</div>'
+            + '<div style="display:flex;flex-direction:column;gap:7px;font-size:0.72rem;">'
+            + '<div style="display:flex;justify-content:space-between;gap:8px;"><span style="color:var(--text-secondary);flex-shrink:0;">Top Products</span><span style="font-weight:700;font-size:0.63rem;text-align:right;">' + p['Top Products'] + '</span></div>'
+            + '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Fastest Seller</span><span style="font-weight:700;color:#10b981;">' + p['Fastest Seller'] + '</span></div>'
+            + '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Restock Cycle</span><span style="font-weight:700;">' + p['Restock Frequency'] + '</span></div>'
+            + '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Supplier</span><span style="font-weight:700;font-size:0.65rem;">' + p['Primary Supplier'] + '</span></div>'
+            + '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Monthly Revenue</span><span style="font-weight:700;">' + p['Monthly Turnover (Reconciled)'] + '</span></div>'
+            + '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Restock Transport</span><span style="font-weight:700;">' + p['Restock Transport'] + '</span></div>'
+            + '</div></div>'
+            + '<div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:14px;padding:16px;">'
+            + '<div style="font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-secondary);margin-bottom:10px;"><i class="fa-solid fa-location-dot" style="color:#f59e0b;margin-right:6px;"></i>Reach & Access</div>'
+            + '<div style="display:flex;flex-direction:column;gap:7px;font-size:0.72rem;">'
+            + '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Township</span><span style="font-weight:700;">' + p['Township'] + '</span></div>'
+            + '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">GPS</span><span style="font-weight:700;font-size:0.63rem;">' + p['GPS'] + '</span></div>'
+            + '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Ward</span><span style="font-weight:700;">' + p['Ward'] + '</span></div>'
+            + '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Distance to Depot</span><span style="font-weight:700;">' + p['Distance to Wholesaler'] + '</span></div>'
+            + '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Payment Methods</span><span style="font-weight:700;">' + p['Payment Methods'] + '</span></div>'
+            + '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Customers/Day</span><span style="font-weight:700;">' + p['Customers Per Day'] + '</span></div>'
+            + '</div></div></div>'
+
+        + '<div style="background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.2);border-radius:14px;padding:16px 20px;margin-bottom:16px;">'
+            + '<div style="font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:#f59e0b;margin-bottom:8px;"><i class="fa-solid fa-triangle-exclamation" style="margin-right:6px;"></i>Distribution Gap \u2014 Unmet Demand</div>'
+            + '<p style="font-size:0.75rem;line-height:1.65;color:var(--text-primary);">Trader reports demand for <strong>' + p['Wanted But Unaffordable'] + '</strong> but cannot afford the upfront cost. <strong>Competitor gap: ' + v.compGap + '.</strong> Direct delivery or consignment stocking could capture this unmet revenue.</p></div>'
+
+        + '<div style="background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.18);border-radius:14px;padding:16px 20px;">'
+            + '<div style="font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:#10b981;margin-bottom:8px;"><i class="fa-solid fa-lightbulb" style="margin-right:6px;"></i>Shelf Intelligence Recommendation</div>'
+            + '<p style="font-size:0.75rem;line-height:1.65;color:var(--text-primary);">High-traffic outlet serving <strong>' + p['Customers Per Day'] + '</strong> in <strong>' + p['Township'] + '</strong>. Peak window <strong>' + p['Busiest Hours'] + '</strong>. Currently sourcing via <strong>' + p['Primary Supplier'] + '</strong>. Direct delivery or pre-order platform could displace competitor SKUs and grow your brand footprint in Ward ' + p['Ward'] + '. Priority: <strong style="color:' + oppColor + ';">' + v.distOpp + '</strong>.</p></div>';
+
+    /* ── INSURER LENS ── */
     } else if (activeLens === 'insurer') {
-        card.innerHTML = `
-            <div class="profile-header">
-                <div class="profile-avatar insurer"><i class="fa-solid fa-shield-halved"></i></div>
-                <div>
-                    <h3>${p['Name'] || trader.label}</h3>
-                    <span class="profile-badge insurer">Pulse Risk Profile — Underwriting</span>
-                </div>
-            </div>
-            <div class="profile-section">
-                <h4><i class="fa-solid fa-triangle-exclamation"></i> Risk Assessment</h4>
-                <div class="profile-grid">
-                    <div class="pg-item"><span>Premises Type</span><strong>${p['Premises']}</strong></div>
-                    <div class="pg-item"><span>Previous Losses</span><strong>${p['Previous Losses']}</strong></div>
-                    <div class="pg-item"><span>Crime Incidents</span><strong>${p['Crime Incidents']}</strong></div>
-                    <div class="pg-item"><span>Infrastructure Risk</span><strong>${p['Infrastructure Disruptions']}</strong></div>
-                    <div class="pg-item"><span>Current Insurance</span><strong>${p['Insurance Status']}</strong></div>
-                    <div class="pg-item"><span>Dependents</span><strong>${p['Dependents']}</strong></div>
-                </div>
-            </div>
-            <div class="profile-section">
-                <h4><i class="fa-solid fa-coins"></i> Asset & Revenue Base</h4>
-                <div class="profile-grid">
-                    <div class="pg-item"><span>Estimated Stock Value</span><strong>${v.stockVal}</strong></div>
-                    <div class="pg-item"><span>Monthly Revenue</span><strong>${p['Monthly Turnover (Reconciled)']}</strong></div>
-                    <div class="pg-item"><span>Years Operating</span><strong>${p['Years Operating']}</strong></div>
-                    <div class="pg-item"><span>Employees</span><strong>${p['Employees']}</strong></div>
-                    <div class="pg-item"><span>Biggest Challenge</span><strong>${p['Biggest Challenge']}</strong></div>
-                    <div class="pg-item"><span>Water Supply</span><strong>${p['Water Supply']}</strong></div>
-                </div>
-            </div>
-            <div class="profile-recommendation insurer">
-                <i class="fa-solid fa-file-signature"></i>
-                <div>
-                    <strong>Underwriting Recommendation: Micro-Business Cover</strong>
-                    <p>Estimated premium ${v.premium}/month for stock + business interruption cover. ${p['Previous Losses'] !== 'None' ? 'Note: Previous loss event (' + p['Previous Losses'] + ') — adjust premium accordingly.' : 'Clean loss history supports standard pricing.'} ${(p['Premises'] || '').includes('container') ? 'Container premises: moderate fire risk.' : ''}</p>
-                </div>
-            </div>
-        `;
+        const riskScore = Math.round((v.wholesale*0.3)+(v.consistency*0.4)+(v.footTraffic*0.3));
+        const hasLoss = p['Previous Losses'] && p['Previous Losses'] !== 'None' && p['Previous Losses'] !== 'No previous losses';
+        card.innerHTML =
+        '<div style="background:linear-gradient(135deg,rgba(168,85,247,0.06),rgba(239,68,68,0.04));border:1px solid rgba(168,85,247,0.15);border-radius:16px;padding:18px 20px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">'
+            + '<div><div style="font-size:0.58rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:#a855f7;margin-bottom:4px;">Pulse SA \u00b7 Risk Intelligence Unit</div>'
+            + '<div style="font-size:1rem;font-weight:800;color:var(--text-primary);">' + (p['Name']||trader.label) + '</div>'
+            + '<div style="font-size:0.68rem;color:var(--text-secondary);margin-top:2px;">' + p['Type'] + ' \u00b7 ' + p['Township'] + ' \u00b7 ' + p['Ward'] + '</div></div>'
+            + '<div style="text-align:right;flex-shrink:0;"><div style="font-size:0.58rem;color:var(--text-secondary);">Ref: <span style="color:#a855f7;font-weight:700;">' + refId + '</span></div>'
+            + '<div style="font-size:0.58rem;color:var(--text-secondary);margin-top:2px;">Generated: ' + today + '</div>'
+            + '<div style="margin-top:6px;background:rgba(168,85,247,0.08);border:1px solid rgba(168,85,247,0.2);border-radius:6px;padding:3px 8px;font-size:0.58rem;font-weight:800;color:#a855f7;">Pulse Risk Profile \u00b7 Underwriting</div></div></div>'
+
+        + '<div style="background:rgba(168,85,247,0.06);border:2px solid rgba(168,85,247,0.2);border-radius:14px;padding:16px 20px;margin-bottom:16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">'
+            + '<div style="width:60px;height:60px;border-radius:50%;background:conic-gradient(#a855f7 ' + riskScore + '%, rgba(255,255,255,0.05) 0%);display:flex;align-items:center;justify-content:center;flex-shrink:0;">'
+            + '<div style="width:44px;height:44px;border-radius:50%;background:var(--bg-card);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:900;color:#a855f7;">' + riskScore + '</div></div>'
+            + '<div style="flex:1;"><div style="font-size:0.6rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#a855f7;">Underwriting Decision</div>'
+            + '<div style="font-size:1rem;font-weight:800;color:var(--text-primary);margin:2px 0;">INSURABLE \u2014 ' + v.coverType + '</div>'
+            + '<div style="font-size:0.72rem;color:var(--text-secondary);">Recommended premium: <strong style="color:var(--text-primary);">' + v.premium + '/month</strong> \u00b7 Stock value: <strong>' + v.stockVal + '</strong></div></div>'
+            + '<div style="text-align:right;flex-shrink:0;"><div style="font-size:0.6rem;color:var(--text-secondary);">Risk tier</div>'
+            + '<div style="font-size:1.2rem;font-weight:900;color:' + v.riskColor + ';">' + v.riskTier + '</div>'
+            + '<div style="font-size:0.58rem;color:var(--text-secondary);">' + v.riskLabel + '</div></div></div>'
+
+        + '<div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:14px;padding:16px 20px;margin-bottom:16px;">'
+            + '<div style="font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-secondary);margin-bottom:12px;"><i class="fa-solid fa-triangle-exclamation" style="color:#a855f7;margin-right:6px;"></i>Risk Factor Assessment</div>'
+            + scoreMeter('Business Stability Score (longitudinal)', v.consistency, '#a855f7')
+            + scoreMeter('Revenue Reliability (wholesaler-verified)', v.wholesale, '#00f2fe')
+            + scoreMeter('Operational Presence (foot-traffic)', v.footTraffic, '#10b981')
+            + '</div>'
+
+        + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">'
+            + '<div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:14px;padding:16px;">'
+            + '<div style="font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-secondary);margin-bottom:10px;"><i class="fa-solid fa-shield-halved" style="color:#a855f7;margin-right:6px;"></i>Risk Profile</div>'
+            + '<div style="display:flex;flex-direction:column;gap:7px;font-size:0.72rem;">'
+            + '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Premises Type</span><span style="font-weight:700;">' + p['Premises'] + '</span></div>'
+            + '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Previous Losses</span><span style="font-weight:700;color:' + (hasLoss?'#ef4444':'#10b981') + ';">' + p['Previous Losses'] + '</span></div>'
+            + '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Crime Incidents</span><span style="font-weight:700;">' + p['Crime Incidents'] + '</span></div>'
+            + '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Infrastructure Risk</span><span style="font-weight:700;">' + p['Infrastructure Disruptions'] + '</span></div>'
+            + '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Current Insurance</span><span style="font-weight:700;color:#f59e0b;">' + p['Insurance Status'] + '</span></div>'
+            + '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Dependents</span><span style="font-weight:700;">' + p['Dependents'] + '</span></div>'
+            + '</div></div>'
+            + '<div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:14px;padding:16px;">'
+            + '<div style="font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-secondary);margin-bottom:10px;"><i class="fa-solid fa-coins" style="color:#f59e0b;margin-right:6px;"></i>Asset & Revenue Base</div>'
+            + '<div style="display:flex;flex-direction:column;gap:7px;font-size:0.72rem;">'
+            + '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Est. Stock Value</span><span style="font-weight:700;color:#00f2fe;">' + v.stockVal + '</span></div>'
+            + '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Monthly Revenue</span><span style="font-weight:700;">' + p['Monthly Turnover (Reconciled)'] + '</span></div>'
+            + '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Years Operating</span><span style="font-weight:700;">' + p['Years Operating'] + '</span></div>'
+            + '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Employees</span><span style="font-weight:700;">' + p['Employees'] + '</span></div>'
+            + '<div style="display:flex;justify-content:space-between;gap:6px;"><span style="color:var(--text-secondary);flex-shrink:0;">Biggest Challenge</span><span style="font-weight:700;font-size:0.63rem;text-align:right;">' + p['Biggest Challenge'] + '</span></div>'
+            + '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Water Supply</span><span style="font-weight:700;">' + p['Water Supply'] + '</span></div>'
+            + '</div></div></div>'
+
+        + '<div style="background:rgba(168,85,247,0.06);border:1px solid rgba(168,85,247,0.2);border-radius:14px;padding:16px 20px;">'
+            + '<div style="font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:#a855f7;margin-bottom:8px;"><i class="fa-solid fa-file-signature" style="margin-right:6px;"></i>Underwriting Recommendation</div>'
+            + '<p style="font-size:0.75rem;line-height:1.65;color:var(--text-primary);">Recommended cover: <strong>' + v.coverType + '</strong> at <strong>' + v.premium + '/month</strong>. Estimated insured stock value: <strong>' + v.stockVal + '</strong>. '
+            + (hasLoss ? '<strong style="color:#f59e0b;">Previous loss event recorded \u2014 apply appropriate loading.</strong> ' : 'Clean loss history supports standard pricing. ')
+            + ((p['Premises']||'').toLowerCase().includes('container') ? 'Container premises: apply moderate fire risk loading. ' : '')
+            + 'This business is currently uninsured \u2014 first policy represents new premium income with no prior claims liability.</p></div>';
     }
 }
 
