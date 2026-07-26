@@ -8,8 +8,8 @@
  * ─────────────────────────────────────
  */
 
-const SUPABASE_URL      = 'YOUR_SUPABASE_URL';       // e.g. https://xyzabc.supabase.co
-const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';  // long eyJ... string
+const SUPABASE_URL      = 'https://oqsclkzjmhlyoaugzwyn.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_e84DPG8NGNEQnVCMlkAbDA_mHlsWKd1';
 
 // Initialise Supabase client (loaded via CDN in agent.html)
 let _supabase = null;
