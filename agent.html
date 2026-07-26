@@ -15,8 +15,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Supabase JS client -->
+    <!-- Supabase JS client + Pulse SA DB layer -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./supabase.js"></script>
     <style>
         :root {
             --bg: #080a12;
@@ -418,6 +419,50 @@
 </head>
 <body>
     <div id="offline-banner">⚡ Offline Mode — data saved, submit when connected</div>
+
+    <!-- ══ ONBOARDING OVERLAY (shows on first launch only) ══ -->
+    <div id="onboarding-overlay" style="
+        display:none;
+        position:fixed;inset:0;z-index:9999;
+        background:rgba(8,10,18,0.97);
+        backdrop-filter:blur(12px);
+        flex-direction:column;align-items:center;justify-content:center;
+        padding:24px;
+    ">
+        <div style="width:100%;max-width:380px;">
+            <!-- Logo -->
+            <div style="text-align:center;margin-bottom:28px;">
+                <div style="display:inline-flex;align-items:center;justify-content:center;width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,#a855f7,#7c3aed);font-size:1.4rem;margin-bottom:12px;">⚡</div>
+                <h2 style="font-size:1.3rem;font-weight:800;margin-bottom:4px;">Welcome to Pulse SA</h2>
+                <p style="font-size:0.72rem;color:#8b8fa8;line-height:1.5;">You are the intelligence network.<br>Let's set up your agent profile to start earning.</p>
+            </div>
+            <!-- Form -->
+            <div style="display:flex;flex-direction:column;gap:14px;">
+                <div>
+                    <label style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#8b8fa8;display:block;margin-bottom:6px;">Your Full Name</label>
+                    <input id="ob-name" type="text" placeholder="e.g. Thabo Dlamini"
+                        style="width:100%;background:#0f1120;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 14px;color:#f0f2ff;font-family:inherit;font-size:0.85rem;outline:none;">
+                </div>
+                <div>
+                    <label style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#8b8fa8;display:block;margin-bottom:6px;">Phone Number</label>
+                    <input id="ob-phone" type="tel" placeholder="e.g. 0821234567"
+                        style="width:100%;background:#0f1120;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 14px;color:#f0f2ff;font-family:inherit;font-size:0.85rem;outline:none;">
+                </div>
+                <div>
+                    <label style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#8b8fa8;display:block;margin-bottom:6px;">Your Township / Area</label>
+                    <input id="ob-township" type="text" placeholder="e.g. Soweto, Khayelitsha, Umlazi"
+                        style="width:100%;background:#0f1120;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 14px;color:#f0f2ff;font-family:inherit;font-size:0.85rem;outline:none;">
+                </div>
+                <button id="ob-submit-btn" onclick="completeOnboarding()"
+                    style="width:100%;background:linear-gradient(135deg,#a855f7,#7c3aed);border:none;border-radius:12px;padding:14px;color:#fff;font-family:inherit;font-size:0.9rem;font-weight:800;cursor:pointer;margin-top:6px;">
+                    ⭐ Start Earning — Let's Go!
+                </button>
+            </div>
+            <p style="text-align:center;font-size:0.6rem;color:#8b8fa8;margin-top:16px;line-height:1.5;">
+                Your info is used only to track your earnings and submissions.<br>Pulse SA does not share your personal data.
+            </p>
+        </div>
+    </div>
 
     <header class="app-header">
         <div class="logo">
@@ -1107,9 +1152,55 @@
         }
 
         // ── Load Supabase helper ──
-        const _dbScript = document.createElement('script');
-        _dbScript.src = './supabase.js';
-        document.head.appendChild(_dbScript);
+        // (now loaded statically in <head> — no dynamic injection needed)
+
+        // ── Onboarding Logic ──
+        function showOnboardingIfNeeded() {
+            const agentId = localStorage.getItem('pulse_agent_id');
+            if (!agentId) {
+                const overlay = document.getElementById('onboarding-overlay');
+                overlay.style.display = 'flex';
+            }
+        }
+
+        async function completeOnboarding() {
+            const name     = document.getElementById('ob-name').value.trim();
+            const phone    = document.getElementById('ob-phone').value.trim();
+            const township = document.getElementById('ob-township').value.trim();
+
+            if (!name || !phone) {
+                showToast('Please enter your name and phone number');
+                return;
+            }
+
+            const btn = document.getElementById('ob-submit-btn');
+            btn.textContent = 'Setting up your account...';
+            btn.disabled = true;
+
+            // Try to create agent in Supabase
+            let agentId = null;
+            if (typeof getOrCreateAgent === 'function') {
+                const agent = await getOrCreateAgent(name, phone, township);
+                if (agent) agentId = agent.id;
+            }
+
+            // Fallback: generate local ID if offline or DB not ready
+            if (!agentId) {
+                agentId = 'local_' + Date.now() + '_' + Math.random().toString(36).substr(2,6);
+                localStorage.setItem('pulse_agent_id', agentId);
+            }
+
+            // Store agent profile locally for display
+            localStorage.setItem('pulse_agent_name', name);
+            localStorage.setItem('pulse_agent_township', township);
+
+            // Hide onboarding
+            document.getElementById('onboarding-overlay').style.display = 'none';
+            showToast(`Welcome ${name.split(' ')[0]}! You earned 2,500 welcome points 🎉`);
+        }
+
+        // Run onboarding check on load
+        showOnboardingIfNeeded();
 
         // ── Clock / title ──
         function updateClock() {
