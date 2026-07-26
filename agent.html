@@ -424,42 +424,84 @@
     <div id="onboarding-overlay" style="
         display:none;
         position:fixed;inset:0;z-index:9999;
-        background:rgba(8,10,18,0.97);
+        background:rgba(8,10,18,0.98);
         backdrop-filter:blur(12px);
-        flex-direction:column;align-items:center;justify-content:center;
-        padding:24px;
+        flex-direction:column;align-items:center;justify-content:flex-start;
+        padding:0;
+        overflow-y:auto;
     ">
-        <div style="width:100%;max-width:380px;">
-            <!-- Logo -->
+        <div style="width:100%;max-width:420px;padding:32px 24px 40px;">
+            <!-- Logo & Intro -->
             <div style="text-align:center;margin-bottom:28px;">
-                <div style="display:inline-flex;align-items:center;justify-content:center;width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,#a855f7,#7c3aed);font-size:1.4rem;margin-bottom:12px;">⚡</div>
-                <h2 style="font-size:1.3rem;font-weight:800;margin-bottom:4px;">Welcome to Pulse SA</h2>
-                <p style="font-size:0.72rem;color:#8b8fa8;line-height:1.5;">You are the intelligence network.<br>Let's set up your agent profile to start earning.</p>
+                <div style="display:inline-flex;align-items:center;justify-content:center;width:60px;height:60px;border-radius:18px;background:linear-gradient(135deg,#a855f7,#7c3aed);font-size:1.5rem;margin-bottom:14px;box-shadow:0 8px 24px rgba(168,85,247,0.4);">⚡</div>
+                <h2 style="font-size:1.35rem;font-weight:800;margin-bottom:6px;">Create Your Agent Profile</h2>
+                <p style="font-size:0.72rem;color:#8b8fa8;line-height:1.6;">You are joining South Africa's intelligence network.<br>All fields are required to verify your identity.</p>
             </div>
-            <!-- Form -->
+
+            <!-- Section label -->
+            <div style="font-size:0.6rem;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;color:#a855f7;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid rgba(168,85,247,0.15);">
+                <i class="fa-solid fa-user" style="margin-right:6px;"></i>Personal Information
+            </div>
+
+            <!-- Form fields -->
             <div style="display:flex;flex-direction:column;gap:14px;">
-                <div>
-                    <label style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#8b8fa8;display:block;margin-bottom:6px;">Your Full Name</label>
-                    <input id="ob-name" type="text" placeholder="e.g. Thabo Dlamini"
-                        style="width:100%;background:#0f1120;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 14px;color:#f0f2ff;font-family:inherit;font-size:0.85rem;outline:none;">
+
+                <!-- First Name + Surname side by side -->
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                    <div>
+                        <label style="font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#8b8fa8;display:block;margin-bottom:6px;">First Name <span style="color:#a855f7;">*</span></label>
+                        <input id="ob-firstname" type="text" placeholder="Thabo" autocomplete="given-name"
+                            style="width:100%;background:#0f1120;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px;color:#f0f2ff;font-family:inherit;font-size:0.85rem;outline:none;-webkit-appearance:none;">
+                    </div>
+                    <div>
+                        <label style="font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#8b8fa8;display:block;margin-bottom:6px;">Surname <span style="color:#a855f7;">*</span></label>
+                        <input id="ob-surname" type="text" placeholder="Dlamini" autocomplete="family-name"
+                            style="width:100%;background:#0f1120;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px;color:#f0f2ff;font-family:inherit;font-size:0.85rem;outline:none;-webkit-appearance:none;">
+                    </div>
                 </div>
+
+                <!-- Age -->
                 <div>
-                    <label style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#8b8fa8;display:block;margin-bottom:6px;">Phone Number</label>
-                    <input id="ob-phone" type="tel" placeholder="e.g. 0821234567"
-                        style="width:100%;background:#0f1120;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 14px;color:#f0f2ff;font-family:inherit;font-size:0.85rem;outline:none;">
+                    <label style="font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#8b8fa8;display:block;margin-bottom:6px;">Age <span style="color:#a855f7;">*</span></label>
+                    <input id="ob-age" type="number" placeholder="e.g. 28" min="16" max="80"
+                        style="width:100%;background:#0f1120;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 14px;color:#f0f2ff;font-family:inherit;font-size:0.85rem;outline:none;-webkit-appearance:none;">
                 </div>
+
+                <!-- Address -->
                 <div>
-                    <label style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#8b8fa8;display:block;margin-bottom:6px;">Your Township / Area</label>
-                    <input id="ob-township" type="text" placeholder="e.g. Soweto, Khayelitsha, Umlazi"
-                        style="width:100%;background:#0f1120;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 14px;color:#f0f2ff;font-family:inherit;font-size:0.85rem;outline:none;">
+                    <label style="font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#8b8fa8;display:block;margin-bottom:6px;">Home Address <span style="color:#a855f7;">*</span></label>
+                    <input id="ob-address" type="text" placeholder="e.g. 14 Vilakazi St, Orlando West, Soweto" autocomplete="street-address"
+                        style="width:100%;background:#0f1120;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 14px;color:#f0f2ff;font-family:inherit;font-size:0.85rem;outline:none;-webkit-appearance:none;">
                 </div>
+
+                <!-- Phone -->
+                <div>
+                    <label style="font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#8b8fa8;display:block;margin-bottom:6px;">Phone Number <span style="color:#a855f7;">*</span></label>
+                    <input id="ob-phone" type="tel" placeholder="e.g. 0821234567" autocomplete="tel"
+                        style="width:100%;background:#0f1120;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 14px;color:#f0f2ff;font-family:inherit;font-size:0.85rem;outline:none;-webkit-appearance:none;">
+                </div>
+
+                <!-- Email -->
+                <div>
+                    <label style="font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#8b8fa8;display:block;margin-bottom:6px;">Email Address <span style="color:#a855f7;">*</span></label>
+                    <input id="ob-email" type="email" placeholder="e.g. thabo@gmail.com" autocomplete="email"
+                        style="width:100%;background:#0f1120;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 14px;color:#f0f2ff;font-family:inherit;font-size:0.85rem;outline:none;-webkit-appearance:none;">
+                </div>
+
+                <!-- Error message -->
+                <div id="ob-error" style="display:none;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:8px;padding:10px 14px;font-size:0.72rem;color:#f87171;"></div>
+
+                <!-- Submit -->
                 <button id="ob-submit-btn" onclick="completeOnboarding()"
-                    style="width:100%;background:linear-gradient(135deg,#a855f7,#7c3aed);border:none;border-radius:12px;padding:14px;color:#fff;font-family:inherit;font-size:0.9rem;font-weight:800;cursor:pointer;margin-top:6px;">
-                    ⭐ Start Earning — Let's Go!
+                    style="width:100%;background:linear-gradient(135deg,#a855f7,#7c3aed);border:none;border-radius:12px;padding:15px;color:#fff;font-family:inherit;font-size:0.92rem;font-weight:800;cursor:pointer;margin-top:6px;letter-spacing:0.3px;box-shadow:0 6px 20px rgba(168,85,247,0.4);">
+                    ⭐ Create My Profile &amp; Start Earning
                 </button>
             </div>
-            <p style="text-align:center;font-size:0.6rem;color:#8b8fa8;margin-top:16px;line-height:1.5;">
-                Your info is used only to track your earnings and submissions.<br>Pulse SA does not share your personal data.
+
+            <p style="text-align:center;font-size:0.6rem;color:#8b8fa8;margin-top:16px;line-height:1.6;">
+                <span style="color:#a855f7;">*</span> All fields are required &nbsp;·&nbsp;
+                Your information is collected solely for agent verification and earnings tracking.
+                Pulse SA does not sell or share your personal data.
             </p>
         </div>
     </div>
@@ -1164,23 +1206,48 @@
         }
 
         async function completeOnboarding() {
-            const name     = document.getElementById('ob-name').value.trim();
-            const phone    = document.getElementById('ob-phone').value.trim();
-            const township = document.getElementById('ob-township').value.trim();
+            const firstname = document.getElementById('ob-firstname').value.trim();
+            const surname   = document.getElementById('ob-surname').value.trim();
+            const age       = document.getElementById('ob-age').value.trim();
+            const address   = document.getElementById('ob-address').value.trim();
+            const phone     = document.getElementById('ob-phone').value.trim();
+            const email     = document.getElementById('ob-email').value.trim();
 
-            if (!name || !phone) {
-                showToast('Please enter your name and phone number');
-                return;
+            const errEl = document.getElementById('ob-error');
+
+            // Validate all fields
+            if (!firstname || !surname) {
+                errEl.textContent = 'Please enter your first name and surname.';
+                errEl.style.display = 'block'; return;
             }
+            if (!age || parseInt(age) < 16 || parseInt(age) > 80) {
+                errEl.textContent = 'Please enter a valid age (16–80).';
+                errEl.style.display = 'block'; return;
+            }
+            if (!address) {
+                errEl.textContent = 'Please enter your home address.';
+                errEl.style.display = 'block'; return;
+            }
+            if (!phone || phone.length < 10) {
+                errEl.textContent = 'Please enter a valid 10-digit phone number.';
+                errEl.style.display = 'block'; return;
+            }
+            if (!email || !email.includes('@')) {
+                errEl.textContent = 'Please enter a valid email address.';
+                errEl.style.display = 'block'; return;
+            }
+            errEl.style.display = 'none';
 
             const btn = document.getElementById('ob-submit-btn');
-            btn.textContent = 'Setting up your account...';
+            btn.textContent = 'Creating your profile...';
             btn.disabled = true;
+
+            const fullName = `${firstname} ${surname}`;
 
             // Try to create agent in Supabase
             let agentId = null;
             if (typeof getOrCreateAgent === 'function') {
-                const agent = await getOrCreateAgent(name, phone, township);
+                const agent = await getOrCreateAgent(fullName, phone, address, { firstname, surname, age: parseInt(age), email });
                 if (agent) agentId = agent.id;
             }
 
@@ -1190,13 +1257,15 @@
                 localStorage.setItem('pulse_agent_id', agentId);
             }
 
-            // Store agent profile locally for display
-            localStorage.setItem('pulse_agent_name', name);
-            localStorage.setItem('pulse_agent_township', township);
+            // Store profile locally for display
+            localStorage.setItem('pulse_agent_name', fullName);
+            localStorage.setItem('pulse_agent_firstname', firstname);
+            localStorage.setItem('pulse_agent_email', email);
+            localStorage.setItem('pulse_agent_address', address);
 
             // Hide onboarding
             document.getElementById('onboarding-overlay').style.display = 'none';
-            showToast(`Welcome ${name.split(' ')[0]}! You earned 2,500 welcome points 🎉`);
+            showToast(`Sawubona ${firstname}! 🎉 Your profile is live — 2,500 welcome points added!`);
         }
 
         // Run onboarding check on load

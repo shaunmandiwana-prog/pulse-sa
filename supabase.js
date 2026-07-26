@@ -29,7 +29,7 @@ function isDBReady() {
  * Get or create an agent record using phone number as identifier.
  * Stores agent_id in localStorage so the agent isn't re-created on every load.
  */
-async function getOrCreateAgent(name, phone, township) {
+async function getOrCreateAgent(name, phone, address, extras = {}) {
     if (!isDBReady()) return null;
     const db = getDB();
 
@@ -49,10 +49,22 @@ async function getOrCreateAgent(name, phone, township) {
         return existing;
     }
 
+    // Build insert payload
+    const payload = {
+        name,
+        phone,
+        address,
+        firstname:  extras.firstname  || null,
+        surname:    extras.surname    || null,
+        age:        extras.age        || null,
+        email:      extras.email      || null,
+        township:   extras.township   || null
+    };
+
     // Create new agent
     const { data: created, error } = await db
         .from('agents')
-        .insert({ name, phone, township })
+        .insert(payload)
         .select('id')
         .single();
 
