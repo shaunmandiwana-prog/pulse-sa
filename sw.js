@@ -1,7 +1,7 @@
-// Pulse SA — Service Worker
+﻿// Pulse SA â€” Service Worker
 // Caches everything on first load. Works fully offline after that.
 
-const CACHE_NAME = 'pulse-sa-v4';
+const CACHE_NAME = 'pulse-sa-v5';
 
 // Everything we need to cache for full offline use
 const STATIC_ASSETS = [
@@ -10,9 +10,9 @@ const STATIC_ASSETS = [
     './agent.html',
     './style.css',
     './app.js',
-    // Google Fonts — cache them so no data needed after first load
+    // Google Fonts â€” cache them so no data needed after first load
     'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap',
-    // Font Awesome — icons
+    // Font Awesome â€” icons
     'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css',
     // Leaflet (ward map)
     'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
@@ -56,7 +56,7 @@ self.addEventListener('fetch', event => {
     // Skip non-GET requests
     if (event.request.method !== 'GET') return;
 
-    // Skip the MDB ArcGIS tile requests — these need live data
+    // Skip the MDB ArcGIS tile requests â€” these need live data
     // But serve from cache if we have them (so ward map works offline with last loaded metro)
     const url = event.request.url;
 
@@ -64,7 +64,7 @@ self.addEventListener('fetch', event => {
         caches.match(event.request).then(cached => {
             if (cached) return cached;
 
-            // Not in cache — try network, then cache the response
+            // Not in cache â€” try network, then cache the response
             return fetch(event.request).then(response => {
                 // Only cache successful responses
                 if (!response || response.status !== 200 || response.type === 'error') {
@@ -81,7 +81,7 @@ self.addEventListener('fetch', event => {
                     return caches.match('./index.html');
                 }
                 // For everything else, return a minimal offline response
-                return new Response('Offline — no cached version available', {
+                return new Response('Offline â€” no cached version available', {
                     status: 503,
                     headers: { 'Content-Type': 'text/plain' }
                 });
@@ -89,3 +89,4 @@ self.addEventListener('fetch', event => {
         })
     );
 });
+
