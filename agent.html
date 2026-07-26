@@ -15,6 +15,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Supabase JS client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
             --bg: #080a12;
@@ -961,43 +963,134 @@
             setTimeout(() => t.classList.remove('show'), 3500);
         }
 
-        // ── Submit handlers ──
-        function submitProfile() {
-            const name = document.getElementById('a-name').value || 'Unknown Trader';
-            const type = document.getElementById('a-type').value;
+        // ── Submit handlers (write to Supabase + award points) ──
+
+        async function submitProfile() {
+            const name       = document.getElementById('a-name').value || 'Unknown Trader';
+            const type       = document.getElementById('a-type').value;
+            const township   = document.getElementById('a-township') ? document.getElementById('a-township').value : '';
             const idVerified = document.getElementById('a-id-verified').value.startsWith('Yes');
-            // Base 500 pts + 100 bonus if ID was verified
-            award(500, `Trader Profile: ${name} (${type})`, idVerified ? 100 : 0);
+            const bonus      = idVerified ? 100 : 0;
+            const summary    = `Trader Profile: ${name} (${type})`;
+
+            // Award points in the UI immediately
+            award(500, summary, bonus);
             goTo('home');
+
+            // Persist to Supabase in background
+            const rawData = {
+                name, type, township,
+                id_verified:    idVerified,
+                bank_account:   document.getElementById('a-bank') ? document.getElementById('a-bank').value : '',
+                years_operating: document.getElementById('a-years') ? document.getElementById('a-years').value : '',
+                premises_type:  document.getElementById('a-premises') ? document.getElementById('a-premises').value : '',
+                employees:      document.getElementById('a-employees') ? document.getElementById('a-employees').value : '',
+                payment_methods: document.getElementById('a-payment') ? document.getElementById('a-payment').value : '',
+                top_products:   document.getElementById('a-products') ? document.getElementById('a-products').value : '',
+                fastest_seller: document.getElementById('a-fastest') ? document.getElementById('a-fastest').value : '',
+                turnover_good_day: document.getElementById('a-turnover-good') ? document.getElementById('a-turnover-good').value : '',
+                turnover_bad_day:  document.getElementById('a-turnover-bad') ? document.getElementById('a-turnover-bad').value : '',
+                insurance_status:  document.getElementById('a-insurance') ? document.getElementById('a-insurance').value : '',
+                biggest_challenge: document.getElementById('a-challenge') ? document.getElementById('a-challenge').value : ''
+            };
+
+            if (typeof saveGigToDatabase === 'function') {
+                if (!navigator.onLine) {
+                    queueOffline({ gigType: 'trader_profile', pointsEarned: 500, bonusPoints: bonus, summary, rawData });
+                } else {
+                    await saveGigToDatabase({ gigType: 'trader_profile', pointsEarned: 500, bonusPoints: bonus, summary, rawData });
+                }
+            }
         }
-        function submitAudit() {
-            const name = document.getElementById('au-name').value || 'Unnamed Spaza';
+
+        async function submitAudit() {
+            const name     = document.getElementById('au-name').value || 'Unnamed Spaza';
             const location = document.getElementById('au-township').value;
-            award(200, `Shelf Audit: ${name}, ${location}`);
+            const summary  = `Shelf Audit: ${name}, ${location}`;
+            award(200, summary);
             goTo('home');
+
+            const rawData = { trader_name: name, location,
+                oil_brand: document.getElementById('fmcg-oil-brand') ? document.getElementById('fmcg-oil-brand').value : '',
+                oil_price: document.getElementById('fmcg-oil-price') ? document.getElementById('fmcg-oil-price').value : ''
+            };
+            if (typeof saveGigToDatabase === 'function') {
+                if (!navigator.onLine) {
+                    queueOffline({ gigType: 'spaza_audit', pointsEarned: 200, summary, rawData });
+                } else {
+                    await saveGigToDatabase({ gigType: 'spaza_audit', pointsEarned: 200, summary, rawData });
+                }
+            }
         }
-        function submitBasket() {
-            const name = document.getElementById('bk-name').value || 'Unnamed trader';
+
+        async function submitBasket() {
+            const name     = document.getElementById('bk-name').value || 'Unnamed trader';
             const location = document.getElementById('bk-township').value;
-            const ids = ['bk-bread','bk-maize','bk-oil','bk-milk','bk-eggs','bk-sugar','bk-airtime','bk-sunoil'];
-            const logged = ids.filter(id => document.getElementById(id).value !== '').length;
-            // Bonus 30 pts if all 8 items logged (complete basket)
-            award(150, `Price Basket: ${name}, ${location} — ${logged}/8 items`, logged === 8 ? 30 : 0);
+            const priceIds = ['bk-bread','bk-maize','bk-oil','bk-milk','bk-eggs','bk-sugar','bk-airtime','bk-sunoil'];
+            const logged   = priceIds.filter(id => document.getElementById(id) && document.getElementById(id).value !== '').length;
+            const bonus    = logged === 8 ? 30 : 0;
+            const summary  = `Price Basket: ${name}, ${location} — ${logged}/8 items`;
+            award(150, summary, bonus);
             goTo('home');
+
+            const rawData = { trader_name: name, township: location, items_logged: logged,
+                bread_price:        document.getElementById('bk-bread')   ? document.getElementById('bk-bread').value   : null,
+                maize_price:        document.getElementById('bk-maize')   ? document.getElementById('bk-maize').value   : null,
+                oil_price:          document.getElementById('bk-oil')     ? document.getElementById('bk-oil').value     : null,
+                milk_price:         document.getElementById('bk-milk')    ? document.getElementById('bk-milk').value    : null,
+                eggs_price:         document.getElementById('bk-eggs')    ? document.getElementById('bk-eggs').value    : null,
+                sugar_price:        document.getElementById('bk-sugar')   ? document.getElementById('bk-sugar').value   : null,
+                airtime_price:      document.getElementById('bk-airtime') ? document.getElementById('bk-airtime').value : null,
+                sunflower_oil_price: document.getElementById('bk-sunoil') ? document.getElementById('bk-sunoil').value  : null
+            };
+            if (typeof saveGigToDatabase === 'function') {
+                if (!navigator.onLine) {
+                    queueOffline({ gigType: 'price_basket', pointsEarned: 150, bonusPoints: bonus, summary, rawData });
+                } else {
+                    await saveGigToDatabase({ gigType: 'price_basket', pointsEarned: 150, bonusPoints: bonus, summary, rawData });
+                    if (typeof savePriceBasket === 'function') await savePriceBasket(rawData);
+                }
+            }
         }
-        function submitVerify() {
+
+        async function submitVerify() {
             const status = document.querySelector('input[name="ft-status"]:checked');
             if (!status) { showToast('Please select the trader status first'); return; }
-            const name = document.getElementById('ft-name').value || 'Unknown trader';
-            const icons = { Open: '✅', Closed: '❌', Partial: '⚠️' };
-            award(60, `${icons[status.value]} Verified: ${name} — ${status.value}`);
+            const name    = document.getElementById('ft-name').value || 'Unknown trader';
+            const icons   = { Open: '✅', Closed: '❌', Partial: '⚠️' };
+            const summary = `${icons[status.value]} Verified: ${name} — ${status.value}`;
+            award(60, summary);
             goTo('home');
+
+            const rawData = { trader_name: name, status: status.value };
+            if (typeof saveGigToDatabase === 'function') {
+                if (!navigator.onLine) {
+                    queueOffline({ gigType: 'foot_traffic', pointsEarned: 60, summary, rawData });
+                } else {
+                    await saveGigToDatabase({ gigType: 'foot_traffic', pointsEarned: 60, summary, rawData });
+                }
+            }
         }
-        function submitInfra() {
-            const type = document.getElementById('ir-type').value;
+
+        async function submitInfra() {
+            const type     = document.getElementById('ir-type').value;
             const location = document.getElementById('ir-location').value;
-            award(40, `Infrastructure: ${type} in ${location}`);
+            const summary  = `Infrastructure: ${type} in ${location}`;
+            award(40, summary);
             goTo('home');
+
+            const rawData = { issue_type: type, location,
+                severity:    document.getElementById('ir-severity')    ? document.getElementById('ir-severity').value    : '',
+                description: document.getElementById('ir-description') ? document.getElementById('ir-description').value : ''
+            };
+            if (typeof saveGigToDatabase === 'function') {
+                if (!navigator.onLine) {
+                    queueOffline({ gigType: 'infrastructure', pointsEarned: 40, summary, rawData });
+                } else {
+                    await saveGigToDatabase({ gigType: 'infrastructure', pointsEarned: 40, summary, rawData });
+                    if (typeof saveInfraReport === 'function') await saveInfraReport(rawData);
+                }
+            }
         }
 
         // ── Offline detection ──
@@ -1012,6 +1105,11 @@
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('./sw.js').catch(() => {});
         }
+
+        // ── Load Supabase helper ──
+        const _dbScript = document.createElement('script');
+        _dbScript.src = './supabase.js';
+        document.head.appendChild(_dbScript);
 
         // ── Clock / title ──
         function updateClock() {
