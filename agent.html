@@ -1146,9 +1146,18 @@
     <script>
         // Points system: 100 pts = R1
         const PTS_PER_RAND = 100;
-        let points = 2500;   // welcome bonus = R25 equivalent
-        let todayPts = 0;
+        // Load persisted points from localStorage (fallback to 2500 welcome bonus)
+        let points    = parseInt(localStorage.getItem('pulse_points') || '0') || 2500;
+        let todayPts  = parseInt(localStorage.getItem('pulse_today_pts') || '0');
         let currentStep = 1;
+
+        // Reset today points at midnight
+        const todayKey = new Date().toISOString().slice(0,10);
+        if (localStorage.getItem('pulse_today_key') !== todayKey) {
+            todayPts = 0;
+            localStorage.setItem('pulse_today_key', todayKey);
+            localStorage.setItem('pulse_today_pts', '0');
+        }
 
         function fmtPts(n) {
             return n.toLocaleString('en-ZA');
@@ -1207,6 +1216,9 @@
             const total = pts + bonusPts;
             points += total;
             todayPts += total;
+            // Persist to localStorage so they survive page refresh
+            localStorage.setItem('pulse_points', points);
+            localStorage.setItem('pulse_today_pts', todayPts);
             updateDisplays();
             const list = document.getElementById('history-list');
             const item = document.createElement('div');
@@ -1215,6 +1227,33 @@
             item.innerHTML = `<span class="desc">${description}${bonusTag}</span><span class="amt">+${fmtPts(total)} pts</span>`;
             list.prepend(item);
             showToast(`⭐ ${fmtPts(total)} points earned! ${description}`);
+        }
+
+        /**
+         * Always-available local submission saver.
+         * Defined here (not in supabase.js) so it works even if the DB script fails.
+         */
+        const GIG_META = {
+            trader_profile:  { label: 'Trader Profile Visit', icon: '🏪' },
+            shelf_audit:     { label: 'Spaza Shelf Audit',    icon: '🛒' },
+            price_basket:    { label: 'Price Basket Monitor', icon: '🧺' },
+            foot_traffic:    { label: 'Foot-Traffic Verify',  icon: '🚶' },
+            infrastructure:  { label: 'Infrastructure Report',icon: '💧' }
+        };
+        function addLocalSubmission({ gigType, pointsEarned, summary }) {
+            const meta = GIG_META[gigType] || { label: gigType, icon: '📋' };
+            const subs = JSON.parse(localStorage.getItem('pulse_submissions') || '[]');
+            subs.unshift({
+                id:     Date.now(),
+                type:   gigType,
+                label:  meta.label,
+                icon:   meta.icon,
+                points: pointsEarned,
+                summary: summary,
+                date:   new Date().toISOString()
+            });
+            if (subs.length > 100) subs.splice(100);
+            localStorage.setItem('pulse_submissions', JSON.stringify(subs));
         }
 
         function showToast(msg) {
@@ -1234,33 +1273,27 @@
             const bonus      = idVerified ? 100 : 0;
             const summary    = `Trader Profile: ${name} (${type})`;
 
-            // Award points in the UI immediately
             award(500, summary, bonus);
+            addLocalSubmission({ gigType: 'trader_profile', pointsEarned: 500 + bonus, summary });
             goTo('home');
 
-            // Persist to Supabase in background
             const rawData = {
-                name, type, township,
-                id_verified:    idVerified,
-                bank_account:   document.getElementById('a-bank') ? document.getElementById('a-bank').value : '',
-                years_operating: document.getElementById('a-years') ? document.getElementById('a-years').value : '',
-                premises_type:  document.getElementById('a-premises') ? document.getElementById('a-premises').value : '',
-                employees:      document.getElementById('a-employees') ? document.getElementById('a-employees').value : '',
-                payment_methods: document.getElementById('a-payment') ? document.getElementById('a-payment').value : '',
-                top_products:   document.getElementById('a-products') ? document.getElementById('a-products').value : '',
-                fastest_seller: document.getElementById('a-fastest') ? document.getElementById('a-fastest').value : '',
+                name, type, township, id_verified: idVerified,
+                bank_account:      document.getElementById('a-bank')     ? document.getElementById('a-bank').value     : '',
+                years_operating:   document.getElementById('a-years')    ? document.getElementById('a-years').value    : '',
+                premises_type:     document.getElementById('a-premises') ? document.getElementById('a-premises').value : '',
+                employees:         document.getElementById('a-employees') ? document.getElementById('a-employees').value : '',
+                payment_methods:   document.getElementById('a-payment')  ? document.getElementById('a-payment').value  : '',
+                top_products:      document.getElementById('a-products') ? document.getElementById('a-products').value : '',
+                fastest_seller:    document.getElementById('a-fastest')  ? document.getElementById('a-fastest').value  : '',
                 turnover_good_day: document.getElementById('a-turnover-good') ? document.getElementById('a-turnover-good').value : '',
-                turnover_bad_day:  document.getElementById('a-turnover-bad') ? document.getElementById('a-turnover-bad').value : '',
-                insurance_status:  document.getElementById('a-insurance') ? document.getElementById('a-insurance').value : '',
-                biggest_challenge: document.getElementById('a-challenge') ? document.getElementById('a-challenge').value : ''
+                turnover_bad_day:  document.getElementById('a-turnover-bad')  ? document.getElementById('a-turnover-bad').value  : '',
+                insurance_status:  document.getElementById('a-insurance')    ? document.getElementById('a-insurance').value    : '',
+                biggest_challenge: document.getElementById('a-challenge')    ? document.getElementById('a-challenge').value    : ''
             };
-
             if (typeof saveGigToDatabase === 'function') {
-                if (!navigator.onLine) {
-                    queueOffline({ gigType: 'trader_profile', pointsEarned: 500, bonusPoints: bonus, summary, rawData });
-                } else {
-                    await saveGigToDatabase({ gigType: 'trader_profile', pointsEarned: 500, bonusPoints: bonus, summary, rawData });
-                }
+                if (!navigator.onLine) { queueOffline({ gigType: 'trader_profile', pointsEarned: 500, bonusPoints: bonus, summary, rawData }); }
+                else { await saveGigToDatabase({ gigType: 'trader_profile', pointsEarned: 500, bonusPoints: bonus, summary, rawData }); }
             }
         }
 
@@ -1269,6 +1302,7 @@
             const location = document.getElementById('au-township').value;
             const summary  = `Shelf Audit: ${name}, ${location}`;
             award(200, summary);
+            addLocalSubmission({ gigType: 'shelf_audit', pointsEarned: 200, summary });
             goTo('home');
 
             const rawData = { trader_name: name, location,
@@ -1276,11 +1310,8 @@
                 oil_price: document.getElementById('fmcg-oil-price') ? document.getElementById('fmcg-oil-price').value : ''
             };
             if (typeof saveGigToDatabase === 'function') {
-                if (!navigator.onLine) {
-                    queueOffline({ gigType: 'spaza_audit', pointsEarned: 200, summary, rawData });
-                } else {
-                    await saveGigToDatabase({ gigType: 'spaza_audit', pointsEarned: 200, summary, rawData });
-                }
+                if (!navigator.onLine) { queueOffline({ gigType: 'shelf_audit', pointsEarned: 200, summary, rawData }); }
+                else { await saveGigToDatabase({ gigType: 'shelf_audit', pointsEarned: 200, summary, rawData }); }
             }
         }
 
@@ -1292,22 +1323,22 @@
             const bonus    = logged === 8 ? 30 : 0;
             const summary  = `Price Basket: ${name}, ${location} — ${logged}/8 items`;
             award(150, summary, bonus);
+            addLocalSubmission({ gigType: 'price_basket', pointsEarned: 150 + bonus, summary });
             goTo('home');
 
             const rawData = { trader_name: name, township: location, items_logged: logged,
-                bread_price:        document.getElementById('bk-bread')   ? document.getElementById('bk-bread').value   : null,
-                maize_price:        document.getElementById('bk-maize')   ? document.getElementById('bk-maize').value   : null,
-                oil_price:          document.getElementById('bk-oil')     ? document.getElementById('bk-oil').value     : null,
-                milk_price:         document.getElementById('bk-milk')    ? document.getElementById('bk-milk').value    : null,
-                eggs_price:         document.getElementById('bk-eggs')    ? document.getElementById('bk-eggs').value    : null,
-                sugar_price:        document.getElementById('bk-sugar')   ? document.getElementById('bk-sugar').value   : null,
-                airtime_price:      document.getElementById('bk-airtime') ? document.getElementById('bk-airtime').value : null,
+                bread_price:         document.getElementById('bk-bread')   ? document.getElementById('bk-bread').value   : null,
+                maize_price:         document.getElementById('bk-maize')   ? document.getElementById('bk-maize').value   : null,
+                oil_price:           document.getElementById('bk-oil')     ? document.getElementById('bk-oil').value     : null,
+                milk_price:          document.getElementById('bk-milk')    ? document.getElementById('bk-milk').value    : null,
+                eggs_price:          document.getElementById('bk-eggs')    ? document.getElementById('bk-eggs').value    : null,
+                sugar_price:         document.getElementById('bk-sugar')   ? document.getElementById('bk-sugar').value   : null,
+                airtime_price:       document.getElementById('bk-airtime') ? document.getElementById('bk-airtime').value : null,
                 sunflower_oil_price: document.getElementById('bk-sunoil') ? document.getElementById('bk-sunoil').value  : null
             };
             if (typeof saveGigToDatabase === 'function') {
-                if (!navigator.onLine) {
-                    queueOffline({ gigType: 'price_basket', pointsEarned: 150, bonusPoints: bonus, summary, rawData });
-                } else {
+                if (!navigator.onLine) { queueOffline({ gigType: 'price_basket', pointsEarned: 150, bonusPoints: bonus, summary, rawData }); }
+                else {
                     await saveGigToDatabase({ gigType: 'price_basket', pointsEarned: 150, bonusPoints: bonus, summary, rawData });
                     if (typeof savePriceBasket === 'function') await savePriceBasket(rawData);
                 }
@@ -1321,15 +1352,13 @@
             const icons   = { Open: '✅', Closed: '❌', Partial: '⚠️' };
             const summary = `${icons[status.value]} Verified: ${name} — ${status.value}`;
             award(60, summary);
+            addLocalSubmission({ gigType: 'foot_traffic', pointsEarned: 60, summary });
             goTo('home');
 
             const rawData = { trader_name: name, status: status.value };
             if (typeof saveGigToDatabase === 'function') {
-                if (!navigator.onLine) {
-                    queueOffline({ gigType: 'foot_traffic', pointsEarned: 60, summary, rawData });
-                } else {
-                    await saveGigToDatabase({ gigType: 'foot_traffic', pointsEarned: 60, summary, rawData });
-                }
+                if (!navigator.onLine) { queueOffline({ gigType: 'foot_traffic', pointsEarned: 60, summary, rawData }); }
+                else { await saveGigToDatabase({ gigType: 'foot_traffic', pointsEarned: 60, summary, rawData }); }
             }
         }
 
@@ -1338,6 +1367,7 @@
             const location = document.getElementById('ir-location').value;
             const summary  = `Infrastructure: ${type} in ${location}`;
             award(40, summary);
+            addLocalSubmission({ gigType: 'infrastructure', pointsEarned: 40, summary });
             goTo('home');
 
             const rawData = { issue_type: type, location,
@@ -1345,9 +1375,8 @@
                 description: document.getElementById('ir-description') ? document.getElementById('ir-description').value : ''
             };
             if (typeof saveGigToDatabase === 'function') {
-                if (!navigator.onLine) {
-                    queueOffline({ gigType: 'infrastructure', pointsEarned: 40, summary, rawData });
-                } else {
+                if (!navigator.onLine) { queueOffline({ gigType: 'infrastructure', pointsEarned: 40, summary, rawData }); }
+                else {
                     await saveGigToDatabase({ gigType: 'infrastructure', pointsEarned: 40, summary, rawData });
                     if (typeof saveInfraReport === 'function') await saveInfraReport(rawData);
                 }
@@ -1371,18 +1400,48 @@
         // (now loaded statically in <head> — no dynamic injection needed)
 
         // ── Profile Screen Logic ──
-        function loadProfile() {
-            // Read from localStorage
+        async function loadProfile() {
+            // Step 1: Try to fetch real agent data from DB first
+            const agentId = localStorage.getItem('pulse_agent_id') || '';
+            if (agentId && !agentId.startsWith('local_') && navigator.onLine && typeof getDB === 'function') {
+                try {
+                    const db = getDB();
+                    if (db) {
+                        const { data } = await db
+                            .from('agents')
+                            .select('name, firstname, surname, email, phone, address, points_balance')
+                            .eq('id', agentId)
+                            .single();
+                        if (data) {
+                            if (data.name)      localStorage.setItem('pulse_agent_name',      data.name);
+                            if (data.firstname) localStorage.setItem('pulse_agent_firstname', data.firstname);
+                            if (data.surname)   localStorage.setItem('pulse_agent_surname',   data.surname);
+                            if (data.email)     localStorage.setItem('pulse_agent_email',     data.email);
+                            if (data.phone)     localStorage.setItem('pulse_agent_phone',     data.phone);
+                            if (data.address)   localStorage.setItem('pulse_agent_address',   data.address);
+                            // Sync points from DB if higher than local
+                            if (data.points_balance && data.points_balance > points) {
+                                points = data.points_balance;
+                                localStorage.setItem('pulse_points', points);
+                                updateDisplays();
+                            }
+                        }
+                    }
+                } catch(e) { /* silently fail — use cached localStorage values */ }
+            }
+
+            // Step 2: Render from localStorage (now potentially updated from DB above)
             const firstname = localStorage.getItem('pulse_agent_firstname') || '';
             const surname   = localStorage.getItem('pulse_agent_surname')   || '';
             const name      = localStorage.getItem('pulse_agent_name')      || 'Agent';
             const email     = localStorage.getItem('pulse_agent_email')     || '—';
             const phone     = localStorage.getItem('pulse_agent_phone')     || '—';
             const address   = localStorage.getItem('pulse_agent_address')   || '—';
-            const agentId   = localStorage.getItem('pulse_agent_id')        || '';
 
             // Avatar initials
-            const initials = (firstname ? firstname[0] : '') + (surname ? surname[0] : (name[1] || ''));
+            const fn = firstname || name.split(' ')[0] || '';
+            const sn = surname   || name.split(' ')[1] || '';
+            const initials = (fn[0] || '') + (sn[0] || '');
             document.getElementById('profile-avatar').textContent = initials.toUpperCase() || '?';
             document.getElementById('profile-fullname').textContent = name;
             document.getElementById('profile-email-display').textContent = email;
@@ -1399,7 +1458,7 @@
 
             // DB sync banner
             const syncBanner = document.getElementById('profile-sync-banner');
-            if (agentId.startsWith('local_') || !agentId) {
+            if (!agentId || agentId.startsWith('local_')) {
                 syncBanner.style.display = 'flex';
             } else {
                 syncBanner.style.display = 'none';
@@ -1407,14 +1466,13 @@
 
             // Details list
             const details = [
-                { icon: 'fa-user',          label: 'Full Name',    value: name },
-                { icon: 'fa-envelope',      label: 'Email',        value: email },
-                { icon: 'fa-phone',         label: 'Phone',        value: phone },
-                { icon: 'fa-location-dot',  label: 'Address',      value: address },
-                { icon: 'fa-id-card',       label: 'Agent ID',     value: agentId.startsWith('local_') ? 'Not synced yet' : agentId.slice(0,8) + '...' }
+                { icon: 'fa-user',         label: 'Full Name', value: name },
+                { icon: 'fa-envelope',     label: 'Email',     value: email },
+                { icon: 'fa-phone',        label: 'Phone',     value: phone },
+                { icon: 'fa-location-dot', label: 'Address',   value: address },
+                { icon: 'fa-id-card',      label: 'Agent ID',  value: agentId.startsWith('local_') ? 'Not synced yet' : (agentId.slice(0,8) + '...') }
             ];
-            const list = document.getElementById('profile-details-list');
-            list.innerHTML = details.map(d => `
+            document.getElementById('profile-details-list').innerHTML = details.map(d => `
                 <div class="profile-detail-row">
                     <div class="profile-detail-icon"><i class="fa-solid ${d.icon}"></i></div>
                     <div>
@@ -1426,9 +1484,9 @@
             // Submissions list
             renderSubmissionHistory(subs);
 
-            // Try to sync if local_
+            // Try to sync if still local_
             if (agentId.startsWith('local_') && navigator.onLine) {
-                if (typeof syncAgentToDatabase === 'function') syncAgentToDatabase().then(() => loadProfile());
+                if (typeof syncAgentToDatabase === 'function') syncAgentToDatabase().catch(() => {});
             }
         }
 

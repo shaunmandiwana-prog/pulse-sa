@@ -1,7 +1,7 @@
 ﻿// Pulse SA â€” Service Worker
 // Caches everything on first load. Works fully offline after that.
 
-const CACHE_NAME = 'pulse-sa-v7';
+const CACHE_NAME = 'pulse-sa-v8';
 
 // Everything we need to cache for full offline use
 const STATIC_ASSETS = [
@@ -89,6 +89,7 @@ self.addEventListener('fetch', event => {
         })
     );
 });
+
 
 
 
