@@ -407,14 +407,44 @@
             align-items: center; justify-content: center;
             padding: 10px 0 14px;
             gap: 3px; cursor: pointer;
-            font-size: 0.58rem; font-weight: 600;
+            font-size: 0.55rem; font-weight: 600;
             color: var(--text-muted);
             border: none; background: transparent;
             transition: color 0.2s;
             -webkit-tap-highlight-color: transparent;
         }
-        .nav-btn i { font-size: 1.1rem; }
+        .nav-btn i { font-size: 1rem; }
         .nav-btn.active { color: var(--purple); }
+
+        /* Profile Screen */
+        .profile-detail-row {
+            display: flex; align-items: center; gap: 10px;
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .profile-detail-row:last-child { border-bottom: none; }
+        .profile-detail-icon {
+            width: 28px; height: 28px; border-radius: 8px;
+            background: rgba(168,85,247,0.12);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.7rem; color: var(--purple); flex-shrink: 0;
+        }
+        .profile-detail-label { font-size: 0.58rem; color: #8b8fa8; text-transform: uppercase; letter-spacing: 0.5px; }
+        .profile-detail-value { font-size: 0.82rem; font-weight: 600; margin-top: 1px; }
+        .sub-history-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .sub-history-item:last-child { border-bottom: none; }
+        .sub-history-icon {
+            width: 34px; height: 34px; border-radius: 10px;
+            background: rgba(0,242,254,0.08);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.95rem; flex-shrink: 0;
+        }
+        .sub-history-pts { font-size: 0.72rem; font-weight: 800; color: var(--orange); white-space: nowrap; }
+        .sub-history-date { font-size: 0.58rem; color: #8b8fa8; margin-top: 1px; }
     </style>
 </head>
 <body>
@@ -959,6 +989,142 @@
 
     </div>
 
+        <!-- ══ PROFILE SCREEN ══ -->
+        <div class="screen" id="screen-profile">
+            <div class="screen-nav">
+                <div class="back-btn" onclick="goTo('home')"><i class="fa-solid fa-arrow-left"></i></div>
+                <h3>My Profile</h3>
+                <button onclick="openEditProfile()" style="background:rgba(168,85,247,0.15);border:1px solid rgba(168,85,247,0.3);color:#a855f7;border-radius:8px;padding:6px 12px;font-size:0.68rem;font-weight:700;cursor:pointer;font-family:inherit;">Edit</button>
+            </div>
+
+            <!-- Avatar Hero -->
+            <div style="background:linear-gradient(160deg,rgba(168,85,247,0.1),rgba(0,242,254,0.04));padding:28px 20px 20px;text-align:center;">
+                <div id="profile-avatar" style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#a855f7,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:800;color:#fff;margin:0 auto 12px;">--</div>
+                <div id="profile-fullname" style="font-size:1.1rem;font-weight:800;margin-bottom:4px;">Loading...</div>
+                <div id="profile-email-display" style="font-size:0.68rem;color:#8b8fa8;">--</div>
+                <div id="profile-address-display" style="font-size:0.62rem;color:#6b6f82;margin-top:2px;">--</div>
+            </div>
+
+            <!-- Stats row -->
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px solid var(--border);margin-bottom:14px;">
+                <div style="padding:14px 10px;text-align:center;border-right:1px solid var(--border);">
+                    <div id="profile-pts-display" style="font-size:1.1rem;font-weight:800;color:#a855f7;">0</div>
+                    <div style="font-size:0.55rem;color:#8b8fa8;text-transform:uppercase;letter-spacing:0.5px;">Points</div>
+                </div>
+                <div style="padding:14px 10px;text-align:center;border-right:1px solid var(--border);">
+                    <div id="profile-gigs-display" style="font-size:1.1rem;font-weight:800;color:#00f2fe;">0</div>
+                    <div style="font-size:0.55rem;color:#8b8fa8;text-transform:uppercase;letter-spacing:0.5px;">Gigs Done</div>
+                </div>
+                <div style="padding:14px 10px;text-align:center;">
+                    <div id="profile-rank-display" style="font-size:0.9rem;font-weight:800;color:#fb923c;">Recruit</div>
+                    <div style="font-size:0.55rem;color:#8b8fa8;text-transform:uppercase;letter-spacing:0.5px;">Agent Rank</div>
+                </div>
+            </div>
+
+            <div style="padding:0 14px;display:flex;flex-direction:column;gap:12px;padding-bottom:100px;">
+
+                <!-- Personal Details -->
+                <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:14px;overflow:hidden;">
+                    <div style="padding:11px 16px;font-size:0.58rem;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:#a855f7;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px;">
+                        <i class="fa-solid fa-user"></i> Personal Details
+                    </div>
+                    <div id="profile-details-list"></div>
+                </div>
+
+                <!-- DB Sync Status -->
+                <div id="profile-sync-banner" style="display:none;background:rgba(251,146,60,0.1);border:1px solid rgba(251,146,60,0.25);border-radius:10px;padding:12px 14px;font-size:0.7rem;color:#fb923c;display:flex;align-items:center;gap:8px;">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span>Your profile wasn't saved to the database yet. <span onclick="retrySyncProfile()" style="text-decoration:underline;cursor:pointer;font-weight:700;">Tap to retry sync →</span></span>
+                </div>
+
+                <!-- Security / PIN -->
+                <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:14px;overflow:hidden;">
+                    <div style="padding:11px 16px;font-size:0.58rem;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:#a855f7;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px;">
+                        <i class="fa-solid fa-lock"></i> Security
+                    </div>
+                    <div onclick="openChangePIN()" style="display:flex;justify-content:space-between;align-items:center;padding:14px 16px;cursor:pointer;">
+                        <div>
+                            <div style="font-size:0.8rem;font-weight:600;">Change PIN</div>
+                            <div style="font-size:0.62rem;color:#8b8fa8;margin-top:2px;">4-digit security PIN for your account</div>
+                        </div>
+                        <i class="fa-solid fa-chevron-right" style="color:#8b8fa8;font-size:0.7rem;"></i>
+                    </div>
+                </div>
+
+                <!-- My Submissions -->
+                <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:14px;overflow:hidden;">
+                    <div style="padding:11px 16px;font-size:0.58rem;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:#00f2fe;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px;">
+                        <i class="fa-solid fa-clock-rotate-left"></i> My Submissions
+                    </div>
+                    <div id="profile-submissions-list">
+                        <div style="padding:24px;text-align:center;color:#8b8fa8;font-size:0.75rem;">No submissions yet — complete your first gig!</div>
+                    </div>
+                </div>
+
+                <!-- Sign out -->
+                <button onclick="confirmSignOut()" style="width:100%;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:12px;padding:13px;color:#f87171;font-family:inherit;font-size:0.8rem;font-weight:700;cursor:pointer;">
+                    <i class="fa-solid fa-right-from-bracket" style="margin-right:6px;"></i>Sign Out / Switch Account
+                </button>
+
+            </div>
+        </div>
+
+    <!-- ══ EDIT PROFILE OVERLAY ══ -->
+    <div id="edit-profile-overlay" style="display:none;position:fixed;inset:0;z-index:9990;background:rgba(8,10,18,0.97);backdrop-filter:blur(12px);overflow-y:auto;">
+        <div style="max-width:420px;margin:0 auto;padding:28px 20px 40px;">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:22px;">
+                <button onclick="closeEditProfile()" style="background:rgba(255,255,255,0.06);border:none;color:#f0f2ff;border-radius:8px;padding:8px 14px;cursor:pointer;font-family:inherit;font-size:0.8rem;">← Back</button>
+                <h3 style="font-size:1rem;font-weight:800;">Edit Profile</h3>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:14px;">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                    <div>
+                        <label style="font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#8b8fa8;display:block;margin-bottom:6px;">First Name</label>
+                        <input id="ep-firstname" type="text" style="width:100%;background:#0f1120;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:11px 12px;color:#f0f2ff;font-family:inherit;font-size:0.82rem;outline:none;">
+                    </div>
+                    <div>
+                        <label style="font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#8b8fa8;display:block;margin-bottom:6px;">Surname</label>
+                        <input id="ep-surname" type="text" style="width:100%;background:#0f1120;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:11px 12px;color:#f0f2ff;font-family:inherit;font-size:0.82rem;outline:none;">
+                    </div>
+                </div>
+                <div>
+                    <label style="font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#8b8fa8;display:block;margin-bottom:6px;">Email Address</label>
+                    <input id="ep-email" type="email" style="width:100%;background:#0f1120;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:11px 14px;color:#f0f2ff;font-family:inherit;font-size:0.85rem;outline:none;">
+                </div>
+                <div>
+                    <label style="font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#8b8fa8;display:block;margin-bottom:6px;">Home Address</label>
+                    <input id="ep-address" type="text" style="width:100%;background:#0f1120;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:11px 14px;color:#f0f2ff;font-family:inherit;font-size:0.85rem;outline:none;">
+                </div>
+                <div>
+                    <label style="font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#8b8fa8;display:block;margin-bottom:6px;">Phone Number</label>
+                    <input id="ep-phone" type="tel" style="width:100%;background:#0f1120;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:11px 14px;color:#f0f2ff;font-family:inherit;font-size:0.85rem;outline:none;">
+                </div>
+                <button onclick="saveProfileChanges()" style="width:100%;background:linear-gradient(135deg,#a855f7,#7c3aed);border:none;border-radius:12px;padding:14px;color:#fff;font-family:inherit;font-size:0.9rem;font-weight:800;cursor:pointer;margin-top:4px;">
+                    💾 Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══ CHANGE PIN OVERLAY ══ -->
+    <div id="pin-overlay" style="display:none;position:fixed;inset:0;z-index:9991;background:rgba(8,10,18,0.97);backdrop-filter:blur(12px);display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px;">
+        <div style="width:100%;max-width:360px;text-align:center;">
+            <i class="fa-solid fa-lock" style="font-size:2rem;color:#a855f7;margin-bottom:16px;display:block;"></i>
+            <h3 id="pin-title" style="font-size:1.1rem;font-weight:800;margin-bottom:6px;">Set Your PIN</h3>
+            <p id="pin-subtitle" style="font-size:0.7rem;color:#8b8fa8;margin-bottom:24px;">Enter a 4-digit PIN to protect your account</p>
+            <div style="display:flex;justify-content:center;gap:12px;margin-bottom:28px;">
+                <input id="pin-d1" type="number" min="0" max="9" maxlength="1" class="pin-digit" oninput="pinNext(this,'pin-d2')" style="width:52px;height:52px;border-radius:12px;background:#0f1120;border:2px solid rgba(168,85,247,0.3);color:#f0f2ff;font-size:1.4rem;font-weight:800;text-align:center;outline:none;">
+                <input id="pin-d2" type="number" min="0" max="9" maxlength="1" class="pin-digit" oninput="pinNext(this,'pin-d3')" style="width:52px;height:52px;border-radius:12px;background:#0f1120;border:2px solid rgba(168,85,247,0.3);color:#f0f2ff;font-size:1.4rem;font-weight:800;text-align:center;outline:none;">
+                <input id="pin-d3" type="number" min="0" max="9" maxlength="1" class="pin-digit" oninput="pinNext(this,'pin-d4')" style="width:52px;height:52px;border-radius:12px;background:#0f1120;border:2px solid rgba(168,85,247,0.3);color:#f0f2ff;font-size:1.4rem;font-weight:800;text-align:center;outline:none;">
+                <input id="pin-d4" type="number" min="0" max="9" maxlength="1" class="pin-digit" oninput="pinNext(this,null)" style="width:52px;height:52px;border-radius:12px;background:#0f1120;border:2px solid rgba(168,85,247,0.3);color:#f0f2ff;font-size:1.4rem;font-weight:800;text-align:center;outline:none;">
+            </div>
+            <div style="display:flex;gap:12px;">
+                <button onclick="closePINOverlay()" style="flex:1;background:rgba(255,255,255,0.06);border:none;border-radius:10px;padding:13px;color:#f0f2ff;font-family:inherit;font-size:0.82rem;font-weight:700;cursor:pointer;">Cancel</button>
+                <button onclick="savePIN()" style="flex:2;background:linear-gradient(135deg,#a855f7,#7c3aed);border:none;border-radius:10px;padding:13px;color:#fff;font-family:inherit;font-size:0.82rem;font-weight:800;cursor:pointer;">Save PIN</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Bottom Nav -->
     <nav class="bottom-nav">
         <button class="nav-btn active" id="nav-home" onclick="goTo('home')">
@@ -966,6 +1132,9 @@
         </button>
         <button class="nav-btn" id="nav-wallet" onclick="goTo('wallet')">
             <i class="fa-solid fa-wallet"></i>Wallet
+        </button>
+        <button class="nav-btn" id="nav-profile" onclick="goTo('profile')">
+            <i class="fa-solid fa-circle-user"></i>Profile
         </button>
         <button class="nav-btn" id="nav-about" onclick="goTo('about')">
             <i class="fa-solid fa-circle-info"></i>About
@@ -996,12 +1165,17 @@
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById('screen-' + screenId).classList.add('active');
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            if (screenId === 'home') document.getElementById('nav-home').classList.add('active');
-            if (screenId === 'wallet') document.getElementById('nav-wallet').classList.add('active');
-            if (screenId === 'about') document.getElementById('nav-about').classList.add('active');
+            if (screenId === 'home')    document.getElementById('nav-home').classList.add('active');
+            if (screenId === 'wallet')  document.getElementById('nav-wallet').classList.add('active');
+            if (screenId === 'about')   document.getElementById('nav-about').classList.add('active');
+            if (screenId === 'profile') {
+                document.getElementById('nav-profile').classList.add('active');
+                loadProfile();
+            }
             window.scrollTo(0, 0);
             if (screenId === 'gig-profile') { profileStep(1); }
         }
+
 
         // ── Trader Profile Steps ──
         const stepLabels = {
@@ -1195,6 +1369,179 @@
 
         // ── Load Supabase helper ──
         // (now loaded statically in <head> — no dynamic injection needed)
+
+        // ── Profile Screen Logic ──
+        function loadProfile() {
+            // Read from localStorage
+            const firstname = localStorage.getItem('pulse_agent_firstname') || '';
+            const surname   = localStorage.getItem('pulse_agent_surname')   || '';
+            const name      = localStorage.getItem('pulse_agent_name')      || 'Agent';
+            const email     = localStorage.getItem('pulse_agent_email')     || '—';
+            const phone     = localStorage.getItem('pulse_agent_phone')     || '—';
+            const address   = localStorage.getItem('pulse_agent_address')   || '—';
+            const agentId   = localStorage.getItem('pulse_agent_id')        || '';
+
+            // Avatar initials
+            const initials = (firstname ? firstname[0] : '') + (surname ? surname[0] : (name[1] || ''));
+            document.getElementById('profile-avatar').textContent = initials.toUpperCase() || '?';
+            document.getElementById('profile-fullname').textContent = name;
+            document.getElementById('profile-email-display').textContent = email;
+            document.getElementById('profile-address-display').textContent = address;
+
+            // Stats
+            document.getElementById('profile-pts-display').textContent = fmtPts(points);
+            const subs = JSON.parse(localStorage.getItem('pulse_submissions') || '[]');
+            document.getElementById('profile-gigs-display').textContent = subs.length;
+
+            // Rank
+            const rank = points >= 50000 ? 'Elite' : points >= 20000 ? 'Senior' : points >= 5000 ? 'Agent' : 'Recruit';
+            document.getElementById('profile-rank-display').textContent = rank;
+
+            // DB sync banner
+            const syncBanner = document.getElementById('profile-sync-banner');
+            if (agentId.startsWith('local_') || !agentId) {
+                syncBanner.style.display = 'flex';
+            } else {
+                syncBanner.style.display = 'none';
+            }
+
+            // Details list
+            const details = [
+                { icon: 'fa-user',          label: 'Full Name',    value: name },
+                { icon: 'fa-envelope',      label: 'Email',        value: email },
+                { icon: 'fa-phone',         label: 'Phone',        value: phone },
+                { icon: 'fa-location-dot',  label: 'Address',      value: address },
+                { icon: 'fa-id-card',       label: 'Agent ID',     value: agentId.startsWith('local_') ? 'Not synced yet' : agentId.slice(0,8) + '...' }
+            ];
+            const list = document.getElementById('profile-details-list');
+            list.innerHTML = details.map(d => `
+                <div class="profile-detail-row">
+                    <div class="profile-detail-icon"><i class="fa-solid ${d.icon}"></i></div>
+                    <div>
+                        <div class="profile-detail-label">${d.label}</div>
+                        <div class="profile-detail-value">${d.value}</div>
+                    </div>
+                </div>`).join('');
+
+            // Submissions list
+            renderSubmissionHistory(subs);
+
+            // Try to sync if local_
+            if (agentId.startsWith('local_') && navigator.onLine) {
+                if (typeof syncAgentToDatabase === 'function') syncAgentToDatabase().then(() => loadProfile());
+            }
+        }
+
+        function renderSubmissionHistory(subs) {
+            const el = document.getElementById('profile-submissions-list');
+            if (!subs.length) {
+                el.innerHTML = '<div style="padding:24px;text-align:center;color:#8b8fa8;font-size:0.75rem;">No submissions yet — complete your first gig!</div>';
+                return;
+            }
+            el.innerHTML = subs.slice(0, 30).map(s => {
+                const d = new Date(s.date);
+                const dateStr = d.toLocaleDateString('en-ZA', { day:'2-digit', month:'short' }) + ' ' + d.toLocaleTimeString('en-ZA', { hour:'2-digit', minute:'2-digit' });
+                return `<div class="sub-history-item">
+                    <div class="sub-history-icon">${s.icon || '📋'}</div>
+                    <div style="flex:1;min-width:0;">
+                        <div style="font-size:0.75rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${s.label || s.type}</div>
+                        <div class="sub-history-date">${dateStr}</div>
+                    </div>
+                    <div class="sub-history-pts">+${s.points} pts</div>
+                </div>`;
+            }).join('');
+        }
+
+        function openEditProfile() {
+            document.getElementById('ep-firstname').value = localStorage.getItem('pulse_agent_firstname') || '';
+            document.getElementById('ep-surname').value   = localStorage.getItem('pulse_agent_surname')   || '';
+            document.getElementById('ep-email').value     = localStorage.getItem('pulse_agent_email')     || '';
+            document.getElementById('ep-address').value   = localStorage.getItem('pulse_agent_address')   || '';
+            document.getElementById('ep-phone').value     = localStorage.getItem('pulse_agent_phone')     || '';
+            document.getElementById('edit-profile-overlay').style.display = 'block';
+        }
+
+        function closeEditProfile() {
+            document.getElementById('edit-profile-overlay').style.display = 'none';
+        }
+
+        async function saveProfileChanges() {
+            const firstname = document.getElementById('ep-firstname').value.trim();
+            const surname   = document.getElementById('ep-surname').value.trim();
+            const email     = document.getElementById('ep-email').value.trim();
+            const address   = document.getElementById('ep-address').value.trim();
+            const phone     = document.getElementById('ep-phone').value.trim();
+
+            if (!firstname || !surname) { showToast('Please enter your first name and surname'); return; }
+
+            const fullName = `${firstname} ${surname}`;
+            localStorage.setItem('pulse_agent_name',      fullName);
+            localStorage.setItem('pulse_agent_firstname', firstname);
+            localStorage.setItem('pulse_agent_surname',   surname);
+            localStorage.setItem('pulse_agent_email',     email);
+            localStorage.setItem('pulse_agent_address',   address);
+            localStorage.setItem('pulse_agent_phone',     phone);
+
+            // Push to DB if available
+            if (typeof updateAgentProfile === 'function') {
+                await updateAgentProfile({ name: fullName, firstname, surname, email, address, phone });
+            }
+
+            closeEditProfile();
+            loadProfile();
+            showToast('Profile updated! ✅');
+        }
+
+        function openChangePIN() {
+            document.querySelectorAll('.pin-digit').forEach(i => i.value = '');
+            document.getElementById('pin-title').textContent    = localStorage.getItem('pulse_pin') ? 'Change Your PIN' : 'Set Your PIN';
+            document.getElementById('pin-subtitle').textContent = localStorage.getItem('pulse_pin') ? 'Enter your new 4-digit PIN' : 'Enter a 4-digit PIN to protect your account';
+            document.getElementById('pin-overlay').style.display = 'flex';
+            document.getElementById('pin-d1').focus();
+        }
+
+        function closePINOverlay() {
+            document.getElementById('pin-overlay').style.display = 'none';
+        }
+
+        function pinNext(current, nextId) {
+            if (current.value.length >= 1 && nextId) {
+                document.getElementById(nextId).focus();
+            }
+        }
+
+        async function savePIN() {
+            const pin = ['pin-d1','pin-d2','pin-d3','pin-d4'].map(id => document.getElementById(id).value).join('');
+            if (pin.length !== 4 || isNaN(pin)) { showToast('Please enter all 4 digits'); return; }
+            localStorage.setItem('pulse_pin', pin);
+            if (typeof updateAgentProfile === 'function') await updateAgentProfile({ pin });
+            closePINOverlay();
+            showToast('PIN saved! 🔒');
+        }
+
+        function confirmSignOut() {
+            if (confirm('Sign out? Your points and local data will be cleared from this device.')) {
+                ['pulse_agent_id','pulse_agent_name','pulse_agent_firstname','pulse_agent_surname',
+                 'pulse_agent_email','pulse_agent_phone','pulse_agent_address','pulse_pin',
+                 'pulse_submissions','pulse_offline_queue'].forEach(k => localStorage.removeItem(k));
+                points = 0;
+                updateDisplays();
+                location.reload();
+            }
+        }
+
+        async function retrySyncProfile() {
+            showToast('Attempting to sync your profile...');
+            if (typeof syncAgentToDatabase === 'function') {
+                await syncAgentToDatabase();
+                loadProfile();
+                if (localStorage.getItem('pulse_agent_id') && !localStorage.getItem('pulse_agent_id').startsWith('local_')) {
+                    showToast('Profile synced to database! ✅');
+                } else {
+                    showToast('Sync failed — check your connection');
+                }
+            }
+        }
 
         // ── Onboarding Logic ──
         function showOnboardingIfNeeded() {
