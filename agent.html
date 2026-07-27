@@ -1070,11 +1070,26 @@
                 <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:14px;overflow:hidden;">
                     <div style="padding:11px 16px;font-size:0.58rem;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:#00f2fe;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px;">
                         <i class="fa-solid fa-clock-rotate-left"></i> My Submissions
+                        <span style="margin-left:auto;font-size:0.5rem;color:#8b8fa8;font-weight:600;text-transform:none;letter-spacing:0;">Tap to view details</span>
                     </div>
                     <div id="profile-submissions-list">
                         <div style="padding:24px;text-align:center;color:#8b8fa8;font-size:0.75rem;">No submissions yet — complete your first gig!</div>
                     </div>
                 </div>
+
+    <!-- ══ SUBMISSION DETAIL OVERLAY ══ -->
+    <div id="submission-detail-overlay" style="display:none;position:fixed;inset:0;z-index:9995;background:rgba(8,10,18,0.97);backdrop-filter:blur(12px);overflow-y:auto;">
+        <div style="max-width:420px;margin:0 auto;padding:28px 20px 40px;">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:22px;">
+                <button onclick="closeSubmissionDetail()" style="background:rgba(255,255,255,0.06);border:none;color:#f0f2ff;border-radius:8px;padding:8px 14px;cursor:pointer;font-family:inherit;font-size:0.8rem;">← Back</button>
+                <h3 style="font-size:1rem;font-weight:800;">Submission Details</h3>
+            </div>
+            <div id="submission-detail-content" style="display:flex;flex-direction:column;gap:14px;"></div>
+            <div style="margin-top:20px;padding:12px;background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.15);border-radius:10px;text-align:center;">
+                <span style="font-size:0.65rem;color:#f87171;font-weight:600;"><i class="fa-solid fa-lock" style="margin-right:4px;"></i> This submission is final and cannot be edited</span>
+            </div>
+        </div>
+    </div>
 
                 <!-- Sign out -->
                 <button onclick="confirmSignOut()" style="width:100%;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:12px;padding:13px;color:#f87171;font-family:inherit;font-size:0.8rem;font-weight:700;cursor:pointer;">
@@ -1257,7 +1272,7 @@
             foot_traffic:    { label: 'Foot-Traffic Verify',  icon: '🚶' },
             infrastructure:  { label: 'Infrastructure Report',icon: '💧' }
         };
-        function addLocalSubmission({ gigType, pointsEarned, summary }) {
+        function addLocalSubmission({ gigType, pointsEarned, summary, rawData }) {
             const meta = GIG_META[gigType] || { label: gigType, icon: '📋' };
             const subs = JSON.parse(localStorage.getItem('pulse_submissions') || '[]');
             subs.unshift({
@@ -1267,6 +1282,7 @@
                 icon:   meta.icon,
                 points: pointsEarned,
                 summary: summary,
+                data:   rawData || {},
                 date:   new Date().toISOString()
             });
             if (subs.length > 100) subs.splice(100);
@@ -1283,16 +1299,14 @@
         // ── Submit handlers (write to Supabase + award points) ──
 
         async function submitProfile() {
+            if (!confirm('Once submitted, this data cannot be changed. Are you sure you want to submit?')) return;
+
             const name       = document.getElementById('a-name').value || 'Unknown Trader';
             const type       = document.getElementById('a-type').value;
             const township   = document.getElementById('a-township') ? document.getElementById('a-township').value : '';
             const idVerified = document.getElementById('a-id-verified').value.startsWith('Yes');
             const bonus      = idVerified ? 100 : 0;
             const summary    = `Trader Profile: ${name} (${type})`;
-
-            award(500, summary, bonus);
-            addLocalSubmission({ gigType: 'trader_profile', pointsEarned: 500 + bonus, summary });
-            goTo('home');
 
             const rawData = {
                 name, type, township, id_verified: idVerified,
@@ -1308,6 +1322,11 @@
                 insurance_status:  document.getElementById('a-insurance')    ? document.getElementById('a-insurance').value    : '',
                 biggest_challenge: document.getElementById('a-challenge')    ? document.getElementById('a-challenge').value    : ''
             };
+
+            award(500, summary, bonus);
+            addLocalSubmission({ gigType: 'trader_profile', pointsEarned: 500 + bonus, summary, rawData });
+            goTo('home');
+
             if (typeof saveGigToDatabase === 'function') {
                 if (!navigator.onLine) { queueOffline({ gigType: 'trader_profile', pointsEarned: 500, bonusPoints: bonus, summary, rawData }); }
                 else { await saveGigToDatabase({ gigType: 'trader_profile', pointsEarned: 500, bonusPoints: bonus, summary, rawData }); }
@@ -1315,17 +1334,21 @@
         }
 
         async function submitAudit() {
+            if (!confirm('Once submitted, this data cannot be changed. Are you sure you want to submit?')) return;
+
             const name     = document.getElementById('au-name').value || 'Unnamed Spaza';
             const location = document.getElementById('au-township').value;
             const summary  = `Shelf Audit: ${name}, ${location}`;
-            award(200, summary);
-            addLocalSubmission({ gigType: 'shelf_audit', pointsEarned: 200, summary });
-            goTo('home');
 
             const rawData = { trader_name: name, location,
                 oil_brand: document.getElementById('fmcg-oil-brand') ? document.getElementById('fmcg-oil-brand').value : '',
                 oil_price: document.getElementById('fmcg-oil-price') ? document.getElementById('fmcg-oil-price').value : ''
             };
+
+            award(200, summary);
+            addLocalSubmission({ gigType: 'shelf_audit', pointsEarned: 200, summary, rawData });
+            goTo('home');
+
             if (typeof saveGigToDatabase === 'function') {
                 if (!navigator.onLine) { queueOffline({ gigType: 'shelf_audit', pointsEarned: 200, summary, rawData }); }
                 else { await saveGigToDatabase({ gigType: 'shelf_audit', pointsEarned: 200, summary, rawData }); }
@@ -1333,15 +1356,14 @@
         }
 
         async function submitBasket() {
+            if (!confirm('Once submitted, this data cannot be changed. Are you sure you want to submit?')) return;
+
             const name     = document.getElementById('bk-name').value || 'Unnamed trader';
             const location = document.getElementById('bk-township').value;
             const priceIds = ['bk-bread','bk-maize','bk-oil','bk-milk','bk-eggs','bk-sugar','bk-airtime','bk-sunoil'];
             const logged   = priceIds.filter(id => document.getElementById(id) && document.getElementById(id).value !== '').length;
             const bonus    = logged === 8 ? 30 : 0;
             const summary  = `Price Basket: ${name}, ${location} — ${logged}/8 items`;
-            award(150, summary, bonus);
-            addLocalSubmission({ gigType: 'price_basket', pointsEarned: 150 + bonus, summary });
-            goTo('home');
 
             const rawData = { trader_name: name, township: location, items_logged: logged,
                 bread_price:         document.getElementById('bk-bread')   ? document.getElementById('bk-bread').value   : null,
@@ -1353,6 +1375,11 @@
                 airtime_price:       document.getElementById('bk-airtime') ? document.getElementById('bk-airtime').value : null,
                 sunflower_oil_price: document.getElementById('bk-sunoil') ? document.getElementById('bk-sunoil').value  : null
             };
+
+            award(150, summary, bonus);
+            addLocalSubmission({ gigType: 'price_basket', pointsEarned: 150 + bonus, summary, rawData });
+            goTo('home');
+
             if (typeof saveGigToDatabase === 'function') {
                 if (!navigator.onLine) { queueOffline({ gigType: 'price_basket', pointsEarned: 150, bonusPoints: bonus, summary, rawData }); }
                 else {
@@ -1365,14 +1392,18 @@
         async function submitVerify() {
             const status = document.querySelector('input[name="ft-status"]:checked');
             if (!status) { showToast('Please select the trader status first'); return; }
+            if (!confirm('Once submitted, this data cannot be changed. Are you sure you want to submit?')) return;
+
             const name    = document.getElementById('ft-name').value || 'Unknown trader';
             const icons   = { Open: '✅', Closed: '❌', Partial: '⚠️' };
             const summary = `${icons[status.value]} Verified: ${name} — ${status.value}`;
-            award(60, summary);
-            addLocalSubmission({ gigType: 'foot_traffic', pointsEarned: 60, summary });
-            goTo('home');
 
             const rawData = { trader_name: name, status: status.value };
+
+            award(60, summary);
+            addLocalSubmission({ gigType: 'foot_traffic', pointsEarned: 60, summary, rawData });
+            goTo('home');
+
             if (typeof saveGigToDatabase === 'function') {
                 if (!navigator.onLine) { queueOffline({ gigType: 'foot_traffic', pointsEarned: 60, summary, rawData }); }
                 else { await saveGigToDatabase({ gigType: 'foot_traffic', pointsEarned: 60, summary, rawData }); }
@@ -1380,15 +1411,14 @@
         }
 
         async function submitInfra() {
+            if (!confirm('Once submitted, this data cannot be changed. Are you sure you want to submit?')) return;
+
             const type     = document.getElementById('ir-type').value;
             const location = document.getElementById('ir-location').value;
             const duration = document.getElementById('ir-duration') ? document.getElementById('ir-duration').value : '';
             const scale    = document.getElementById('ir-scale')    ? document.getElementById('ir-scale').value    : '';
             const notes    = document.getElementById('ir-notes')    ? document.getElementById('ir-notes').value    : '';
             const summary  = `Infrastructure: ${type} in ${location}`;
-            award(40, summary);
-            addLocalSubmission({ gigType: 'infrastructure', pointsEarned: 40, summary });
-            goTo('home');
 
             const rawData = {
                 issue_type:  type,
@@ -1400,6 +1430,11 @@
                 scale:       scale,
                 notes:       notes
             };
+
+            award(40, summary);
+            addLocalSubmission({ gigType: 'infrastructure', pointsEarned: 40, summary, rawData });
+            goTo('home');
+
             if (typeof saveGigToDatabase === 'function') {
                 if (!navigator.onLine) { queueOffline({ gigType: 'infrastructure', pointsEarned: 40, summary, rawData }); }
                 else {
@@ -1522,18 +1557,94 @@
                 el.innerHTML = '<div style="padding:24px;text-align:center;color:#8b8fa8;font-size:0.75rem;">No submissions yet — complete your first gig!</div>';
                 return;
             }
-            el.innerHTML = subs.slice(0, 30).map(s => {
+            // Store globally so we can access by index when tapped
+            window._profileSubs = subs;
+            el.innerHTML = subs.slice(0, 30).map((s, i) => {
                 const d = new Date(s.date);
                 const dateStr = d.toLocaleDateString('en-ZA', { day:'2-digit', month:'short' }) + ' ' + d.toLocaleTimeString('en-ZA', { hour:'2-digit', minute:'2-digit' });
-                return `<div class="sub-history-item">
+                return `<div class="sub-history-item" onclick="showSubmissionDetail(${i})" style="cursor:pointer;">
                     <div class="sub-history-icon">${s.icon || '📋'}</div>
                     <div style="flex:1;min-width:0;">
                         <div style="font-size:0.75rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${s.label || s.type}</div>
                         <div class="sub-history-date">${dateStr}</div>
                     </div>
-                    <div class="sub-history-pts">+${s.points} pts</div>
+                    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+                        <div class="sub-history-pts">+${s.points} pts</div>
+                        <i class="fa-solid fa-chevron-right" style="color:#8b8fa8;font-size:0.55rem;"></i>
+                    </div>
                 </div>`;
             }).join('');
+        }
+
+        /** Human-readable labels for raw data keys */
+        const FIELD_LABELS = {
+            trader_name: 'Trader Name', name: 'Trader Name', type: 'Business Type',
+            township: 'Township', location: 'Location', ward: 'Ward',
+            id_verified: 'ID Verified', bank_account: 'Bank Account',
+            years_operating: 'Years Operating', premises_type: 'Premises Type',
+            employees: 'Employees', payment_methods: 'Payment Methods',
+            top_products: 'Top Products', fastest_seller: 'Fastest Seller',
+            turnover_good_day: 'Turnover (Good Day)', turnover_bad_day: 'Turnover (Bad Day)',
+            insurance_status: 'Insurance', biggest_challenge: 'Biggest Challenge',
+            oil_brand: 'Oil Brand', oil_price: 'Oil Price',
+            bread_price: 'Bread Price', maize_price: 'Maize Meal Price',
+            milk_price: 'Milk Price', eggs_price: 'Eggs Price',
+            sugar_price: 'Sugar Price', airtime_price: 'Airtime Price',
+            sunflower_oil_price: 'Sunflower Oil Price', items_logged: 'Items Logged',
+            issue_type: 'Issue Type', severity: 'Severity', description: 'Description',
+            duration: 'Duration', scale: 'Scale Affected', notes: 'Notes',
+            status: 'Trader Status'
+        };
+
+        function showSubmissionDetail(index) {
+            const subs = window._profileSubs || JSON.parse(localStorage.getItem('pulse_submissions') || '[]');
+            const s = subs[index];
+            if (!s) return;
+
+            const d = new Date(s.date);
+            const dateStr = d.toLocaleDateString('en-ZA', { weekday:'long', day:'numeric', month:'long', year:'numeric' }) +
+                           ' at ' + d.toLocaleTimeString('en-ZA', { hour:'2-digit', minute:'2-digit' });
+
+            let html = '';
+            // Header card
+            html += `<div style="background:linear-gradient(135deg,rgba(168,85,247,0.1),rgba(0,242,254,0.05));border:1px solid rgba(168,85,247,0.2);border-radius:14px;padding:18px;text-align:center;">`;
+            html += `<div style="font-size:2rem;margin-bottom:6px;">${s.icon || '📋'}</div>`;
+            html += `<div style="font-size:0.95rem;font-weight:800;color:#f0f2ff;">${s.label || s.type}</div>`;
+            html += `<div style="font-size:0.68rem;color:#8b8fa8;margin-top:4px;">${dateStr}</div>`;
+            html += `<div style="margin-top:10px;display:inline-block;background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.25);border-radius:8px;padding:5px 14px;">`;
+            html += `<span style="font-size:0.85rem;font-weight:800;color:#10b981;">+${(s.points || 0).toLocaleString('en-ZA')} pts</span>`;
+            html += `</div></div>`;
+
+            // Summary
+            html += `<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:14px;">`;
+            html += `<div style="font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#00f2fe;margin-bottom:6px;">Summary</div>`;
+            html += `<div style="font-size:0.78rem;color:#d1d5f0;line-height:1.5;">${s.summary || '—'}</div>`;
+            html += `</div>`;
+
+            // Data fields
+            const data = s.data || {};
+            const keys = Object.keys(data).filter(k => data[k] !== null && data[k] !== '' && data[k] !== undefined);
+            if (keys.length > 0) {
+                html += `<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:12px;overflow:hidden;">`;
+                html += `<div style="padding:11px 14px;font-size:0.58rem;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:#a855f7;border-bottom:1px solid var(--border);"><i class="fa-solid fa-database" style="margin-right:5px;"></i> Captured Data</div>`;
+                keys.forEach((key, i) => {
+                    const label = FIELD_LABELS[key] || key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+                    const val = typeof data[key] === 'boolean' ? (data[key] ? 'Yes' : 'No') : data[key];
+                    const border = i < keys.length - 1 ? 'border-bottom:1px solid rgba(255,255,255,0.04);' : '';
+                    html += `<div style="padding:10px 14px;display:flex;justify-content:space-between;align-items:center;${border}">`;
+                    html += `<span style="font-size:0.7rem;color:#8b8fa8;font-weight:600;">${label}</span>`;
+                    html += `<span style="font-size:0.75rem;color:#f0f2ff;font-weight:700;text-align:right;max-width:55%;word-break:break-word;">${val}</span>`;
+                    html += `</div>`;
+                });
+                html += `</div>`;
+            }
+
+            document.getElementById('submission-detail-content').innerHTML = html;
+            document.getElementById('submission-detail-overlay').style.display = 'block';
+        }
+
+        function closeSubmissionDetail() {
+            document.getElementById('submission-detail-overlay').style.display = 'none';
         }
 
         function openEditProfile() {

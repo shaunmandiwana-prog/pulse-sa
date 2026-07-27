@@ -1,7 +1,7 @@
-// Pulse SA â€” Service Worker
+﻿// Pulse SA Ã¢â‚¬â€ Service Worker
 // Caches everything on first load. Works fully offline after that.
 
-const CACHE_NAME = 'pulse-sa-v9';
+const CACHE_NAME = 'pulse-sa-v10';
 
 // Everything we need to cache for full offline use
 const STATIC_ASSETS = [
@@ -11,9 +11,9 @@ const STATIC_ASSETS = [
     './supabase.js',
     './style.css',
     './app.js',
-    // Google Fonts â€” cache them so no data needed after first load
+    // Google Fonts Ã¢â‚¬â€ cache them so no data needed after first load
     'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap',
-    // Font Awesome â€” icons
+    // Font Awesome Ã¢â‚¬â€ icons
     'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css',
     // Leaflet (ward map)
     'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
@@ -61,7 +61,7 @@ self.addEventListener('fetch', event => {
     const isLocalFile = url.origin === self.location.origin;
 
     if (isLocalFile) {
-        // NETWORK-FIRST for our own files — always try to get the latest
+        // NETWORK-FIRST for our own files â€” always try to get the latest
         event.respondWith(
             fetch(event.request)
                 .then(response => {
@@ -93,3 +93,4 @@ self.addEventListener('fetch', event => {
         );
     }
 });
+

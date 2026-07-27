@@ -298,9 +298,23 @@ async function savePriceBasket(basketData) {
     const db = getDB();
     const agentId = localStorage.getItem('pulse_agent_id');
 
+    const payload = {
+        agent_id:           agentId,
+        trader_name:        basketData.trader_name    || null,
+        township:           basketData.township       || null,
+        bread_price:        basketData.bread_price    || null,
+        maize_price:        basketData.maize_price    || null,
+        oil_price:          basketData.oil_price      || null,
+        milk_price:         basketData.milk_price     || null,
+        eggs_price:         basketData.eggs_price     || null,
+        sugar_price:        basketData.sugar_price    || null,
+        airtime_price:      basketData.airtime_price  || null,
+        sunflower_oil_price: basketData.sunflower_oil_price || null
+    };
+
     const { error } = await db
         .from('price_basket_readings')
-        .insert({ ...basketData, agent_id: agentId });
+        .insert(payload);
 
     if (error) console.warn('[Pulse DB] Basket save error:', error.message);
 }
