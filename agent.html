@@ -903,6 +903,21 @@
             </div>
         </div>
 
+        <!-- Script: rebuild wallet history from local submissions on load -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const histList = document.getElementById('history-list');
+                const subs = JSON.parse(localStorage.getItem('pulse_submissions') || '[]');
+                // Prepend saved submissions (newest first) above the welcome bonus
+                subs.forEach(function(s) {
+                    const item = document.createElement('div');
+                    item.className = 'history-item';
+                    item.innerHTML = '<span class="desc">' + (s.label || s.type) + '</span><span class="amt">+' + (s.points || 0).toLocaleString('en-ZA') + ' pts</span>';
+                    histList.insertBefore(item, histList.firstChild);
+                });
+            });
+        </script>
+
         <!-- ══ ABOUT SCREEN ══ -->
         <div class="screen" id="screen-about">
 
@@ -1163,10 +1178,12 @@
             return n.toLocaleString('en-ZA');
         }
         function updateDisplays() {
-            document.getElementById('balance-display').textContent = fmtPts(points);
-            document.getElementById('wallet-bal').textContent = fmtPts(points);
-            document.getElementById('rand-value').textContent = (points / PTS_PER_RAND).toFixed(2);
-            document.getElementById('today-amount').textContent = fmtPts(todayPts) + ' pts';
+            const balEl = document.getElementById('balance-display');
+            const walEl = document.getElementById('wallet-bal');
+            const todEl = document.getElementById('today-amount');
+            if (balEl) balEl.textContent = fmtPts(points);
+            if (walEl) walEl.textContent = fmtPts(points);
+            if (todEl) todEl.textContent = fmtPts(todayPts) + ' pts';
         }
 
         // ── Navigation ──
@@ -1658,27 +1675,45 @@
 
             const fullName = `${firstname} ${surname}`;
 
-            // Try to create agent in Supabase
+            // Store profile locally FIRST (so even if DB fails, we proceed)
+            localStorage.setItem('pulse_agent_name',      fullName);
+            localStorage.setItem('pulse_agent_firstname', firstname);
+            localStorage.setItem('pulse_agent_surname',   surname);
+            localStorage.setItem('pulse_agent_email',     email);
+            localStorage.setItem('pulse_agent_address',   address);
+            localStorage.setItem('pulse_agent_phone',     phone);
+
+            // Set welcome bonus points
+            if (!localStorage.getItem('pulse_points')) {
+                localStorage.setItem('pulse_points', '2500');
+                points = 2500;
+            }
+
+            // Try to create agent in Supabase (with timeout so it never freezes)
             let agentId = null;
-            if (typeof getOrCreateAgent === 'function') {
-                const agent = await getOrCreateAgent(fullName, phone, address, { firstname, surname, age: parseInt(age), email });
-                if (agent) agentId = agent.id;
+            try {
+                if (typeof getOrCreateAgent === 'function') {
+                    const dbPromise = getOrCreateAgent(fullName, phone, address, {
+                        firstname, surname, age: parseInt(age), email
+                    });
+                    // 8-second timeout so the UI never freezes
+                    const timeoutPromise = new Promise(resolve => setTimeout(() => resolve(null), 8000));
+                    const agent = await Promise.race([dbPromise, timeoutPromise]);
+                    if (agent) agentId = agent.id;
+                }
+            } catch(e) {
+                console.warn('[Pulse] DB save failed during onboarding:', e);
             }
 
             // Fallback: generate local ID if offline or DB not ready
             if (!agentId) {
                 agentId = 'local_' + Date.now() + '_' + Math.random().toString(36).substr(2,6);
-                localStorage.setItem('pulse_agent_id', agentId);
             }
+            localStorage.setItem('pulse_agent_id', agentId);
 
-            // Store profile locally for display
-            localStorage.setItem('pulse_agent_name', fullName);
-            localStorage.setItem('pulse_agent_firstname', firstname);
-            localStorage.setItem('pulse_agent_email', email);
-            localStorage.setItem('pulse_agent_address', address);
-
-            // Hide onboarding
+            // Hide onboarding and show home screen
             document.getElementById('onboarding-overlay').style.display = 'none';
+            updateDisplays();
             showToast(`Sawubona ${firstname}! 🎉 Your profile is live — 2,500 welcome points added!`);
         }
 
