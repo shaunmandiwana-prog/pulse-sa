@@ -1,13 +1,14 @@
-﻿// Pulse SA â€” Service Worker
+// Pulse SA â€” Service Worker
 // Caches everything on first load. Works fully offline after that.
 
-const CACHE_NAME = 'pulse-sa-v8';
+const CACHE_NAME = 'pulse-sa-v9';
 
 // Everything we need to cache for full offline use
 const STATIC_ASSETS = [
     './',
     './index.html',
     './agent.html',
+    './supabase.js',
     './style.css',
     './app.js',
     // Google Fonts â€” cache them so no data needed after first load
@@ -25,7 +26,7 @@ self.addEventListener('install', event => {
         caches.open(CACHE_NAME).then(cache => {
             console.log('[SW] Caching static assets...');
             // Cache local files first (must succeed), then try external
-            const localAssets = ['./', './index.html', './agent.html', './style.css', './app.js'];
+            const localAssets = ['./', './index.html', './agent.html', './supabase.js', './style.css', './app.js'];
             const externalAssets = STATIC_ASSETS.filter(a => !localAssets.includes(a));
             return cache.addAll(localAssets).then(() => {
                 // External assets: try each individually, don't fail if one is unavailable
@@ -50,46 +51,45 @@ self.addEventListener('activate', event => {
     );
 });
 
-// Fetch: cache-first strategy for everything
-// Falls back to network if not in cache, then caches the response
+// Fetch strategy:
+// - Local app files: NETWORK-FIRST (always get latest code)
+// - External CDN assets: CACHE-FIRST (fonts, icons don't change)
 self.addEventListener('fetch', event => {
-    // Skip non-GET requests
     if (event.request.method !== 'GET') return;
 
-    // Skip the MDB ArcGIS tile requests â€” these need live data
-    // But serve from cache if we have them (so ward map works offline with last loaded metro)
-    const url = event.request.url;
+    const url = new URL(event.request.url);
+    const isLocalFile = url.origin === self.location.origin;
 
-    event.respondWith(
-        caches.match(event.request).then(cached => {
-            if (cached) return cached;
-
-            // Not in cache â€” try network, then cache the response
-            return fetch(event.request).then(response => {
-                // Only cache successful responses
-                if (!response || response.status !== 200 || response.type === 'error') {
+    if (isLocalFile) {
+        // NETWORK-FIRST for our own files — always try to get the latest
+        event.respondWith(
+            fetch(event.request)
+                .then(response => {
+                    if (response && response.status === 200) {
+                        const toCache = response.clone();
+                        caches.open(CACHE_NAME).then(cache => cache.put(event.request, toCache));
+                    }
                     return response;
-                }
-                // Cache a clone (response body can only be read once)
-                const toCache = response.clone();
-                caches.open(CACHE_NAME).then(cache => cache.put(event.request, toCache));
-                return response;
-            }).catch(() => {
-                // Network failed and nothing in cache
-                // For navigation requests, return the cached index.html
-                if (event.request.mode === 'navigate') {
-                    return caches.match('./index.html');
-                }
-                // For everything else, return a minimal offline response
-                return new Response('Offline â€” no cached version available', {
-                    status: 503,
-                    headers: { 'Content-Type': 'text/plain' }
-                });
-            });
-        })
-    );
+                })
+                .catch(() => caches.match(event.request).then(cached => {
+                    if (cached) return cached;
+                    if (event.request.mode === 'navigate') return caches.match('./index.html');
+                    return new Response('Offline', { status: 503, headers: { 'Content-Type': 'text/plain' } });
+                }))
+        );
+    } else {
+        // CACHE-FIRST for external CDN resources (fonts, icons, Leaflet)
+        event.respondWith(
+            caches.match(event.request).then(cached => {
+                if (cached) return cached;
+                return fetch(event.request).then(response => {
+                    if (response && response.status === 200) {
+                        const toCache = response.clone();
+                        caches.open(CACHE_NAME).then(cache => cache.put(event.request, toCache));
+                    }
+                    return response;
+                }).catch(() => new Response('Offline', { status: 503, headers: { 'Content-Type': 'text/plain' } }));
+            })
+        );
+    }
 });
-
-
-
-

@@ -1365,14 +1365,23 @@
         async function submitInfra() {
             const type     = document.getElementById('ir-type').value;
             const location = document.getElementById('ir-location').value;
+            const duration = document.getElementById('ir-duration') ? document.getElementById('ir-duration').value : '';
+            const scale    = document.getElementById('ir-scale')    ? document.getElementById('ir-scale').value    : '';
+            const notes    = document.getElementById('ir-notes')    ? document.getElementById('ir-notes').value    : '';
             const summary  = `Infrastructure: ${type} in ${location}`;
             award(40, summary);
             addLocalSubmission({ gigType: 'infrastructure', pointsEarned: 40, summary });
             goTo('home');
 
-            const rawData = { issue_type: type, location,
-                severity:    document.getElementById('ir-severity')    ? document.getElementById('ir-severity').value    : '',
-                description: document.getElementById('ir-description') ? document.getElementById('ir-description').value : ''
+            const rawData = {
+                issue_type:  type,
+                location:    location,
+                township:    location,
+                severity:    duration,
+                description: `${notes} [Duration: ${duration}, Scale: ${scale}]`,
+                duration:    duration,
+                scale:       scale,
+                notes:       notes
             };
             if (typeof saveGigToDatabase === 'function') {
                 if (!navigator.onLine) { queueOffline({ gigType: 'infrastructure', pointsEarned: 40, summary, rawData }); }

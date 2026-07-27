@@ -131,8 +131,7 @@ async function syncAgentToDatabase() {
  * Skips DB insert if no real agent_id is available.
  */
 async function saveGigToDatabase({ gigType, pointsEarned, bonusPoints = 0, summary, rawData, traderId = null }) {
-    // Always save locally first (this is the history the profile screen reads)
-    saveSubmissionLocally({ gigType, pointsEarned, summary, rawData });
+    // Local submission history is now handled by addLocalSubmission() in agent.html
 
     if (!isDBReady() || !navigator.onLine) return null;
 
@@ -189,6 +188,23 @@ async function saveGigToDatabase({ gigType, pointsEarned, bonusPoints = 0, summa
         reason:            summary,
         gig_completion_id: gig.id
     }).catch(() => {});
+
+    // Update agent's running balance in the agents table
+    // Read current balance, then update (no RPC needed)
+    try {
+        const { data: agentRow } = await db
+            .from('agents')
+            .select('points_balance, total_earned')
+            .eq('id', agentId)
+            .single();
+        if (agentRow) {
+            await db.from('agents').update({
+                points_balance: (agentRow.points_balance || 0) + totalPts,
+                total_earned:   (agentRow.total_earned   || 0) + totalPts,
+                last_active:    new Date().toISOString()
+            }).eq('id', agentId);
+        }
+    } catch(e) { /* non-critical — balance will sync on next profile load */ }
 
     return gig;
 }
@@ -297,9 +313,18 @@ async function saveInfraReport(reportData) {
     const db = getDB();
     const agentId = localStorage.getItem('pulse_agent_id');
 
+    const payload = {
+        agent_id:    agentId,
+        issue_type:  reportData.issue_type  || null,
+        location:    reportData.location    || null,
+        township:    reportData.township    || reportData.location || null,
+        severity:    reportData.severity    || null,
+        description: reportData.description || null
+    };
+
     const { error } = await db
         .from('infrastructure_reports')
-        .insert({ ...reportData, agent_id: agentId });
+        .insert(payload);
 
     if (error) console.warn('[Pulse DB] Infra save error:', error.message);
 }
