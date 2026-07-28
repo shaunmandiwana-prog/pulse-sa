@@ -91,12 +91,14 @@ async function getOrCreateAgent(name, phone, address, extras = {}) {
     if (created) {
         localStorage.setItem('pulse_agent_id', created.id);
         // Log welcome points
-        await db.from('points_ledger').insert({
-            agent_id:         created.id,
-            points:           2500,
-            transaction_type: 'welcome',
-            reason:           'Welcome bonus — account created'
-        }).catch(() => {});
+        try {
+            await db.from('points_ledger').insert({
+                agent_id:         created.id,
+                points:           2500,
+                transaction_type: 'welcome',
+                reason:           'Welcome bonus — account created'
+            });
+        } catch(e) { console.warn('[Pulse DB] Welcome points ledger failed:', e); }
         return created;
     }
 
@@ -131,7 +133,6 @@ async function syncAgentToDatabase() {
  * Skips DB insert if no real agent_id is available.
  */
 async function saveGigToDatabase({ gigType, pointsEarned, bonusPoints = 0, summary, rawData, traderId = null }) {
-    // Local submission history is now handled by addLocalSubmission() in agent.html
     console.log('[Pulse DB] saveGigToDatabase called:', { gigType, pointsEarned });
 
     if (!isDBReady()) { console.warn('[Pulse DB] DB not ready'); return null; }
@@ -140,92 +141,77 @@ async function saveGigToDatabase({ gigType, pointsEarned, bonusPoints = 0, summa
     const agentId = localStorage.getItem('pulse_agent_id');
     if (!agentId) { console.warn('[Pulse DB] No agent_id'); return null; }
 
-    // Skip DB save if agent_id is a local fallback (not a valid UUID)
     if (agentId.startsWith('local_')) {
         console.warn('[Pulse DB] Agent not in DB yet — submission saved locally only');
-        syncAgentToDatabase().catch(() => {});
+        try { syncAgentToDatabase(); } catch(e) {}
         return null;
     }
 
-    const db = getDB();
-    console.log('[Pulse DB] Inserting gig for agent:', agentId);
-
-    // Build payload with only core fields to avoid column mismatch errors
-    const gigPayload = {
-        agent_id:      agentId,
-        gig_type:      gigType,
-        points_earned: pointsEarned,
-        bonus_points:  bonusPoints,
-        summary:       summary
-    };
-
-    // Try to add optional fields — these may or may not exist as columns
-    // raw_data: jsonb column for storing the captured form data
-    if (rawData) gigPayload.raw_data = rawData;
-
-    // Insert gig completion
-    const { data: gig, error: gigErr } = await db
-        .from('gig_completions')
-        .insert(gigPayload)
-        .select('id')
-        .single();
-
-    if (gigErr) {
-        console.error('[Pulse DB] Gig save FAILED:', gigErr.message, gigErr.details, gigErr.hint);
-        // If the error is about extra columns, try again with minimal fields
-        if (gigErr.message && (gigErr.message.includes('column') || gigErr.message.includes('raw_data'))) {
-            console.log('[Pulse DB] Retrying with minimal fields...');
-            const { data: gig2, error: gigErr2 } = await db
-                .from('gig_completions')
-                .insert({
-                    agent_id:      agentId,
-                    gig_type:      gigType,
-                    points_earned: pointsEarned,
-                    bonus_points:  bonusPoints,
-                    summary:       summary
-                })
-                .select('id')
-                .single();
-            if (gigErr2) {
-                console.error('[Pulse DB] Retry also FAILED:', gigErr2.message);
-                return null;
-            }
-            console.log('[Pulse DB] Retry succeeded, gig id:', gig2.id);
-            return gig2;
-        }
-        return null;
-    }
-
-    console.log('[Pulse DB] Gig saved, id:', gig.id);
-
-    // Insert points ledger entry
-    const totalPts = pointsEarned + bonusPoints;
-    const { error: ledgerErr } = await db.from('points_ledger').insert({
-        agent_id:          agentId,
-        points:            totalPts,
-        transaction_type:  'earned',
-        reason:            summary,
-        gig_completion_id: gig.id
-    });
-    if (ledgerErr) console.warn('[Pulse DB] Ledger save error:', ledgerErr.message);
-
-    // Update agent's running balance in the agents table
     try {
-        const { data: agentRow } = await db
-            .from('agents')
-            .select('points_balance, total_earned')
-            .eq('id', agentId)
-            .single();
-        if (agentRow) {
-            await db.from('agents').update({
-                points_balance: (agentRow.points_balance || 0) + totalPts,
-                total_earned:   (agentRow.total_earned   || 0) + totalPts,
-                last_active:    new Date().toISOString()
-            }).eq('id', agentId);
-        }
-    } catch(e) { /* non-critical */ }
+        const db = getDB();
+        console.log('[Pulse DB] Inserting gig for agent:', agentId);
 
-    return gig;
+        // Insert gig completion
+        const gigPayload = {
+            agent_id:      agentId,
+            gig_type:      gigType,
+            points_earned: pointsEarned,
+            bonus_points:  bonusPoints,
+            summary:       summary
+        };
+        if (rawData) gigPayload.raw_data = rawData;
+
+        const gigResult = await db
+            .from('gig_completions')
+            .insert(gigPayload)
+            .select('id')
+            .single();
+
+        if (gigResult.error) {
+            console.error('[Pulse DB] Gig save FAILED:', gigResult.error.message, gigResult.error.details);
+            return null;
+        }
+
+        const gig = gigResult.data;
+        console.log('[Pulse DB] ✅ Gig saved, id:', gig.id);
+
+        // Insert points ledger entry
+        const totalPts = pointsEarned + bonusPoints;
+        try {
+            const ledgerResult = await db.from('points_ledger').insert({
+                agent_id:          agentId,
+                points:            totalPts,
+                transaction_type:  'earned',
+                reason:            summary,
+                gig_completion_id: gig.id
+            });
+            if (ledgerResult.error) console.warn('[Pulse DB] Ledger error:', ledgerResult.error.message);
+            else console.log('[Pulse DB] ✅ Ledger entry saved');
+        } catch(e) { console.warn('[Pulse DB] Ledger insert exception:', e); }
+
+        // Update agent's running balance
+        try {
+            const agentResult = await db
+                .from('agents')
+                .select('points_balance, total_earned')
+                .eq('id', agentId)
+                .single();
+            if (agentResult.data) {
+                await db.from('agents').update({
+                    points_balance: (agentResult.data.points_balance || 0) + totalPts,
+                    total_earned:   (agentResult.data.total_earned   || 0) + totalPts,
+                    last_active:    new Date().toISOString()
+                }).eq('id', agentId);
+                console.log('[Pulse DB] ✅ Agent balance updated');
+            }
+        } catch(e) { console.warn('[Pulse DB] Balance update exception:', e); }
+
+        return gig;
+
+    } catch (err) {
+        console.error('[Pulse DB] saveGigToDatabase CRASHED:', err.message, err);
+        return null;
+    }
 }
 
 /**
@@ -313,59 +299,61 @@ async function saveTraderProfile(profileData, agentId) {
  * Save a price basket reading.
  */
 async function savePriceBasket(basketData) {
-    console.log('[Pulse DB] savePriceBasket called:', basketData);
+    console.log('[Pulse DB] savePriceBasket called');
     if (!isDBReady() || !hasRealAgentId()) { console.warn('[Pulse DB] Price basket: DB not ready or no agent'); return; }
-    const db = getDB();
-    const agentId = localStorage.getItem('pulse_agent_id');
+    try {
+        const db = getDB();
+        const agentId = localStorage.getItem('pulse_agent_id');
 
-    const payload = {
-        agent_id:           agentId,
-        trader_name:        basketData.trader_name    || null,
-        township:           basketData.township       || null,
-        bread_price:        basketData.bread_price    || null,
-        maize_price:        basketData.maize_price    || null,
-        oil_price:          basketData.oil_price      || null,
-        milk_price:         basketData.milk_price     || null,
-        eggs_price:         basketData.eggs_price     || null,
-        sugar_price:        basketData.sugar_price    || null,
-        airtime_price:      basketData.airtime_price  || null,
-        sunflower_oil_price: basketData.sunflower_oil_price || null
-    };
-    console.log('[Pulse DB] Price basket payload:', payload);
+        const payload = {
+            agent_id:           agentId,
+            trader_name:        basketData.trader_name    || null,
+            township:           basketData.township       || null,
+            bread_price:        basketData.bread_price    || null,
+            maize_price:        basketData.maize_price    || null,
+            oil_price:          basketData.oil_price      || null,
+            milk_price:         basketData.milk_price     || null,
+            eggs_price:         basketData.eggs_price     || null,
+            sugar_price:        basketData.sugar_price    || null,
+            airtime_price:      basketData.airtime_price  || null,
+            sunflower_oil_price: basketData.sunflower_oil_price || null
+        };
+        console.log('[Pulse DB] Price basket payload:', payload);
 
-    const { error } = await db
-        .from('price_basket_readings')
-        .insert(payload);
-
-    if (error) console.error('[Pulse DB] Basket save FAILED:', error.message, error.details, error.hint);
-    else console.log('[Pulse DB] Price basket saved successfully!');
+        const result = await db.from('price_basket_readings').insert(payload);
+        if (result.error) console.error('[Pulse DB] Basket save FAILED:', result.error.message, result.error.details);
+        else console.log('[Pulse DB] ✅ Price basket saved!');
+    } catch(err) {
+        console.error('[Pulse DB] savePriceBasket CRASHED:', err.message, err);
+    }
 }
 
 /**
  * Save an infrastructure report.
  */
 async function saveInfraReport(reportData) {
-    console.log('[Pulse DB] saveInfraReport called:', reportData);
+    console.log('[Pulse DB] saveInfraReport called');
     if (!isDBReady() || !hasRealAgentId()) { console.warn('[Pulse DB] Infra report: DB not ready or no agent'); return; }
-    const db = getDB();
-    const agentId = localStorage.getItem('pulse_agent_id');
+    try {
+        const db = getDB();
+        const agentId = localStorage.getItem('pulse_agent_id');
 
-    const payload = {
-        agent_id:    agentId,
-        issue_type:  reportData.issue_type  || null,
-        location:    reportData.location    || null,
-        township:    reportData.township    || reportData.location || null,
-        severity:    reportData.severity    || null,
-        description: reportData.description || null
-    };
-    console.log('[Pulse DB] Infra report payload:', payload);
+        const payload = {
+            agent_id:    agentId,
+            issue_type:  reportData.issue_type  || null,
+            location:    reportData.location    || null,
+            township:    reportData.township    || reportData.location || null,
+            severity:    reportData.severity    || null,
+            description: reportData.description || null
+        };
+        console.log('[Pulse DB] Infra report payload:', payload);
 
-    const { error } = await db
-        .from('infrastructure_reports')
-        .insert(payload);
-
-    if (error) console.error('[Pulse DB] Infra save FAILED:', error.message, error.details, error.hint);
-    else console.log('[Pulse DB] Infra report saved successfully!');
+        const result = await db.from('infrastructure_reports').insert(payload);
+        if (result.error) console.error('[Pulse DB] Infra save FAILED:', result.error.message, result.error.details);
+        else console.log('[Pulse DB] ✅ Infra report saved!');
+    } catch(err) {
+        console.error('[Pulse DB] saveInfraReport CRASHED:', err.message, err);
+    }
 }
 
 /**
