@@ -132,65 +132,84 @@ async function syncAgentToDatabase() {
  */
 async function saveGigToDatabase({ gigType, pointsEarned, bonusPoints = 0, summary, rawData, traderId = null }) {
     // Local submission history is now handled by addLocalSubmission() in agent.html
+    console.log('[Pulse DB] saveGigToDatabase called:', { gigType, pointsEarned });
 
-    if (!isDBReady() || !navigator.onLine) return null;
+    if (!isDBReady()) { console.warn('[Pulse DB] DB not ready'); return null; }
+    if (!navigator.onLine) { console.warn('[Pulse DB] Offline'); return null; }
 
     const agentId = localStorage.getItem('pulse_agent_id');
-    if (!agentId) return null;
+    if (!agentId) { console.warn('[Pulse DB] No agent_id'); return null; }
 
     // Skip DB save if agent_id is a local fallback (not a valid UUID)
     if (agentId.startsWith('local_')) {
         console.warn('[Pulse DB] Agent not in DB yet — submission saved locally only');
-        // Try to sync in background
         syncAgentToDatabase().catch(() => {});
         return null;
     }
 
     const db = getDB();
+    console.log('[Pulse DB] Inserting gig for agent:', agentId);
 
-    // Get GPS if available
-    let gpsLat = null, gpsLng = null;
-    if (navigator.geolocation) {
-        await new Promise(resolve => {
-            navigator.geolocation.getCurrentPosition(
-                pos => { gpsLat = pos.coords.latitude; gpsLng = pos.coords.longitude; resolve(); },
-                () => resolve(),
-                { timeout: 3000 }
-            );
-        });
-    }
+    // Build payload with only core fields to avoid column mismatch errors
+    const gigPayload = {
+        agent_id:      agentId,
+        gig_type:      gigType,
+        points_earned: pointsEarned,
+        bonus_points:  bonusPoints,
+        summary:       summary
+    };
+
+    // Try to add optional fields — these may or may not exist as columns
+    // raw_data: jsonb column for storing the captured form data
+    if (rawData) gigPayload.raw_data = rawData;
 
     // Insert gig completion
     const { data: gig, error: gigErr } = await db
         .from('gig_completions')
-        .insert({
-            agent_id:      agentId,
-            gig_type:      gigType,
-            points_earned: pointsEarned,
-            bonus_points:  bonusPoints,
-            trader_id:     traderId,
-            summary,
-            raw_data:      rawData,
-            gps_lat:       gpsLat,
-            gps_lng:       gpsLng
-        })
+        .insert(gigPayload)
         .select('id')
         .single();
 
-    if (gigErr) { console.warn('[Pulse DB] Gig save error:', gigErr.message); return null; }
+    if (gigErr) {
+        console.error('[Pulse DB] Gig save FAILED:', gigErr.message, gigErr.details, gigErr.hint);
+        // If the error is about extra columns, try again with minimal fields
+        if (gigErr.message && (gigErr.message.includes('column') || gigErr.message.includes('raw_data'))) {
+            console.log('[Pulse DB] Retrying with minimal fields...');
+            const { data: gig2, error: gigErr2 } = await db
+                .from('gig_completions')
+                .insert({
+                    agent_id:      agentId,
+                    gig_type:      gigType,
+                    points_earned: pointsEarned,
+                    bonus_points:  bonusPoints,
+                    summary:       summary
+                })
+                .select('id')
+                .single();
+            if (gigErr2) {
+                console.error('[Pulse DB] Retry also FAILED:', gigErr2.message);
+                return null;
+            }
+            console.log('[Pulse DB] Retry succeeded, gig id:', gig2.id);
+            return gig2;
+        }
+        return null;
+    }
+
+    console.log('[Pulse DB] Gig saved, id:', gig.id);
 
     // Insert points ledger entry
     const totalPts = pointsEarned + bonusPoints;
-    await db.from('points_ledger').insert({
+    const { error: ledgerErr } = await db.from('points_ledger').insert({
         agent_id:          agentId,
         points:            totalPts,
         transaction_type:  'earned',
         reason:            summary,
         gig_completion_id: gig.id
-    }).catch(() => {});
+    });
+    if (ledgerErr) console.warn('[Pulse DB] Ledger save error:', ledgerErr.message);
 
     // Update agent's running balance in the agents table
-    // Read current balance, then update (no RPC needed)
     try {
         const { data: agentRow } = await db
             .from('agents')
@@ -204,7 +223,7 @@ async function saveGigToDatabase({ gigType, pointsEarned, bonusPoints = 0, summa
                 last_active:    new Date().toISOString()
             }).eq('id', agentId);
         }
-    } catch(e) { /* non-critical — balance will sync on next profile load */ }
+    } catch(e) { /* non-critical */ }
 
     return gig;
 }
@@ -294,7 +313,8 @@ async function saveTraderProfile(profileData, agentId) {
  * Save a price basket reading.
  */
 async function savePriceBasket(basketData) {
-    if (!isDBReady() || !hasRealAgentId()) return;
+    console.log('[Pulse DB] savePriceBasket called:', basketData);
+    if (!isDBReady() || !hasRealAgentId()) { console.warn('[Pulse DB] Price basket: DB not ready or no agent'); return; }
     const db = getDB();
     const agentId = localStorage.getItem('pulse_agent_id');
 
@@ -311,19 +331,22 @@ async function savePriceBasket(basketData) {
         airtime_price:      basketData.airtime_price  || null,
         sunflower_oil_price: basketData.sunflower_oil_price || null
     };
+    console.log('[Pulse DB] Price basket payload:', payload);
 
     const { error } = await db
         .from('price_basket_readings')
         .insert(payload);
 
-    if (error) console.warn('[Pulse DB] Basket save error:', error.message);
+    if (error) console.error('[Pulse DB] Basket save FAILED:', error.message, error.details, error.hint);
+    else console.log('[Pulse DB] Price basket saved successfully!');
 }
 
 /**
  * Save an infrastructure report.
  */
 async function saveInfraReport(reportData) {
-    if (!isDBReady() || !hasRealAgentId()) return;
+    console.log('[Pulse DB] saveInfraReport called:', reportData);
+    if (!isDBReady() || !hasRealAgentId()) { console.warn('[Pulse DB] Infra report: DB not ready or no agent'); return; }
     const db = getDB();
     const agentId = localStorage.getItem('pulse_agent_id');
 
@@ -335,12 +358,14 @@ async function saveInfraReport(reportData) {
         severity:    reportData.severity    || null,
         description: reportData.description || null
     };
+    console.log('[Pulse DB] Infra report payload:', payload);
 
     const { error } = await db
         .from('infrastructure_reports')
         .insert(payload);
 
-    if (error) console.warn('[Pulse DB] Infra save error:', error.message);
+    if (error) console.error('[Pulse DB] Infra save FAILED:', error.message, error.details, error.hint);
+    else console.log('[Pulse DB] Infra report saved successfully!');
 }
 
 /**

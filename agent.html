@@ -1621,21 +1621,36 @@
             html += `<div style="font-size:0.78rem;color:#d1d5f0;line-height:1.5;">${s.summary || '—'}</div>`;
             html += `</div>`;
 
-            // Data fields
+            // Data fields — collapsible accordion
             const data = s.data || {};
             const keys = Object.keys(data).filter(k => data[k] !== null && data[k] !== '' && data[k] !== undefined);
             if (keys.length > 0) {
+                const uniqueId = 'data-accordion-' + Date.now();
                 html += `<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:12px;overflow:hidden;">`;
-                html += `<div style="padding:11px 14px;font-size:0.58rem;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:#a855f7;border-bottom:1px solid var(--border);"><i class="fa-solid fa-database" style="margin-right:5px;"></i> Captured Data</div>`;
+                html += `<div onclick="toggleAccordion('${uniqueId}')" style="padding:11px 14px;font-size:0.58rem;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:#a855f7;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none;">`;
+                html += `<i class="fa-solid fa-database"></i> Captured Data (${keys.length} fields)`;
+                html += `<span style="margin-left:auto;display:flex;align-items:center;gap:4px;font-size:0.5rem;color:#8b8fa8;font-weight:600;text-transform:none;letter-spacing:0;">`;
+                html += `<span id="${uniqueId}-label">Tap to collapse</span>`;
+                html += `<i id="${uniqueId}-icon" class="fa-solid fa-chevron-up" style="font-size:0.55rem;transition:transform 0.3s;"></i>`;
+                html += `</span></div>`;
+                html += `<div id="${uniqueId}" style="transition:max-height 0.35s ease, opacity 0.25s ease;overflow:hidden;">`;
                 keys.forEach((key, i) => {
                     const label = FIELD_LABELS[key] || key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-                    const val = typeof data[key] === 'boolean' ? (data[key] ? 'Yes' : 'No') : data[key];
+                    let val = data[key];
+                    if (typeof val === 'boolean') val = val ? 'Yes' : 'No';
+                    // Format price values with R prefix
+                    if (key.includes('price') && val && !isNaN(val)) val = 'R' + parseFloat(val).toFixed(2);
                     const border = i < keys.length - 1 ? 'border-bottom:1px solid rgba(255,255,255,0.04);' : '';
                     html += `<div style="padding:10px 14px;display:flex;justify-content:space-between;align-items:center;${border}">`;
                     html += `<span style="font-size:0.7rem;color:#8b8fa8;font-weight:600;">${label}</span>`;
                     html += `<span style="font-size:0.75rem;color:#f0f2ff;font-weight:700;text-align:right;max-width:55%;word-break:break-word;">${val}</span>`;
                     html += `</div>`;
                 });
+                html += `</div></div>`;
+            } else {
+                html += `<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;">`;
+                html += `<div style="font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#a855f7;margin-bottom:6px;"><i class="fa-solid fa-database" style="margin-right:5px;"></i> Captured Data</div>`;
+                html += `<div style="font-size:0.72rem;color:#8b8fa8;">No detailed data available for this submission. Submissions made after this update will show full breakdowns.</div>`;
                 html += `</div>`;
             }
 
@@ -1647,6 +1662,24 @@
             document.getElementById('submission-detail-overlay').style.display = 'none';
         }
 
+        function toggleAccordion(id) {
+            const body  = document.getElementById(id);
+            const icon  = document.getElementById(id + '-icon');
+            const label = document.getElementById(id + '-label');
+            if (!body) return;
+            const isOpen = body.style.maxHeight !== '0px';
+            if (isOpen) {
+                body.style.maxHeight = '0px';
+                body.style.opacity = '0';
+                if (icon) icon.style.transform = 'rotate(180deg)';
+                if (label) label.textContent = 'Tap to expand';
+            } else {
+                body.style.maxHeight = body.scrollHeight + 'px';
+                body.style.opacity = '1';
+                if (icon) icon.style.transform = 'rotate(0deg)';
+                if (label) label.textContent = 'Tap to collapse';
+            }
+        }
         function openEditProfile() {
             document.getElementById('ep-firstname').value = localStorage.getItem('pulse_agent_firstname') || '';
             document.getElementById('ep-surname').value   = localStorage.getItem('pulse_agent_surname')   || '';
