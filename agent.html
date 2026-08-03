@@ -18,6 +18,7 @@
     <!-- Supabase JS client + Pulse SA DB layer -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.min.js"></script>
     <script src="./supabase.js"></script>
+    <script src="./dqs-engine.js"></script>
     <style>
         :root {
             --bg: #080a12;
@@ -157,6 +158,8 @@
         .gig-icon.basket { background: rgba(16,185,129,0.1); color: var(--green); }
         .gig-icon.verify { background: rgba(245,158,11,0.1); color: var(--orange); }
         .gig-icon.infra { background: rgba(59,130,246,0.1); color: #60a5fa; }
+        .gig-icon.kota { background: linear-gradient(135deg, #f97316, #ea580c); color: #fff; }
+        .gig-icon.tavern { background: linear-gradient(135deg, #a855f7, #7c3aed); color: #fff; }
         .gig-info { flex: 1; }
         .gig-info h4 { font-size: 0.85rem; font-weight: 700; margin-bottom: 2px; }
         .gig-info p { font-size: 0.65rem; color: var(--text-muted); }
@@ -626,6 +629,30 @@
                     </div>
                     <i class="fa-solid fa-chevron-right gig-arrow"></i>
                 </div>
+                <div class="gig-card" onclick="goTo('gig-kota')">
+                    <div class="gig-icon kota"><i class="fa-solid fa-burger"></i></div>
+                    <div class="gig-info">
+                        <h4>Kota / Fast-Food Profile</h4>
+                        <p>Log menu, pricing, ingredients &amp; sourcing data</p>
+                    </div>
+                    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0;">
+                        <span class="gig-reward">+300 pts</span>
+                        <span style="font-size:0.6rem;color:var(--text-muted);">≈ R3 airtime</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-right gig-arrow"></i>
+                </div>
+                <div class="gig-card" onclick="goTo('gig-tavern')">
+                    <div class="gig-icon tavern"><i class="fa-solid fa-beer-mug-empty"></i></div>
+                    <div class="gig-info">
+                        <h4>Tavern / Shebeen Profile</h4>
+                        <p>Log brands, stock, pricing &amp; licence data</p>
+                    </div>
+                    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0;">
+                        <span class="gig-reward">+350 pts</span>
+                        <span style="font-size:0.6rem;color:var(--text-muted);">≈ R3.50 airtime</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-right gig-arrow"></i>
+                </div>
             </div>
         </div>
 
@@ -880,6 +907,173 @@
                 <div class="field"><label>Additional Details (optional)</label><textarea id="ir-notes" placeholder="e.g. The water was cut at 6am with no warning. Traders can't operate."></textarea></div>
                 <button class="earn-btn" onclick="submitInfra()">✓ Submit Report &amp; Earn R2</button>
             </div>
+        </div>
+
+        <!-- ══ KOTA / FAST-FOOD PROFILE ══ -->
+        <div class="screen" id="screen-gig-kota">
+            <div class="screen-nav">
+                <div class="back-btn" onclick="goTo('home')"><i class="fa-solid fa-arrow-left"></i></div>
+                <h3>Kota / Fast-Food Profile</h3>
+            </div>
+            <div class="step-bar">
+                <div class="step-node active" id="kn1">1</div><div class="step-line" id="kl1"></div>
+                <div class="step-node" id="kn2">2</div><div class="step-line" id="kl2"></div>
+                <div class="step-node" id="kn3">3</div>
+            </div>
+            <div class="step-caption" id="kota-step-caption">Step 1 of 3 — Identity &amp; Menu</div>
+            <form onsubmit="return false;">
+                <div class="form-body">
+                    <!-- Step 1 -->
+                    <div class="profile-step active" id="ks1">
+                        <div class="field"><label>Business Name</label><input type="text" id="kt-name"></div>
+                        <div class="field"><label>Operator Name</label><input type="text" id="kt-operator"></div>
+                        <div class="field"><label>Location / Township</label>
+                            <select id="kt-township"><option>Soweto</option><option>Khayelitsha</option><option>Tembisa</option><option>Mitchells Plain</option><option>Alexandra</option><option>Other</option></select>
+                        </div>
+                        <div class="field"><label>Years Trading</label><input type="number" id="kt-years" min="0" max="30"></div>
+                        <div class="field"><label>Location Type</label>
+                            <select id="kt-location-type"><option>Stand/Table</option><option>Container</option><option>Room/House</option><option>Mobile cart</option></select>
+                        </div>
+                        <div class="field"><label>Kota Price: Basic</label>
+                            <div class="currency-row"><span class="curr-sym">R</span><input type="number" id="kt-price-basic"></div>
+                        </div>
+                        <div class="field"><label>Kota Price: Full House</label>
+                            <div class="currency-row"><span class="curr-sym">R</span><input type="number" id="kt-price-full"></div>
+                        </div>
+                        <div class="field"><label>Top 3 Items Sold</label><input type="text" id="kt-top-items" placeholder="e.g. Russian kota, chips, polony"></div>
+                        <div class="field"><label>Daily Units Sold</label><input type="number" id="kt-daily-units"></div>
+                        <button class="btn btn-primary" onclick="kotaStep(2)">Next → Ingredients</button>
+                    </div>
+                    <!-- Step 2 -->
+                    <div class="profile-step" id="ks2">
+                        <div class="field"><label>Bread Supplier</label><input type="text" id="kt-bread-supplier" placeholder="e.g. Albany, local bakery"></div>
+                        <div class="field"><label>Protein Source</label>
+                            <select id="kt-protein-source"><option>Butchery</option><option>Wholesaler</option><option>Supermarket</option><option>Other</option></select>
+                        </div>
+                        <div class="field"><label>Chips Supplier</label><input type="text" id="kt-chips-supplier"></div>
+                        <div class="field"><label>Polony Brand</label><input type="text" id="kt-polony-brand"></div>
+                        <div class="field"><label>Good Day Revenue</label>
+                            <div class="currency-row"><span class="curr-sym">R</span><input type="number" id="kt-good-day"></div>
+                        </div>
+                        <div class="field"><label>Bad Day Revenue</label>
+                            <div class="currency-row"><span class="curr-sym">R</span><input type="number" id="kt-bad-day"></div>
+                        </div>
+                        <div class="field"><label>Busiest Hours</label><input type="text" id="kt-busy-hours"></div>
+                        <div class="btn-row">
+                            <button class="btn btn-secondary" onclick="kotaStep(1)">← Back</button>
+                            <button class="btn btn-primary" onclick="kotaStep(3)">Next → Infrastructure</button>
+                        </div>
+                    </div>
+                    <!-- Step 3 -->
+                    <div class="profile-step" id="ks3">
+                        <div class="field"><label>Electricity Source</label>
+                            <select id="kt-electricity"><option>Prepaid Eskom</option><option>Municipal</option><option>Generator</option><option>Solar</option><option>None</option></select>
+                        </div>
+                        <div class="field"><label>Refrigeration</label>
+                            <select id="kt-fridge"><option>Yes - working fridge</option><option>Yes - but broken</option><option>No refrigeration</option></select>
+                        </div>
+                        <div class="field"><label>Water Access</label>
+                            <select id="kt-water"><option>Municipal tap</option><option>Communal</option><option>Borehole</option><option>None</option></select>
+                        </div>
+                        <div class="field"><label>Biggest Cost Challenge</label><input type="text" id="kt-challenge"></div>
+                        <div class="field"><label>Food Waste %</label>
+                            <select id="kt-waste"><option>Less than 5%</option><option>5-15%</option><option>15-30%</option><option>More than 30%</option></select>
+                        </div>
+                        <div class="field"><label>Supplier Reliability</label>
+                            <select id="kt-supplier-rating"><option value="1">1-Very unreliable</option><option value="2">2-Sometimes late</option><option value="3">3-Usually on time</option><option value="4">4-Very reliable</option><option value="5">5-Excellent</option></select>
+                        </div>
+                        <div class="btn-row">
+                            <button class="btn btn-secondary" onclick="kotaStep(2)">← Back</button>
+                        </div>
+                        <button class="earn-btn" onclick="submitKota()">✓ Submit Profile &amp; Earn R3</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- ══ TAVERN PROFILE ══ -->
+        <div class="screen" id="screen-gig-tavern">
+            <div class="screen-nav">
+                <div class="back-btn" onclick="goTo('home')"><i class="fa-solid fa-arrow-left"></i></div>
+                <h3>Tavern / Shebeen Profile</h3>
+            </div>
+            <div class="step-bar">
+                <div class="step-node active" id="tn1">1</div><div class="step-line" id="tl1"></div>
+                <div class="step-node" id="tn2">2</div><div class="step-line" id="tl2"></div>
+                <div class="step-node" id="tn3">3</div>
+            </div>
+            <div class="step-caption" id="tavern-step-caption">Step 1 of 3 — Identity &amp; License</div>
+            <form onsubmit="return false;">
+                <div class="form-body">
+                    <!-- Step 1 -->
+                    <div class="profile-step active" id="ts1">
+                        <div class="field"><label>Tavern Name</label><input type="text" id="tv-name"></div>
+                        <div class="field"><label>Operator Name</label><input type="text" id="tv-operator"></div>
+                        <div class="field"><label>Location / Township</label>
+                            <select id="tv-township"><option>Soweto</option><option>Khayelitsha</option><option>Tembisa</option><option>Mitchells Plain</option><option>Alexandra</option><option>Other</option></select>
+                        </div>
+                        <div class="field"><label>Years Operating</label><input type="number" id="tv-years"></div>
+                        <div class="field"><label>License Status</label>
+                            <select id="tv-license"><option>Licensed</option><option>Unlicensed</option><option>Application pending</option></select>
+                        </div>
+                        <div class="field"><label>Capacity</label><input type="number" id="tv-capacity" placeholder="Approx patrons at peak"></div>
+                        <div class="field"><label>Premises Type</label>
+                            <select id="tv-premises"><option>House extension</option><option>Dedicated building</option><option>Container</option><option>Yard/outdoor</option></select>
+                        </div>
+                        <button class="btn btn-primary" onclick="tavernStep(2)">Next → Stock &amp; Brands</button>
+                    </div>
+                    <!-- Step 2 -->
+                    <div class="profile-step" id="ts2">
+                        <div class="field"><label>Top 5 Beer Brands</label><input type="text" id="tv-beer-brands" placeholder="e.g. Castle Lager, Black Label, Heineken"></div>
+                        <div class="field"><label>Spirit Brands Stocked</label><input type="text" id="tv-spirits" placeholder="e.g. Jameson, KWV, Hennessy"></div>
+                        <div class="field"><label>Mixer Brands</label><input type="text" id="tv-mixers" placeholder="e.g. Coke, Sprite, Appletiser"></div>
+                        <div class="field"><label>Quart Price</label>
+                            <div class="currency-row"><span class="curr-sym">R</span><input type="number" id="tv-quart-price"></div>
+                        </div>
+                        <div class="field"><label>Dumpy / Can Price</label>
+                            <div class="currency-row"><span class="curr-sym">R</span><input type="number" id="tv-can-price"></div>
+                        </div>
+                        <div class="field"><label>Primary Supplier</label>
+                            <select id="tv-supplier"><option>Distributor/depot</option><option>Wholesaler/Cash &amp; Carry</option><option>Bottle store</option><option>Informal/other</option></select>
+                        </div>
+                        <div class="field"><label>Delivery Frequency</label>
+                            <select id="tv-delivery"><option>Daily</option><option>2-3 times/week</option><option>Weekly</option><option>Fortnightly+</option></select>
+                        </div>
+                        <div class="btn-row">
+                            <button class="btn btn-secondary" onclick="tavernStep(1)">← Back</button>
+                            <button class="btn btn-primary" onclick="tavernStep(3)">Next → Revenue &amp; Infra</button>
+                        </div>
+                    </div>
+                    <!-- Step 3 -->
+                    <div class="profile-step" id="ts3">
+                        <div class="field"><label>Good Day Revenue</label>
+                            <div class="currency-row"><span class="curr-sym">R</span><input type="number" id="tv-good-day"></div>
+                        </div>
+                        <div class="field"><label>Bad Day Revenue</label>
+                            <div class="currency-row"><span class="curr-sym">R</span><input type="number" id="tv-bad-day"></div>
+                        </div>
+                        <div class="field"><label>Peak Days</label><input type="text" id="tv-peak-days" placeholder="e.g. Friday, Saturday, month-end"></div>
+                        <div class="field"><label>Payment Methods</label>
+                            <select id="tv-payments"><option>Cash only</option><option>Cash + EFT</option><option>Cash + Card</option><option>Cash + Mobile Money</option></select>
+                        </div>
+                        <div class="field"><label>Fridge Count</label><input type="number" id="tv-fridge-count" min="0" max="20"></div>
+                        <div class="field"><label>Electricity Status</label>
+                            <select id="tv-electricity"><option>Prepaid Eskom</option><option>Municipal</option><option>Generator</option><option>Solar</option><option>None</option></select>
+                        </div>
+                        <div class="field"><label>Security Measures</label>
+                            <select id="tv-security"><option>None</option><option>Alarm</option><option>Security guard</option><option>Burglar bars</option><option>CCTV</option></select>
+                        </div>
+                        <div class="field"><label>Entertainment</label><input type="text" id="tv-entertainment" placeholder="e.g. Pool table, TV, DJ, Music system"></div>
+                        <div class="field"><label>Food Sold Alongside?</label>
+                            <select id="tv-food"><option>Yes - full meals</option><option>Yes - snacks only</option><option>No</option></select>
+                        </div>
+                        <div class="btn-row">
+                            <button class="btn btn-secondary" onclick="tavernStep(2)">← Back</button>
+                        </div>
+                        <button class="earn-btn" onclick="submitTavern()">✓ Submit Profile &amp; Earn R3.50</button>
+                    </div>
+                </div>
+            </form>
         </div>
 
         <!-- ══ WALLET SCREEN ══ -->
@@ -1215,6 +1409,8 @@
             }
             window.scrollTo(0, 0);
             if (screenId === 'gig-profile') { profileStep(1); }
+            if (screenId === 'gig-kota') { kotaStep(1); }
+            if (screenId === 'gig-tavern') { tavernStep(1); }
         }
 
 
@@ -1237,6 +1433,46 @@
                 node.className = 'step-node' + (i < n ? ' done' : i === n ? ' active' : '');
                 if (i < 6) {
                     const line = document.getElementById('sl' + i);
+                    line.className = 'step-line' + (i < n ? ' done' : '');
+                }
+            }
+            window.scrollTo(0, 0);
+        }
+
+        const kotaStepLabels = {
+            1: 'Step 1 of 3 — Identity & Menu',
+            2: 'Step 2 of 3 — Ingredients & Sourcing',
+            3: 'Step 3 of 3 — Infrastructure & Challenges'
+        };
+        function kotaStep(n) {
+            document.querySelectorAll('#screen-gig-kota .profile-step').forEach(s => s.classList.remove('active'));
+            document.getElementById('ks' + n).classList.add('active');
+            document.getElementById('kota-step-caption').textContent = kotaStepLabels[n];
+            for (let i = 1; i <= 3; i++) {
+                const node = document.getElementById('kn' + i);
+                node.className = 'step-node' + (i < n ? ' done' : i === n ? ' active' : '');
+                if (i < 3) {
+                    const line = document.getElementById('kl' + i);
+                    line.className = 'step-line' + (i < n ? ' done' : '');
+                }
+            }
+            window.scrollTo(0, 0);
+        }
+
+        const tavernStepLabels = {
+            1: 'Step 1 of 3 — Identity & License',
+            2: 'Step 2 of 3 — Stock & Brands',
+            3: 'Step 3 of 3 — Revenue & Infrastructure'
+        };
+        function tavernStep(n) {
+            document.querySelectorAll('#screen-gig-tavern .profile-step').forEach(s => s.classList.remove('active'));
+            document.getElementById('ts' + n).classList.add('active');
+            document.getElementById('tavern-step-caption').textContent = tavernStepLabels[n];
+            for (let i = 1; i <= 3; i++) {
+                const node = document.getElementById('tn' + i);
+                node.className = 'step-node' + (i < n ? ' done' : i === n ? ' active' : '');
+                if (i < 3) {
+                    const line = document.getElementById('tl' + i);
                     line.className = 'step-line' + (i < n ? ' done' : '');
                 }
             }
@@ -1270,7 +1506,9 @@
             shelf_audit:     { label: 'Spaza Shelf Audit',    icon: '🛒' },
             price_basket:    { label: 'Price Basket Monitor', icon: '🧺' },
             foot_traffic:    { label: 'Foot-Traffic Verify',  icon: '🚶' },
-            infrastructure:  { label: 'Infrastructure Report',icon: '💧' }
+            infrastructure:  { label: 'Infrastructure Report',icon: '💧' },
+            kota_profile:    { label: 'Kota / Fast-Food Profile', icon: '🍔' },
+            tavern_profile:  { label: 'Tavern / Shebeen Profile', icon: '🍺' }
         };
         function addLocalSubmission({ gigType, pointsEarned, summary, rawData }) {
             const meta = GIG_META[gigType] || { label: gigType, icon: '📋' };
@@ -1298,6 +1536,115 @@
 
         // ── Submit handlers (write to Supabase + award points) ──
 
+        async function submitKota() {
+            if (!confirm('Once submitted, this data cannot be changed. Are you sure you want to submit?')) return;
+
+            const name = document.getElementById('kt-name').value || 'Unknown Kota';
+            const location = document.getElementById('kt-township').value;
+            const summary = `Kota Profile: ${name}, ${location}`;
+
+            const rawData = {
+                business_name: name,
+                operator_name: document.getElementById('kt-operator').value,
+                township: location,
+                years_trading: document.getElementById('kt-years').value,
+                location_type: document.getElementById('kt-location-type').value,
+                price_basic: document.getElementById('kt-price-basic').value,
+                price_full: document.getElementById('kt-price-full').value,
+                top_items: document.getElementById('kt-top-items').value,
+                daily_units: document.getElementById('kt-daily-units').value,
+                bread_supplier: document.getElementById('kt-bread-supplier').value,
+                protein_source: document.getElementById('kt-protein-source').value,
+                chips_supplier: document.getElementById('kt-chips-supplier').value,
+                polony_brand: document.getElementById('kt-polony-brand').value,
+                good_day_revenue: document.getElementById('kt-good-day').value,
+                bad_day_revenue: document.getElementById('kt-bad-day').value,
+                busy_hours: document.getElementById('kt-busy-hours').value,
+                electricity: document.getElementById('kt-electricity').value,
+                refrigeration: document.getElementById('kt-fridge').value,
+                water_access: document.getElementById('kt-water').value,
+                challenge: document.getElementById('kt-challenge').value,
+                food_waste_pct: document.getElementById('kt-waste').value,
+                supplier_rating: document.getElementById('kt-supplier-rating').value
+            };
+
+            // Audit: hard block check
+            const block = (typeof checkHardBlocks === 'function') ? checkHardBlocks('kota_profile', rawData) : { blocked: false };
+            if (block.blocked) { alert('⛔ ' + block.reason); return; }
+
+            // DQS calculation
+            const gps = (typeof getGPSPosition === 'function') ? await getGPSPosition() : null;
+            const dqs = (typeof calculateDQS === 'function') ? calculateDQS('kota_profile', rawData, { hasGPS: !!gps, gpsCoords: gps }) : null;
+            const basePoints = 300;
+            const qualityBonus = dqs ? Math.round(basePoints * dqs.bonusPct) : 0;
+
+            award(basePoints, summary, qualityBonus);
+            addLocalSubmission({ gigType: 'kota_profile', pointsEarned: basePoints + qualityBonus, summary, rawData });
+            goTo('home');
+
+            if (dqs && typeof showDQSResult === 'function') showDQSResult(dqs, basePoints);
+
+            if (!navigator.onLine) { if (typeof queueOffline === 'function') queueOffline({ gigType: 'kota_profile', pointsEarned: basePoints, bonusPoints: qualityBonus, summary, rawData }); }
+            else {
+                try { if (typeof saveGigToDatabase === 'function') await saveGigToDatabase({ gigType: 'kota_profile', pointsEarned: basePoints, bonusPoints: qualityBonus, summary, rawData }); } catch(e) { console.error('[Submit] Gig DB error:', e); }
+                try { if (typeof saveKotaProfile === 'function') await saveKotaProfile(rawData); } catch(e) { console.error('[Submit] Kota DB error:', e); }
+            }
+        }
+
+        async function submitTavern() {
+            if (!confirm('Once submitted, this data cannot be changed. Are you sure you want to submit?')) return;
+
+            const name = document.getElementById('tv-name').value || 'Unknown Tavern';
+            const location = document.getElementById('tv-township').value;
+            const summary = `Tavern Profile: ${name}, ${location}`;
+
+            const rawData = {
+                tavern_name: name,
+                operator_name: document.getElementById('tv-operator').value,
+                township: location,
+                years_operating: document.getElementById('tv-years').value,
+                license_status: document.getElementById('tv-license').value,
+                capacity: document.getElementById('tv-capacity').value,
+                premises_type: document.getElementById('tv-premises').value,
+                beer_brands: document.getElementById('tv-beer-brands').value,
+                spirits: document.getElementById('tv-spirits').value,
+                mixers: document.getElementById('tv-mixers').value,
+                quart_price: document.getElementById('tv-quart-price').value,
+                can_price: document.getElementById('tv-can-price').value,
+                supplier_type: document.getElementById('tv-supplier').value,
+                delivery_frequency: document.getElementById('tv-delivery').value,
+                good_day_revenue: document.getElementById('tv-good-day').value,
+                bad_day_revenue: document.getElementById('tv-bad-day').value,
+                peak_days: document.getElementById('tv-peak-days').value,
+                payment_methods: document.getElementById('tv-payments').value,
+                fridge_count: document.getElementById('tv-fridge-count').value,
+                electricity: document.getElementById('tv-electricity').value,
+                security: document.getElementById('tv-security').value,
+                entertainment: document.getElementById('tv-entertainment').value,
+                food_sold: document.getElementById('tv-food').value
+            };
+
+            const block = (typeof checkHardBlocks === 'function') ? checkHardBlocks('tavern_profile', rawData) : { blocked: false };
+            if (block.blocked) { alert('⛔ ' + block.reason); return; }
+
+            const gps = (typeof getGPSPosition === 'function') ? await getGPSPosition() : null;
+            const dqs = (typeof calculateDQS === 'function') ? calculateDQS('tavern_profile', rawData, { hasGPS: !!gps, gpsCoords: gps }) : null;
+            const basePoints = 350;
+            const qualityBonus = dqs ? Math.round(basePoints * dqs.bonusPct) : 0;
+
+            award(basePoints, summary, qualityBonus);
+            addLocalSubmission({ gigType: 'tavern_profile', pointsEarned: basePoints + qualityBonus, summary, rawData });
+            goTo('home');
+
+            if (dqs && typeof showDQSResult === 'function') showDQSResult(dqs, basePoints);
+
+            if (!navigator.onLine) { if (typeof queueOffline === 'function') queueOffline({ gigType: 'tavern_profile', pointsEarned: basePoints, bonusPoints: qualityBonus, summary, rawData }); }
+            else {
+                try { if (typeof saveGigToDatabase === 'function') await saveGigToDatabase({ gigType: 'tavern_profile', pointsEarned: basePoints, bonusPoints: qualityBonus, summary, rawData }); } catch(e) { console.error('[Submit] Gig DB error:', e); }
+                try { if (typeof saveTavernProfile === 'function') await saveTavernProfile(rawData); } catch(e) { console.error('[Submit] Tavern DB error:', e); }
+            }
+        }
+
         async function submitProfile() {
             if (!confirm('Once submitted, this data cannot be changed. Are you sure you want to submit?')) return;
 
@@ -1323,14 +1670,23 @@
                 biggest_challenge: document.getElementById('a-challenge')    ? document.getElementById('a-challenge').value    : ''
             };
 
-            award(500, summary, bonus);
-            addLocalSubmission({ gigType: 'trader_profile', pointsEarned: 500 + bonus, summary, rawData });
+            const block = (typeof checkHardBlocks === 'function') ? checkHardBlocks('trader_profile', rawData) : { blocked: false };
+            if (block.blocked) { alert('⛔ ' + block.reason); return; }
+
+            const gps = (typeof getGPSPosition === 'function') ? await getGPSPosition() : null;
+            const dqs = (typeof calculateDQS === 'function') ? calculateDQS('trader_profile', rawData, { hasGPS: !!gps, gpsCoords: gps }) : null;
+            const basePoints = 500;
+            const qualityBonus = dqs ? Math.round(basePoints * dqs.bonusPct) + bonus : bonus;
+
+            award(basePoints, summary, qualityBonus);
+            addLocalSubmission({ gigType: 'trader_profile', pointsEarned: basePoints + qualityBonus, summary, rawData });
             goTo('home');
 
-            // DB saves — each independent so one crash doesn't block the other
-            if (!navigator.onLine) { if (typeof queueOffline === 'function') queueOffline({ gigType: 'trader_profile', pointsEarned: 500, bonusPoints: bonus, summary, rawData }); }
+            if (dqs && typeof showDQSResult === 'function') showDQSResult(dqs, basePoints);
+
+            if (!navigator.onLine) { if (typeof queueOffline === 'function') queueOffline({ gigType: 'trader_profile', pointsEarned: basePoints, bonusPoints: qualityBonus, summary, rawData }); }
             else {
-                try { if (typeof saveGigToDatabase === 'function') await saveGigToDatabase({ gigType: 'trader_profile', pointsEarned: 500, bonusPoints: bonus, summary, rawData }); } catch(e) { console.error('[Submit] Gig DB error:', e); }
+                try { if (typeof saveGigToDatabase === 'function') await saveGigToDatabase({ gigType: 'trader_profile', pointsEarned: basePoints, bonusPoints: qualityBonus, summary, rawData }); } catch(e) { console.error('[Submit] Gig DB error:', e); }
             }
         }
 
@@ -1346,13 +1702,23 @@
                 oil_price: document.getElementById('fmcg-oil-price') ? document.getElementById('fmcg-oil-price').value : ''
             };
 
-            award(200, summary);
-            addLocalSubmission({ gigType: 'shelf_audit', pointsEarned: 200, summary, rawData });
+            const block = (typeof checkHardBlocks === 'function') ? checkHardBlocks('shelf_audit', rawData) : { blocked: false };
+            if (block.blocked) { alert('⛔ ' + block.reason); return; }
+
+            const gps = (typeof getGPSPosition === 'function') ? await getGPSPosition() : null;
+            const dqs = (typeof calculateDQS === 'function') ? calculateDQS('shelf_audit', rawData, { hasGPS: !!gps, gpsCoords: gps }) : null;
+            const basePoints = 200;
+            const qualityBonus = dqs ? Math.round(basePoints * dqs.bonusPct) : 0;
+
+            award(basePoints, summary, qualityBonus);
+            addLocalSubmission({ gigType: 'shelf_audit', pointsEarned: basePoints + qualityBonus, summary, rawData });
             goTo('home');
 
-            if (!navigator.onLine) { if (typeof queueOffline === 'function') queueOffline({ gigType: 'shelf_audit', pointsEarned: 200, summary, rawData }); }
+            if (dqs && typeof showDQSResult === 'function') showDQSResult(dqs, basePoints);
+
+            if (!navigator.onLine) { if (typeof queueOffline === 'function') queueOffline({ gigType: 'shelf_audit', pointsEarned: basePoints, bonusPoints: qualityBonus, summary, rawData }); }
             else {
-                try { if (typeof saveGigToDatabase === 'function') await saveGigToDatabase({ gigType: 'shelf_audit', pointsEarned: 200, summary, rawData }); } catch(e) { console.error('[Submit] Gig DB error:', e); }
+                try { if (typeof saveGigToDatabase === 'function') await saveGigToDatabase({ gigType: 'shelf_audit', pointsEarned: basePoints, bonusPoints: qualityBonus, summary, rawData }); } catch(e) { console.error('[Submit] Gig DB error:', e); }
             }
         }
 
@@ -1363,7 +1729,6 @@
             const location = document.getElementById('bk-township').value;
             const priceIds = ['bk-bread','bk-maize','bk-oil','bk-milk','bk-eggs','bk-sugar','bk-airtime','bk-sunoil'];
             const logged   = priceIds.filter(id => document.getElementById(id) && document.getElementById(id).value !== '').length;
-            const bonus    = logged === 8 ? 30 : 0;
             const summary  = `Price Basket: ${name}, ${location} — ${logged}/8 items`;
 
             const rawData = { trader_name: name, township: location, items_logged: logged,
@@ -1377,14 +1742,24 @@
                 sunflower_oil_price: document.getElementById('bk-sunoil') ? document.getElementById('bk-sunoil').value  : null
             };
 
-            award(150, summary, bonus);
-            addLocalSubmission({ gigType: 'price_basket', pointsEarned: 150 + bonus, summary, rawData });
+            const block = (typeof checkHardBlocks === 'function') ? checkHardBlocks('price_basket', rawData) : { blocked: false };
+            if (block.blocked) { alert('⛔ ' + block.reason); return; }
+
+            const gps = (typeof getGPSPosition === 'function') ? await getGPSPosition() : null;
+            const dqs = (typeof calculateDQS === 'function') ? calculateDQS('price_basket', rawData, { hasGPS: !!gps, gpsCoords: gps }) : null;
+            const basePoints = 150;
+            const completionBonus = logged === 8 ? 30 : 0;
+            const qualityBonus = (dqs ? Math.round(basePoints * dqs.bonusPct) : 0) + completionBonus;
+
+            award(basePoints, summary, qualityBonus);
+            addLocalSubmission({ gigType: 'price_basket', pointsEarned: basePoints + qualityBonus, summary, rawData });
             goTo('home');
 
-            if (!navigator.onLine) { if (typeof queueOffline === 'function') queueOffline({ gigType: 'price_basket', pointsEarned: 150, bonusPoints: bonus, summary, rawData }); }
+            if (dqs && typeof showDQSResult === 'function') showDQSResult(dqs, basePoints);
+
+            if (!navigator.onLine) { if (typeof queueOffline === 'function') queueOffline({ gigType: 'price_basket', pointsEarned: basePoints, bonusPoints: qualityBonus, summary, rawData }); }
             else {
-                // Fire BOTH saves independently — one crash must NOT block the other
-                try { if (typeof saveGigToDatabase === 'function') await saveGigToDatabase({ gigType: 'price_basket', pointsEarned: 150, bonusPoints: bonus, summary, rawData }); } catch(e) { console.error('[Submit] Gig DB error:', e); }
+                try { if (typeof saveGigToDatabase === 'function') await saveGigToDatabase({ gigType: 'price_basket', pointsEarned: basePoints, bonusPoints: qualityBonus, summary, rawData }); } catch(e) { console.error('[Submit] Gig DB error:', e); }
                 try { if (typeof savePriceBasket === 'function') await savePriceBasket(rawData); } catch(e) { console.error('[Submit] Basket DB error:', e); }
             }
         }
@@ -1400,13 +1775,20 @@
 
             const rawData = { trader_name: name, status: status.value };
 
-            award(60, summary);
-            addLocalSubmission({ gigType: 'foot_traffic', pointsEarned: 60, summary, rawData });
+            const gps = (typeof getGPSPosition === 'function') ? await getGPSPosition() : null;
+            const dqs = (typeof calculateDQS === 'function') ? calculateDQS('foot_traffic', rawData, { hasGPS: !!gps, gpsCoords: gps }) : null;
+            const basePoints = 60;
+            const qualityBonus = dqs ? Math.round(basePoints * dqs.bonusPct) : 0;
+
+            award(basePoints, summary, qualityBonus);
+            addLocalSubmission({ gigType: 'foot_traffic', pointsEarned: basePoints + qualityBonus, summary, rawData });
             goTo('home');
 
-            if (!navigator.onLine) { if (typeof queueOffline === 'function') queueOffline({ gigType: 'foot_traffic', pointsEarned: 60, summary, rawData }); }
+            if (dqs && typeof showDQSResult === 'function') showDQSResult(dqs, basePoints);
+
+            if (!navigator.onLine) { if (typeof queueOffline === 'function') queueOffline({ gigType: 'foot_traffic', pointsEarned: basePoints, bonusPoints: qualityBonus, summary, rawData }); }
             else {
-                try { if (typeof saveGigToDatabase === 'function') await saveGigToDatabase({ gigType: 'foot_traffic', pointsEarned: 60, summary, rawData }); } catch(e) { console.error('[Submit] Gig DB error:', e); }
+                try { if (typeof saveGigToDatabase === 'function') await saveGigToDatabase({ gigType: 'foot_traffic', pointsEarned: basePoints, bonusPoints: qualityBonus, summary, rawData }); } catch(e) { console.error('[Submit] Gig DB error:', e); }
             }
         }
 
@@ -1431,14 +1813,23 @@
                 notes:       notes
             };
 
-            award(40, summary);
-            addLocalSubmission({ gigType: 'infrastructure', pointsEarned: 40, summary, rawData });
+            const block = (typeof checkHardBlocks === 'function') ? checkHardBlocks('infrastructure', rawData) : { blocked: false };
+            if (block.blocked) { alert('⛔ ' + block.reason); return; }
+
+            const gps = (typeof getGPSPosition === 'function') ? await getGPSPosition() : null;
+            const dqs = (typeof calculateDQS === 'function') ? calculateDQS('infrastructure', rawData, { hasGPS: !!gps, gpsCoords: gps }) : null;
+            const basePoints = 40;
+            const qualityBonus = dqs ? Math.round(basePoints * dqs.bonusPct) : 0;
+
+            award(basePoints, summary, qualityBonus);
+            addLocalSubmission({ gigType: 'infrastructure', pointsEarned: basePoints + qualityBonus, summary, rawData });
             goTo('home');
 
-            if (!navigator.onLine) { if (typeof queueOffline === 'function') queueOffline({ gigType: 'infrastructure', pointsEarned: 40, summary, rawData }); }
+            if (dqs && typeof showDQSResult === 'function') showDQSResult(dqs, basePoints);
+
+            if (!navigator.onLine) { if (typeof queueOffline === 'function') queueOffline({ gigType: 'infrastructure', pointsEarned: basePoints, bonusPoints: qualityBonus, summary, rawData }); }
             else {
-                // Fire BOTH saves independently — one crash must NOT block the other
-                try { if (typeof saveGigToDatabase === 'function') await saveGigToDatabase({ gigType: 'infrastructure', pointsEarned: 40, summary, rawData }); } catch(e) { console.error('[Submit] Gig DB error:', e); }
+                try { if (typeof saveGigToDatabase === 'function') await saveGigToDatabase({ gigType: 'infrastructure', pointsEarned: basePoints, bonusPoints: qualityBonus, summary, rawData }); } catch(e) { console.error('[Submit] Gig DB error:', e); }
                 try { if (typeof saveInfraReport === 'function') await saveInfraReport(rawData); } catch(e) { console.error('[Submit] Infra DB error:', e); }
             }
         }

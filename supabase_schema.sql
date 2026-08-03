@@ -193,12 +193,85 @@ create trigger on_points_ledger_insert
 -- ─────────────────────────────────────────────
 -- ROW LEVEL SECURITY
 -- ─────────────────────────────────────────────
+-- TABLE 7: KOTA / FAST-FOOD PROFILES
+-- ─────────────────────────────────────────────
+create table if not exists kota_profiles (
+  id                uuid default gen_random_uuid() primary key,
+  agent_id          uuid references agents(id) not null,
+  business_name     text,
+  operator_name     text,
+  township          text,
+  years_trading     text,
+  location_type     text,
+  price_basic       numeric,
+  price_full        numeric,
+  top_items         text,
+  daily_units       integer,
+  bread_supplier    text,
+  protein_source    text,
+  chips_supplier    text,
+  polony_brand      text,
+  good_day_revenue  numeric,
+  bad_day_revenue   numeric,
+  busy_hours        text,
+  electricity       text,
+  refrigeration     text,
+  water_access      text,
+  challenge         text,
+  food_waste_pct    text,
+  supplier_rating   text,
+  created_at        timestamp with time zone default now()
+);
+
+-- ─────────────────────────────────────────────
+-- TABLE 8: TAVERN / SHEBEEN PROFILES
+-- ─────────────────────────────────────────────
+create table if not exists tavern_profiles (
+  id                  uuid default gen_random_uuid() primary key,
+  agent_id            uuid references agents(id) not null,
+  tavern_name         text,
+  operator_name       text,
+  township            text,
+  years_operating     text,
+  license_status      text,
+  capacity            integer,
+  premises_type       text,
+  beer_brands         text,
+  spirits             text,
+  mixers              text,
+  quart_price         numeric,
+  can_price           numeric,
+  supplier_type       text,
+  delivery_frequency  text,
+  good_day_revenue    numeric,
+  bad_day_revenue     numeric,
+  peak_days           text,
+  payment_methods     text,
+  fridge_count        integer,
+  electricity         text,
+  security            text,
+  entertainment       text,
+  food_sold           text,
+  created_at          timestamp with time zone default now()
+);
+
+-- ─────────────────────────────────────────────
+-- ADD DQS COLUMNS TO GIG_COMPLETIONS (run separately if table exists)
+-- ─────────────────────────────────────────────
+-- alter table gig_completions add column if not exists dqs_score integer;
+-- alter table gig_completions add column if not exists audit_flags jsonb;
+
+-- ─────────────────────────────────────────────
+-- ROW LEVEL SECURITY
+-- ─────────────────────────────────────────────
 alter table agents                enable row level security;
 alter table traders               enable row level security;
 alter table gig_completions       enable row level security;
 alter table points_ledger         enable row level security;
 alter table price_basket_readings enable row level security;
 alter table infrastructure_reports enable row level security;
+alter table kota_profiles         enable row level security;
+alter table tavern_profiles       enable row level security;
 
 -- Insert policies (agents submitting via anon key)
 create policy "insert_gigs"    on gig_completions       for insert with check (true);
@@ -207,6 +280,8 @@ create policy "insert_baskets" on price_basket_readings for insert with check (t
 create policy "insert_infra"   on infrastructure_reports for insert with check (true);
 create policy "insert_ledger"  on points_ledger         for insert with check (true);
 create policy "insert_agents"  on agents               for insert with check (true);
+create policy "insert_kota"    on kota_profiles         for insert with check (true);
+create policy "insert_tavern"  on tavern_profiles       for insert with check (true);
 
 -- Select policies (dashboard reads)
 create policy "read_traders" on traders               for select using (true);
@@ -215,5 +290,10 @@ create policy "read_baskets" on price_basket_readings for select using (true);
 create policy "read_infra"   on infrastructure_reports for select using (true);
 create policy "read_agents"  on agents               for select using (true);
 create policy "read_ledger"  on points_ledger         for select using (true);
+create policy "read_kota"    on kota_profiles         for select using (true);
+create policy "read_tavern"  on tavern_profiles       for select using (true);
+
+-- Update policy for agent balance
+create policy "update_agents" on agents for update using (true);
 
 -- DONE

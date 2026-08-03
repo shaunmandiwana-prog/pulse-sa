@@ -223,7 +223,9 @@ function saveSubmissionLocally({ gigType, pointsEarned, summary, rawData }) {
         shelf_audit:     { label: 'Spaza Shelf Audit',    icon: '🛒' },
         price_basket:    { label: 'Price Basket Monitor', icon: '🧺' },
         foot_traffic:    { label: 'Foot-Traffic Verify',  icon: '🚶' },
-        infrastructure:  { label: 'Infrastructure Report',icon: '💧' }
+        infrastructure:  { label: 'Infrastructure Report',icon: '💧' },
+        kota_profile:    { label: 'Kota / Fast-Food Profile', icon: '🍔' },
+        tavern_profile:  { label: 'Tavern / Shebeen Profile', icon: '🍺' }
     };
     const meta = GIG_LABELS[gigType] || { label: gigType, icon: '📋' };
     const subs = JSON.parse(localStorage.getItem('pulse_submissions') || '[]');
@@ -353,6 +355,97 @@ async function saveInfraReport(reportData) {
         else console.log('[Pulse DB] ✅ Infra report saved!');
     } catch(err) {
         console.error('[Pulse DB] saveInfraReport CRASHED:', err.message, err);
+    }
+}
+
+/**
+ * Save a Kota profile.
+ */
+async function saveKotaProfile(kotaData) {
+    console.log('[Pulse DB] saveKotaProfile called');
+    if (!isDBReady() || !hasRealAgentId()) { console.warn('[Pulse DB] Kota profile: DB not ready or no agent'); return; }
+    try {
+        const db = getDB();
+        const agentId = localStorage.getItem('pulse_agent_id');
+
+        const payload = {
+            agent_id: agentId,
+            business_name: kotaData.business_name || null,
+            operator_name: kotaData.operator_name || null,
+            township: kotaData.township || null,
+            years_trading: kotaData.years_trading || null,
+            location_type: kotaData.location_type || null,
+            price_basic: kotaData.price_basic || null,
+            price_full: kotaData.price_full || null,
+            top_items: kotaData.top_items || null,
+            daily_units: kotaData.daily_units || null,
+            bread_supplier: kotaData.bread_supplier || null,
+            protein_source: kotaData.protein_source || null,
+            chips_supplier: kotaData.chips_supplier || null,
+            polony_brand: kotaData.polony_brand || null,
+            good_day_revenue: kotaData.good_day_revenue || null,
+            bad_day_revenue: kotaData.bad_day_revenue || null,
+            busy_hours: kotaData.busy_hours || null,
+            electricity: kotaData.electricity || null,
+            refrigeration: kotaData.refrigeration || null,
+            water_access: kotaData.water_access || null,
+            challenge: kotaData.challenge || null,
+            food_waste_pct: kotaData.food_waste_pct || null,
+            supplier_rating: kotaData.supplier_rating || null
+        };
+        console.log('[Pulse DB] Kota profile payload:', payload);
+
+        const result = await db.from('kota_profiles').insert(payload);
+        if (result.error) console.error('[Pulse DB] Kota profile save FAILED:', result.error.message, result.error.details);
+        else console.log('[Pulse DB] ✅ Kota profile saved!');
+    } catch(err) {
+        console.error('[Pulse DB] saveKotaProfile CRASHED:', err.message, err);
+    }
+}
+
+/**
+ * Save a Tavern profile.
+ */
+async function saveTavernProfile(tavernData) {
+    console.log('[Pulse DB] saveTavernProfile called');
+    if (!isDBReady() || !hasRealAgentId()) { console.warn('[Pulse DB] Tavern profile: DB not ready or no agent'); return; }
+    try {
+        const db = getDB();
+        const agentId = localStorage.getItem('pulse_agent_id');
+
+        const payload = {
+            agent_id: agentId,
+            tavern_name: tavernData.tavern_name || null,
+            operator_name: tavernData.operator_name || null,
+            township: tavernData.township || null,
+            years_operating: tavernData.years_operating || null,
+            license_status: tavernData.license_status || null,
+            capacity: tavernData.capacity || null,
+            premises_type: tavernData.premises_type || null,
+            beer_brands: tavernData.beer_brands || null,
+            spirits: tavernData.spirits || null,
+            mixers: tavernData.mixers || null,
+            quart_price: tavernData.quart_price || null,
+            can_price: tavernData.can_price || null,
+            supplier_type: tavernData.supplier_type || null,
+            delivery_frequency: tavernData.delivery_frequency || null,
+            good_day_revenue: tavernData.good_day_revenue || null,
+            bad_day_revenue: tavernData.bad_day_revenue || null,
+            peak_days: tavernData.peak_days || null,
+            payment_methods: tavernData.payment_methods || null,
+            fridge_count: tavernData.fridge_count || null,
+            electricity: tavernData.electricity || null,
+            security: tavernData.security || null,
+            entertainment: tavernData.entertainment || null,
+            food_sold: tavernData.food_sold || null
+        };
+        console.log('[Pulse DB] Tavern profile payload:', payload);
+
+        const result = await db.from('tavern_profiles').insert(payload);
+        if (result.error) console.error('[Pulse DB] Tavern profile save FAILED:', result.error.message, result.error.details);
+        else console.log('[Pulse DB] ✅ Tavern profile saved!');
+    } catch(err) {
+        console.error('[Pulse DB] saveTavernProfile CRASHED:', err.message, err);
     }
 }
 
