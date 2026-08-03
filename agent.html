@@ -1327,9 +1327,10 @@
             addLocalSubmission({ gigType: 'trader_profile', pointsEarned: 500 + bonus, summary, rawData });
             goTo('home');
 
-            if (typeof saveGigToDatabase === 'function') {
-                if (!navigator.onLine) { queueOffline({ gigType: 'trader_profile', pointsEarned: 500, bonusPoints: bonus, summary, rawData }); }
-                else { await saveGigToDatabase({ gigType: 'trader_profile', pointsEarned: 500, bonusPoints: bonus, summary, rawData }); }
+            // DB saves — each independent so one crash doesn't block the other
+            if (!navigator.onLine) { if (typeof queueOffline === 'function') queueOffline({ gigType: 'trader_profile', pointsEarned: 500, bonusPoints: bonus, summary, rawData }); }
+            else {
+                try { if (typeof saveGigToDatabase === 'function') await saveGigToDatabase({ gigType: 'trader_profile', pointsEarned: 500, bonusPoints: bonus, summary, rawData }); } catch(e) { console.error('[Submit] Gig DB error:', e); }
             }
         }
 
@@ -1349,9 +1350,9 @@
             addLocalSubmission({ gigType: 'shelf_audit', pointsEarned: 200, summary, rawData });
             goTo('home');
 
-            if (typeof saveGigToDatabase === 'function') {
-                if (!navigator.onLine) { queueOffline({ gigType: 'shelf_audit', pointsEarned: 200, summary, rawData }); }
-                else { await saveGigToDatabase({ gigType: 'shelf_audit', pointsEarned: 200, summary, rawData }); }
+            if (!navigator.onLine) { if (typeof queueOffline === 'function') queueOffline({ gigType: 'shelf_audit', pointsEarned: 200, summary, rawData }); }
+            else {
+                try { if (typeof saveGigToDatabase === 'function') await saveGigToDatabase({ gigType: 'shelf_audit', pointsEarned: 200, summary, rawData }); } catch(e) { console.error('[Submit] Gig DB error:', e); }
             }
         }
 
@@ -1380,12 +1381,11 @@
             addLocalSubmission({ gigType: 'price_basket', pointsEarned: 150 + bonus, summary, rawData });
             goTo('home');
 
-            if (typeof saveGigToDatabase === 'function') {
-                if (!navigator.onLine) { queueOffline({ gigType: 'price_basket', pointsEarned: 150, bonusPoints: bonus, summary, rawData }); }
-                else {
-                    await saveGigToDatabase({ gigType: 'price_basket', pointsEarned: 150, bonusPoints: bonus, summary, rawData });
-                    if (typeof savePriceBasket === 'function') await savePriceBasket(rawData);
-                }
+            if (!navigator.onLine) { if (typeof queueOffline === 'function') queueOffline({ gigType: 'price_basket', pointsEarned: 150, bonusPoints: bonus, summary, rawData }); }
+            else {
+                // Fire BOTH saves independently — one crash must NOT block the other
+                try { if (typeof saveGigToDatabase === 'function') await saveGigToDatabase({ gigType: 'price_basket', pointsEarned: 150, bonusPoints: bonus, summary, rawData }); } catch(e) { console.error('[Submit] Gig DB error:', e); }
+                try { if (typeof savePriceBasket === 'function') await savePriceBasket(rawData); } catch(e) { console.error('[Submit] Basket DB error:', e); }
             }
         }
 
@@ -1404,9 +1404,9 @@
             addLocalSubmission({ gigType: 'foot_traffic', pointsEarned: 60, summary, rawData });
             goTo('home');
 
-            if (typeof saveGigToDatabase === 'function') {
-                if (!navigator.onLine) { queueOffline({ gigType: 'foot_traffic', pointsEarned: 60, summary, rawData }); }
-                else { await saveGigToDatabase({ gigType: 'foot_traffic', pointsEarned: 60, summary, rawData }); }
+            if (!navigator.onLine) { if (typeof queueOffline === 'function') queueOffline({ gigType: 'foot_traffic', pointsEarned: 60, summary, rawData }); }
+            else {
+                try { if (typeof saveGigToDatabase === 'function') await saveGigToDatabase({ gigType: 'foot_traffic', pointsEarned: 60, summary, rawData }); } catch(e) { console.error('[Submit] Gig DB error:', e); }
             }
         }
 
@@ -1435,12 +1435,11 @@
             addLocalSubmission({ gigType: 'infrastructure', pointsEarned: 40, summary, rawData });
             goTo('home');
 
-            if (typeof saveGigToDatabase === 'function') {
-                if (!navigator.onLine) { queueOffline({ gigType: 'infrastructure', pointsEarned: 40, summary, rawData }); }
-                else {
-                    await saveGigToDatabase({ gigType: 'infrastructure', pointsEarned: 40, summary, rawData });
-                    if (typeof saveInfraReport === 'function') await saveInfraReport(rawData);
-                }
+            if (!navigator.onLine) { if (typeof queueOffline === 'function') queueOffline({ gigType: 'infrastructure', pointsEarned: 40, summary, rawData }); }
+            else {
+                // Fire BOTH saves independently — one crash must NOT block the other
+                try { if (typeof saveGigToDatabase === 'function') await saveGigToDatabase({ gigType: 'infrastructure', pointsEarned: 40, summary, rawData }); } catch(e) { console.error('[Submit] Gig DB error:', e); }
+                try { if (typeof saveInfraReport === 'function') await saveInfraReport(rawData); } catch(e) { console.error('[Submit] Infra DB error:', e); }
             }
         }
 
