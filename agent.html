@@ -19,6 +19,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.min.js"></script>
     <script src="./supabase.js"></script>
     <script src="./dqs-engine.js"></script>
+    <script src="./ai-questions.js"></script>
     <style>
         :root {
             --bg: #080a12;
@@ -800,6 +801,8 @@
                         <div class="btn-row">
                             <button class="btn btn-secondary" onclick="profileStep(5)">← Back</button>
                         </div>
+                        <button class="btn btn-ai" onclick="loadAISuggestions('trader_profile','ai-container-profile')" style="width:100%;margin:10px 0;padding:10px;background:linear-gradient(135deg,rgba(168,85,247,0.2),rgba(0,242,254,0.15));border:1px solid rgba(168,85,247,0.3);border-radius:10px;color:var(--teal);font-weight:700;font-size:0.85rem;cursor:pointer;">💡 AI Suggest More Questions</button>
+                        <div id="ai-container-profile"></div>
                         <button class="earn-btn" onclick="submitProfile()">✓ Submit Profile &amp; Earn R25</button>
                     </div>
                 </div>
@@ -828,6 +831,8 @@
                 <div class="field"><label>Overall Stock Level</label>
                     <select id="au-stock-level"><option>Well-stocked (full shelves)</option><option>Moderate (some gaps)</option><option>Low (many empty shelves)</option></select>
                 </div>
+                <button class="btn btn-ai" onclick="loadAISuggestions('shelf_audit','ai-container-audit')" style="width:100%;margin:10px 0;padding:10px;background:linear-gradient(135deg,rgba(168,85,247,0.2),rgba(0,242,254,0.15));border:1px solid rgba(168,85,247,0.3);border-radius:10px;color:var(--teal);font-weight:700;font-size:0.85rem;cursor:pointer;">💡 AI Suggest More Questions</button>
+                <div id="ai-container-audit"></div>
                 <button class="earn-btn" onclick="submitAudit()">✓ Submit Audit &amp; Earn R10</button>
             </div>
         </div>
@@ -854,6 +859,8 @@
                     <div class="basket-cell"><span class="item-name">Airtime voucher (R10)</span><div class="price-row"><span>R</span><input type="number" id="bk-airtime" min="0" step="0.5" placeholder="—"></div></div>
                     <div class="basket-cell"><span class="item-name">Sunflower oil (2L)</span><div class="price-row"><span>R</span><input type="number" id="bk-sunoil" min="0" step="0.5" placeholder="—"></div></div>
                 </div>
+                <button class="btn btn-ai" onclick="loadAISuggestions('price_basket','ai-container-basket')" style="width:100%;margin:10px 0;padding:10px;background:linear-gradient(135deg,rgba(168,85,247,0.2),rgba(0,242,254,0.15));border:1px solid rgba(168,85,247,0.3);border-radius:10px;color:var(--teal);font-weight:700;font-size:0.85rem;cursor:pointer;">💡 AI Suggest More Questions</button>
+                <div id="ai-container-basket"></div>
                 <button class="earn-btn" onclick="submitBasket()">✓ Submit Prices &amp; Earn R8</button>
             </div>
         </div>
@@ -880,6 +887,8 @@
                 </div>
                 <div class="field"><label>Any observation? (optional)</label><input type="text" id="ft-note" placeholder="e.g. Price increase on bread, new stock delivery"></div>
                 <div class="gps-badge"><i class="fa-solid fa-location-crosshairs"></i> GPS timestamp auto-captured on submit</div>
+                <button class="btn btn-ai" onclick="loadAISuggestions('foot_traffic','ai-container-verify')" style="width:100%;margin:10px 0;padding:10px;background:linear-gradient(135deg,rgba(168,85,247,0.2),rgba(0,242,254,0.15));border:1px solid rgba(168,85,247,0.3);border-radius:10px;color:var(--teal);font-weight:700;font-size:0.85rem;cursor:pointer;">💡 AI Suggest More Questions</button>
+                <div id="ai-container-verify"></div>
                 <button class="earn-btn" onclick="submitVerify()">✓ Confirm &amp; Earn R3</button>
             </div>
         </div>
@@ -905,6 +914,8 @@
                     <select id="ir-scale"><option>Just my place</option><option>My street</option><option>My block / section</option><option>Whole area</option></select>
                 </div>
                 <div class="field"><label>Additional Details (optional)</label><textarea id="ir-notes" placeholder="e.g. The water was cut at 6am with no warning. Traders can't operate."></textarea></div>
+                <button class="btn btn-ai" onclick="loadAISuggestions('infrastructure','ai-container-infra')" style="width:100%;margin:10px 0;padding:10px;background:linear-gradient(135deg,rgba(168,85,247,0.2),rgba(0,242,254,0.15));border:1px solid rgba(168,85,247,0.3);border-radius:10px;color:var(--teal);font-weight:700;font-size:0.85rem;cursor:pointer;">💡 AI Suggest More Questions</button>
+                <div id="ai-container-infra"></div>
                 <button class="earn-btn" onclick="submitInfra()">✓ Submit Report &amp; Earn R2</button>
             </div>
         </div>
@@ -985,6 +996,8 @@
                         <div class="btn-row">
                             <button class="btn btn-secondary" onclick="kotaStep(2)">← Back</button>
                         </div>
+                        <button class="btn btn-ai" onclick="loadAISuggestions('kota_profile','ai-container-kota')" style="width:100%;margin:10px 0;padding:10px;background:linear-gradient(135deg,rgba(168,85,247,0.2),rgba(0,242,254,0.15));border:1px solid rgba(168,85,247,0.3);border-radius:10px;color:var(--teal);font-weight:700;font-size:0.85rem;cursor:pointer;">💡 AI Suggest More Questions</button>
+                        <div id="ai-container-kota"></div>
                         <button class="earn-btn" onclick="submitKota()">✓ Submit Profile &amp; Earn R3</button>
                     </div>
                 </div>
@@ -1070,6 +1083,8 @@
                         <div class="btn-row">
                             <button class="btn btn-secondary" onclick="tavernStep(2)">← Back</button>
                         </div>
+                        <button class="btn btn-ai" onclick="loadAISuggestions('tavern_profile','ai-container-tavern')" style="width:100%;margin:10px 0;padding:10px;background:linear-gradient(135deg,rgba(168,85,247,0.2),rgba(0,242,254,0.15));border:1px solid rgba(168,85,247,0.3);border-radius:10px;color:var(--teal);font-weight:700;font-size:0.85rem;cursor:pointer;">💡 AI Suggest More Questions</button>
+                        <div id="ai-container-tavern"></div>
                         <button class="earn-btn" onclick="submitTavern()">✓ Submit Profile &amp; Earn R3.50</button>
                     </div>
                 </div>
@@ -1534,6 +1549,39 @@
             setTimeout(() => t.classList.remove('show'), 3500);
         }
 
+        // ── AI Question Suggestions ──
+        let _activeAIQuestions = {}; // Tracks loaded AI questions per gig type
+
+        async function loadAISuggestions(gigType, containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            // Show loading state
+            container.innerHTML = '<div style="text-align:center;padding:12px;color:var(--teal);font-size:0.8rem;"><i class="fa-solid fa-spinner fa-spin"></i> Loading smart suggestions...</div>';
+
+            try {
+                const questions = (typeof suggestQuestionsAI === 'function')
+                    ? await suggestQuestionsAI(gigType, {}, 5)
+                    : (typeof suggestQuestions === 'function')
+                        ? suggestQuestions(gigType, {}, 5)
+                        : [];
+
+                _activeAIQuestions[gigType] = questions;
+                if (typeof renderSuggestions === 'function') {
+                    renderSuggestions(containerId, questions);
+                }
+            } catch(e) {
+                console.error('[Pulse AI] Failed to load suggestions:', e);
+                container.innerHTML = '<div style="color:#ef4444;font-size:0.8rem;padding:8px;">Could not load suggestions. You can still submit normally.</div>';
+            }
+        }
+
+        function getAIAnswersForGig(gigType) {
+            const questions = _activeAIQuestions[gigType] || [];
+            if (questions.length === 0) return {};
+            return (typeof collectAIAnswers === 'function') ? collectAIAnswers(questions) : {};
+        }
+
         // ── Submit handlers (write to Supabase + award points) ──
 
         async function submitKota() {
@@ -1567,6 +1615,10 @@
                 food_waste_pct: document.getElementById('kt-waste').value,
                 supplier_rating: document.getElementById('kt-supplier-rating').value
             };
+
+            // Collect AI suggestion answers
+            const aiAnswers = getAIAnswersForGig('kota_profile');
+            if (Object.keys(aiAnswers).length > 0) rawData.ai_answers = aiAnswers;
 
             // Audit: hard block check
             const block = (typeof checkHardBlocks === 'function') ? checkHardBlocks('kota_profile', rawData) : { blocked: false };
@@ -1624,6 +1676,9 @@
                 food_sold: document.getElementById('tv-food').value
             };
 
+            const aiAnswers = getAIAnswersForGig('tavern_profile');
+            if (Object.keys(aiAnswers).length > 0) rawData.ai_answers = aiAnswers;
+
             const block = (typeof checkHardBlocks === 'function') ? checkHardBlocks('tavern_profile', rawData) : { blocked: false };
             if (block.blocked) { alert('⛔ ' + block.reason); return; }
 
@@ -1670,6 +1725,9 @@
                 biggest_challenge: document.getElementById('a-challenge')    ? document.getElementById('a-challenge').value    : ''
             };
 
+            const aiAnswers = getAIAnswersForGig('trader_profile');
+            if (Object.keys(aiAnswers).length > 0) rawData.ai_answers = aiAnswers;
+
             const block = (typeof checkHardBlocks === 'function') ? checkHardBlocks('trader_profile', rawData) : { blocked: false };
             if (block.blocked) { alert('⛔ ' + block.reason); return; }
 
@@ -1701,6 +1759,9 @@
                 oil_brand: document.getElementById('fmcg-oil-brand') ? document.getElementById('fmcg-oil-brand').value : '',
                 oil_price: document.getElementById('fmcg-oil-price') ? document.getElementById('fmcg-oil-price').value : ''
             };
+
+            const aiAnswers = getAIAnswersForGig('shelf_audit');
+            if (Object.keys(aiAnswers).length > 0) rawData.ai_answers = aiAnswers;
 
             const block = (typeof checkHardBlocks === 'function') ? checkHardBlocks('shelf_audit', rawData) : { blocked: false };
             if (block.blocked) { alert('⛔ ' + block.reason); return; }
@@ -1742,6 +1803,9 @@
                 sunflower_oil_price: document.getElementById('bk-sunoil') ? document.getElementById('bk-sunoil').value  : null
             };
 
+            const aiAnswers = getAIAnswersForGig('price_basket');
+            if (Object.keys(aiAnswers).length > 0) rawData.ai_answers = aiAnswers;
+
             const block = (typeof checkHardBlocks === 'function') ? checkHardBlocks('price_basket', rawData) : { blocked: false };
             if (block.blocked) { alert('⛔ ' + block.reason); return; }
 
@@ -1775,6 +1839,8 @@
 
             const rawData = { trader_name: name, status: status.value };
 
+            const aiAnswers = getAIAnswersForGig('foot_traffic');
+            if (Object.keys(aiAnswers).length > 0) rawData.ai_answers = aiAnswers;
             const gps = (typeof getGPSPosition === 'function') ? await getGPSPosition() : null;
             const dqs = (typeof calculateDQS === 'function') ? calculateDQS('foot_traffic', rawData, { hasGPS: !!gps, gpsCoords: gps }) : null;
             const basePoints = 60;
@@ -1812,6 +1878,9 @@
                 scale:       scale,
                 notes:       notes
             };
+
+            const aiAnswers = getAIAnswersForGig('infrastructure');
+            if (Object.keys(aiAnswers).length > 0) rawData.ai_answers = aiAnswers;
 
             const block = (typeof checkHardBlocks === 'function') ? checkHardBlocks('infrastructure', rawData) : { blocked: false };
             if (block.blocked) { alert('⛔ ' + block.reason); return; }
