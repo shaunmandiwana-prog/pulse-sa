@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pulse SA — Earn Rewards by Helping Your Community</title>
+    <title>Pulse SA â€” Earn Rewards by Helping Your Community</title>
     <meta name="description" content="Complete quick data gigs in your area and earn Pulse Points redeemable for airtime, vouchers or cash.">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#a855f7">
@@ -43,7 +43,7 @@
             align-items: center;
         }
 
-        /* ── OFFLINE BANNER ── */
+        /* â”€â”€ OFFLINE BANNER â”€â”€ */
         #offline-banner {
             display: none;
             width: 100%;
@@ -57,7 +57,7 @@
         }
         body.offline #offline-banner { display: block; }
 
-        /* ── APP HEADER ── */
+        /* â”€â”€ APP HEADER â”€â”€ */
         .app-header {
             width: 100%;
             max-width: 480px;
@@ -93,7 +93,7 @@
         .wallet-chip:hover { background: rgba(168,85,247,0.2); }
         .wallet-chip .currency { color: var(--teal); font-size: 0.7rem; }
 
-        /* ── MAIN CONTENT ── */
+        /* â”€â”€ MAIN CONTENT â”€â”€ */
         .agent-app {
             width: 100%;
             max-width: 480px;
@@ -102,11 +102,11 @@
             overflow-x: hidden;
         }
 
-        /* ── SCREENS ── */
+        /* â”€â”€ SCREENS â”€â”€ */
         .screen { display: none; flex-direction: column; }
         .screen.active { display: flex; }
 
-        /* ── HOME SCREEN ── */
+        /* â”€â”€ HOME SCREEN â”€â”€ */
         .hero {
             padding: 20px 18px 14px;
             background: linear-gradient(180deg, rgba(168,85,247,0.06) 0%, transparent 100%);
@@ -172,7 +172,7 @@
         }
         .gig-arrow { color: var(--text-muted); font-size: 0.75rem; margin-left: 4px; }
 
-        /* ── SCREEN HEADER ── */
+        /* â”€â”€ SCREEN HEADER â”€â”€ */
         .screen-nav {
             display: flex;
             align-items: center;
@@ -197,7 +197,7 @@
         }
         .screen-nav h3 { font-size: 0.95rem; font-weight: 800; }
 
-        /* ── FORMS ── */
+        /* â”€â”€ FORMS â”€â”€ */
         .form-body { padding: 16px 18px; display: flex; flex-direction: column; gap: 14px; }
         .form-hint { font-size: 0.68rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 4px; }
         .field { display: flex; flex-direction: column; gap: 5px; }
@@ -346,7 +346,7 @@
         }
         .earn-btn:active { transform: scale(0.98); }
 
-        /* ── WALLET SCREEN ── */
+        /* â”€â”€ WALLET SCREEN â”€â”€ */
         .wallet-hero {
             margin: 20px 18px;
             background: linear-gradient(135deg, rgba(168,85,247,0.12), rgba(0,242,254,0.08));
@@ -376,7 +376,7 @@
         .history-item .desc { font-size: 0.72rem; color: var(--text-muted); flex: 1; }
         .history-item .amt { font-size: 0.8rem; font-weight: 800; color: var(--green); }
 
-        /* ── SUCCESS TOAST ── */
+        /* â”€â”€ SUCCESS TOAST â”€â”€ */
         .toast {
             position: fixed;
             bottom: 90px;
@@ -396,7 +396,7 @@
         .toast.show { display: block; animation: slideUp 0.3s ease; }
         @keyframes slideUp { from { opacity:0; transform: translateX(-50%) translateY(10px); } to { opacity:1; transform: translateX(-50%) translateY(0); } }
 
-        /* ── BOTTOM NAV ── */
+        /* â”€â”€ BOTTOM NAV â”€â”€ */
         .bottom-nav {
             position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
             width: 100%; max-width: 480px;
@@ -452,9 +452,9 @@
     </style>
 </head>
 <body>
-    <div id="offline-banner">⚡ Offline Mode — data saved, submit when connected</div>
+    <div id="offline-banner">âš¡ Offline Mode â€” data saved, submit when connected</div>
 
-    <!-- ══ ONBOARDING OVERLAY (shows on first launch only) ══ -->
+    <!-- â•â• ONBOARDING OVERLAY (shows on first launch only) â•â• -->
     <div id="onboarding-overlay" style="
         display:none;
         position:fixed;inset:0;z-index:9999;
@@ -467,7 +467,7 @@
         <div style="width:100%;max-width:420px;padding:32px 24px 40px;">
             <!-- Logo & Intro -->
             <div style="text-align:center;margin-bottom:28px;">
-                <div style="display:inline-flex;align-items:center;justify-content:center;width:60px;height:60px;border-radius:18px;background:linear-gradient(135deg,#a855f7,#7c3aed);font-size:1.5rem;margin-bottom:14px;box-shadow:0 8px 24px rgba(168,85,247,0.4);">⚡</div>
+                <div style="display:inline-flex;align-items:center;justify-content:center;width:60px;height:60px;border-radius:18px;background:linear-gradient(135deg,#a855f7,#7c3aed);font-size:1.5rem;margin-bottom:14px;box-shadow:0 8px 24px rgba(168,85,247,0.4);">âš¡</div>
                 <h2 style="font-size:1.35rem;font-weight:800;margin-bottom:6px;">Create Your Agent Profile</h2>
                 <p style="font-size:0.72rem;color:#8b8fa8;line-height:1.6;">You are joining South Africa's intelligence network.<br>All fields are required to verify your identity.</p>
             </div>
@@ -528,12 +528,12 @@
                 <!-- Submit -->
                 <button id="ob-submit-btn" onclick="completeOnboarding()"
                     style="width:100%;background:linear-gradient(135deg,#a855f7,#7c3aed);border:none;border-radius:12px;padding:15px;color:#fff;font-family:inherit;font-size:0.92rem;font-weight:800;cursor:pointer;margin-top:6px;letter-spacing:0.3px;box-shadow:0 6px 20px rgba(168,85,247,0.4);">
-                    ⭐ Create My Profile &amp; Start Earning
+                    â­ Create My Profile &amp; Start Earning
                 </button>
             </div>
 
             <p style="text-align:center;font-size:0.6rem;color:#8b8fa8;margin-top:16px;line-height:1.6;">
-                <span style="color:#a855f7;">*</span> All fields are required &nbsp;·&nbsp;
+                <span style="color:#a855f7;">*</span> All fields are required &nbsp;Â·&nbsp;
                 Your information is collected solely for agent verification and earnings tracking.
                 Pulse SA does not sell or share your personal data.
             </p>
@@ -554,12 +554,12 @@
 
     <div class="agent-app">
 
-        <!-- ══ HOME SCREEN ══ -->
+        <!-- â•â• HOME SCREEN â•â• -->
         <div class="screen active" id="screen-home">
             <div class="hero">
                 <div style="font-size:0.6rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--purple);margin-bottom:6px;">You are the Intelligence Network</div>
-                <h2 style="font-size:1.25rem;">Awe, Champ! 👋</h2>
-                <p>Complete quick gigs in your hood to earn <strong style="color:var(--orange)">Pulse Points</strong> — and help build your community's economic future using Data.</p>
+                <h2 style="font-size:1.25rem;">Awe, Champ! ðŸ‘‹</h2>
+                <p>Complete quick gigs in your hood to earn <strong style="color:var(--orange)">Pulse Points</strong> â€” and help build your community's economic future using Data.</p>
             </div>
             <div class="earnings-today">
                 <div>
@@ -578,7 +578,7 @@
                     </div>
                     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0;">
                         <span class="gig-reward">+500 pts</span>
-                        <span style="font-size:0.6rem;color:var(--text-muted);">≈ R5 airtime</span>
+                        <span style="font-size:0.6rem;color:var(--text-muted);">â‰ˆ R5 airtime</span>
                     </div>
                     <i class="fa-solid fa-chevron-right gig-arrow"></i>
                 </div>
@@ -590,7 +590,7 @@
                     </div>
                     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0;">
                         <span class="gig-reward">+200 pts</span>
-                        <span style="font-size:0.6rem;color:var(--text-muted);">≈ R2 airtime</span>
+                        <span style="font-size:0.6rem;color:var(--text-muted);">â‰ˆ R2 airtime</span>
                     </div>
                     <i class="fa-solid fa-chevron-right gig-arrow"></i>
                 </div>
@@ -602,7 +602,7 @@
                     </div>
                     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0;">
                         <span class="gig-reward">+150 pts</span>
-                        <span style="font-size:0.6rem;color:var(--text-muted);">≈ R1.50 airtime</span>
+                        <span style="font-size:0.6rem;color:var(--text-muted);">â‰ˆ R1.50 airtime</span>
                     </div>
                     <i class="fa-solid fa-chevron-right gig-arrow"></i>
                 </div>
@@ -614,7 +614,7 @@
                     </div>
                     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0;">
                         <span class="gig-reward">+60 pts</span>
-                        <span style="font-size:0.6rem;color:var(--text-muted);">≈ R0.60 airtime</span>
+                        <span style="font-size:0.6rem;color:var(--text-muted);">â‰ˆ R0.60 airtime</span>
                     </div>
                     <i class="fa-solid fa-chevron-right gig-arrow"></i>
                 </div>
@@ -626,7 +626,7 @@
                     </div>
                     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0;">
                         <span class="gig-reward">+40 pts</span>
-                        <span style="font-size:0.6rem;color:var(--text-muted);">≈ R0.40 airtime</span>
+                        <span style="font-size:0.6rem;color:var(--text-muted);">â‰ˆ R0.40 airtime</span>
                     </div>
                     <i class="fa-solid fa-chevron-right gig-arrow"></i>
                 </div>
@@ -638,7 +638,7 @@
                     </div>
                     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0;">
                         <span class="gig-reward">+300 pts</span>
-                        <span style="font-size:0.6rem;color:var(--text-muted);">≈ R3 airtime</span>
+                        <span style="font-size:0.6rem;color:var(--text-muted);">â‰ˆ R3 airtime</span>
                     </div>
                     <i class="fa-solid fa-chevron-right gig-arrow"></i>
                 </div>
@@ -650,14 +650,14 @@
                     </div>
                     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0;">
                         <span class="gig-reward">+350 pts</span>
-                        <span style="font-size:0.6rem;color:var(--text-muted);">≈ R3.50 airtime</span>
+                        <span style="font-size:0.6rem;color:var(--text-muted);">â‰ˆ R3.50 airtime</span>
                     </div>
                     <i class="fa-solid fa-chevron-right gig-arrow"></i>
                 </div>
             </div>
         </div>
 
-        <!-- ══ TRADER PROFILE GIG (6 Steps) ══ -->
+        <!-- â•â• TRADER PROFILE GIG (6 Steps) â•â• -->
         <div class="screen" id="screen-gig-profile">
             <div class="screen-nav">
                 <div class="back-btn" onclick="goTo('home')"><i class="fa-solid fa-arrow-left"></i></div>
@@ -671,7 +671,7 @@
                 <div class="step-node" id="sn5">5</div><div class="step-line" id="sl5"></div>
                 <div class="step-node" id="sn6">6</div>
             </div>
-            <div class="step-caption" id="step-caption">Step 1 of 6 — Identity &amp; Profile</div>
+            <div class="step-caption" id="step-caption">Step 1 of 6 â€” Identity &amp; Profile</div>
             <form onsubmit="return false;">
                 <div class="form-body">
                     <!-- Step 1 -->
@@ -693,7 +693,7 @@
                                 </optgroup>
                                 <optgroup label="Services">
                                     <option>Roadside Service (phone charging, shoe repair, key cutting)</option>
-                                    <option>Childcare / Crèche</option><option>Tutoring / Skills Training</option>
+                                    <option>Childcare / CrÃ¨che</option><option>Tutoring / Skills Training</option>
                                     <option>Domestic / Cleaning Services</option>
                                 </optgroup>
                                 <optgroup label="Informal Finance">
@@ -703,7 +703,7 @@
                             </select>
                         </div>
                         <div class="field"><label>Township / Area</label>
-                            <select id="a-township"><option>Soweto</option><option>Khayelitsha</option><option>Tembisa</option><option>Mitchells Plain</option><option>Alexandra</option><option>Other</option></select>
+                            <select id="a-township"><optgroup label="â”€â”€ Gauteng: City of Johannesburg â”€â”€"><option>Soweto</option><option>Alexandra</option><option>Diepsloot</option><option>Orange Farm</option><option>Ivory Park</option><option>Cosmo City</option><option>Zandspruit</option><option>Braamfischerville</option><option>Ennerdale</option><option>Lenasia</option><option>Eldorado Park</option><option>Meadowlands</option><option>Diepkloof</option><option>Orlando</option><option>Dobsonville</option><option>Pimville</option><option>Kliptown</option><option>Protea Glen</option><option>Zola</option><option>Naledi</option><option>Dlamini</option><option>Jabulani</option></optgroup><optgroup label="â”€â”€ Gauteng: City of Ekurhuleni â”€â”€"><option>Tembisa</option><option>Katlehong</option><option>Vosloorus</option><option>Thokoza</option><option>Etwatwa</option><option>Daveyton</option><option>Duduza</option><option>KwaThema</option><option>Tsakane</option><option>Wattville</option></optgroup><optgroup label="â”€â”€ Gauteng: City of Tshwane â”€â”€"><option>Mamelodi</option><option>Soshanguve</option><option>Atteridgeville</option><option>Hammanskraal</option><option>Ga-Rankuwa</option><option>Mabopane</option><option>Winterveld</option><option>Olievenhoutbosch</option></optgroup><optgroup label="â”€â”€ Gauteng: Sedibeng & West Rand â”€â”€"><option>Sebokeng</option><option>Evaton</option><option>Sharpeville</option><option>Ratanda</option><option>Kagiso</option><option>Bekkersdal</option><option>Mohlakeng</option><option>Munsieville</option></optgroup><optgroup label="â”€â”€ Western Cape: City of Cape Town â”€â”€"><option>Khayelitsha</option><option>Mitchells Plain</option><option>Gugulethu</option><option>Nyanga</option><option>Langa</option><option>Philippi</option><option>Delft</option><option>Mfuleni</option><option>Kraaifontein</option><option>Dunoon</option><option>Joe Slovo (Langa)</option><option>Masiphumelele</option><option>Imizamo Yethu</option><option>Ocean View</option><option>Manenberg</option><option>Bonteheuwel</option><option>Hanover Park</option><option>Grassy Park</option></optgroup><optgroup label="â”€â”€ KwaZulu-Natal: eThekwini â”€â”€"><option>Umlazi</option><option>KwaMashu</option><option>Inanda</option><option>Ntuzuma</option><option>Clermont</option><option>Pinetown (KwaDabeka)</option><option>Lamontville</option><option>Chesterville</option><option>Chatsworth</option><option>Phoenix</option><option>Amaoti</option></optgroup><optgroup label="â”€â”€ Eastern Cape: Buffalo City â”€â”€"><option>Mdantsane</option><option>Duncan Village</option><option>Zwelitsha</option><option>Dimbaza</option></optgroup><optgroup label="â”€â”€ Eastern Cape: Nelson Mandela Bay â”€â”€"><option>Ibhayi (Zwide)</option><option>KwaNobantle</option><option>Motherwell</option><option>New Brighton</option><option>KwaDwesi</option><option>Walmer Township</option></optgroup><optgroup label="â”€â”€ Free State: Mangaung â”€â”€"><option>Botshabelo</option><option>Thaba Nchu</option><option>Mangaung (Bloemfontein)</option><option>Batho</option><option>Rocklands</option></optgroup><optgroup label="â”€â”€ Other / Not Listed â”€â”€"><option>Other</option></optgroup></select>
                         </div>
                         <div class="field"><label>Years in Business</label><input type="number" id="a-years" min="0" max="50" value="3"></div>
                         <div class="field"><label>Premises Type</label>
@@ -711,9 +711,9 @@
                         </div>
                         <div class="field"><label>Number of Employees (incl. self)</label><input type="number" id="a-employees" min="1" max="20" value="1"></div>
                         <div class="field"><label>ID Verified by You?</label>
-                            <select id="a-id-verified"><option>Yes — SA ID confirmed</option><option>No — not available</option></select>
+                            <select id="a-id-verified"><option>Yes â€” SA ID confirmed</option><option>No â€” not available</option></select>
                         </div>
-                        <button class="btn btn-primary" onclick="profileStep(2)">Next → Financial Info</button>
+                        <button class="btn btn-primary" onclick="profileStep(2)">Next â†’ Financial Info</button>
                     </div>
                     <!-- Step 2 -->
                     <div class="profile-step" id="ps2">
@@ -733,8 +733,8 @@
                             <select id="a-payments"><option>Cash Only</option><option>Cash + Capitec Pay/CashSend</option><option>Cash + Card (Yoco/iKhokha)</option><option>Cash + Mobile Money</option></select>
                         </div>
                         <div class="btn-row">
-                            <button class="btn btn-secondary" onclick="profileStep(1)">← Back</button>
-                            <button class="btn btn-primary" onclick="profileStep(3)">Next → Stock &amp; Products</button>
+                            <button class="btn btn-secondary" onclick="profileStep(1)">â† Back</button>
+                            <button class="btn btn-primary" onclick="profileStep(3)">Next â†’ Stock &amp; Products</button>
                         </div>
                     </div>
                     <!-- Step 3 -->
@@ -747,16 +747,16 @@
                         <div class="field"><label>Product Wanted But Can't Afford to Stock</label><input type="text" id="a-wanted" placeholder="e.g. Bulk cooking oil (needs R200 upfront)"></div>
                         <div class="field"><label>Primary Wholesaler / Supplier</label><input type="text" id="a-supplier" placeholder="e.g. Metro Cash &amp; Carry"></div>
                         <div class="btn-row">
-                            <button class="btn btn-secondary" onclick="profileStep(2)">← Back</button>
-                            <button class="btn btn-primary" onclick="profileStep(4)">Next → Transactions</button>
+                            <button class="btn btn-secondary" onclick="profileStep(2)">â† Back</button>
+                            <button class="btn btn-primary" onclick="profileStep(4)">Next â†’ Transactions</button>
                         </div>
                     </div>
                     <!-- Step 4 -->
                     <div class="profile-step" id="ps4">
-                        <div class="field"><label>Daily Turnover — Good Day</label>
+                        <div class="field"><label>Daily Turnover â€” Good Day</label>
                             <div class="currency-row"><span class="curr-sym">R</span><input type="number" id="a-good-day" min="0" max="100000" value="2500"></div>
                         </div>
-                        <div class="field"><label>Daily Turnover — Bad Day</label>
+                        <div class="field"><label>Daily Turnover â€” Bad Day</label>
                             <div class="currency-row"><span class="curr-sym">R</span><input type="number" id="a-bad-day" min="0" max="100000" value="700"></div>
                         </div>
                         <div class="field"><label>Busiest Trading Hours</label><input type="text" id="a-hours" placeholder="e.g. 6-8am &amp; 4-7pm"></div>
@@ -765,8 +765,8 @@
                         </div>
                         <div class="field"><label>Customers Per Day (estimate)</label><input type="number" id="a-customers" min="1" max="1000" value="40"></div>
                         <div class="btn-row">
-                            <button class="btn btn-secondary" onclick="profileStep(3)">← Back</button>
-                            <button class="btn btn-primary" onclick="profileStep(5)">Next → Location</button>
+                            <button class="btn btn-secondary" onclick="profileStep(3)">â† Back</button>
+                            <button class="btn btn-primary" onclick="profileStep(5)">Next â†’ Location</button>
                         </div>
                     </div>
                     <!-- Step 5 -->
@@ -782,8 +782,8 @@
                             <select id="a-transport"><option>Minibus taxi</option><option>Own vehicle / bakkie</option><option>Wholesaler delivers</option><option>Walking / Bicycle</option></select>
                         </div>
                         <div class="btn-row">
-                            <button class="btn btn-secondary" onclick="profileStep(4)">← Back</button>
-                            <button class="btn btn-primary" onclick="profileStep(6)">Next → Risk History</button>
+                            <button class="btn btn-secondary" onclick="profileStep(4)">â† Back</button>
+                            <button class="btn btn-primary" onclick="profileStep(6)">Next â†’ Risk History</button>
                         </div>
                     </div>
                     <!-- Step 6 -->
@@ -792,24 +792,24 @@
                             <select id="a-losses"><option>None</option><option>Fire damage</option><option>Theft / Robbery</option><option>Flood / Weather damage</option><option>Stock spoilage (power cuts)</option></select>
                         </div>
                         <div class="field"><label>Insurance Status</label>
-                            <select id="a-insurance"><option>None — "too expensive"</option><option>Funeral policy only</option><option>Has basic business cover</option></select>
+                            <select id="a-insurance"><option>None â€” "too expensive"</option><option>Funeral policy only</option><option>Has basic business cover</option></select>
                         </div>
                         <div class="field"><label>Biggest Business Challenge Right Now</label><input type="text" id="a-challenge" placeholder="e.g. Cash flow gaps between restock days"></div>
                         <div class="field"><label>Crime / Theft Incidents (last 12 months)</label>
                             <select id="a-crime"><option>None</option><option>1 incident</option><option>2 or more incidents</option></select>
                         </div>
                         <div class="btn-row">
-                            <button class="btn btn-secondary" onclick="profileStep(5)">← Back</button>
+                            <button class="btn btn-secondary" onclick="profileStep(5)">â† Back</button>
                         </div>
-                        <button class="btn btn-ai" onclick="loadAISuggestions('trader_profile','ai-container-profile')" style="width:100%;margin:10px 0;padding:10px;background:linear-gradient(135deg,rgba(168,85,247,0.2),rgba(0,242,254,0.15));border:1px solid rgba(168,85,247,0.3);border-radius:10px;color:var(--teal);font-weight:700;font-size:0.85rem;cursor:pointer;">💡 AI Suggest More Questions</button>
+                        <button class="btn btn-ai" onclick="loadAISuggestions('trader_profile','ai-container-profile')" style="width:100%;margin:10px 0;padding:10px;background:linear-gradient(135deg,rgba(168,85,247,0.2),rgba(0,242,254,0.15));border:1px solid rgba(168,85,247,0.3);border-radius:10px;color:var(--teal);font-weight:700;font-size:0.85rem;cursor:pointer;">ðŸ’¡ AI Suggest More Questions</button>
                         <div id="ai-container-profile"></div>
-                        <button class="earn-btn" onclick="submitProfile()">✓ Submit Profile &amp; Earn R25</button>
+                        <button class="earn-btn" onclick="submitProfile()">âœ“ Submit Profile &amp; Earn R25</button>
                     </div>
                 </div>
             </form>
         </div>
 
-        <!-- ══ SPAZA SHELF AUDIT ══ -->
+        <!-- â•â• SPAZA SHELF AUDIT â•â• -->
         <div class="screen" id="screen-gig-audit">
             <div class="screen-nav">
                 <div class="back-btn" onclick="goTo('home')"><i class="fa-solid fa-arrow-left"></i></div>
@@ -818,7 +818,7 @@
             <div class="form-body">
                 <p class="form-hint">Walk into the spaza and record what you see on the shelves. Takes about 5 minutes.</p>
                 <div class="field"><label>Spaza Location</label>
-                    <select id="au-township"><option>Soweto</option><option>Khayelitsha</option><option>Tembisa</option><option>Mitchells Plain</option><option>Alexandra</option></select>
+                    <select id="au-township"><optgroup label="â”€â”€ Gauteng: City of Johannesburg â”€â”€"><option>Soweto</option><option>Alexandra</option><option>Diepsloot</option><option>Orange Farm</option><option>Ivory Park</option><option>Cosmo City</option><option>Zandspruit</option><option>Braamfischerville</option><option>Ennerdale</option><option>Lenasia</option><option>Eldorado Park</option><option>Meadowlands</option><option>Diepkloof</option><option>Orlando</option><option>Dobsonville</option><option>Pimville</option><option>Kliptown</option><option>Protea Glen</option><option>Zola</option><option>Naledi</option><option>Dlamini</option><option>Jabulani</option></optgroup><optgroup label="â”€â”€ Gauteng: City of Ekurhuleni â”€â”€"><option>Tembisa</option><option>Katlehong</option><option>Vosloorus</option><option>Thokoza</option><option>Etwatwa</option><option>Daveyton</option><option>Duduza</option><option>KwaThema</option><option>Tsakane</option><option>Wattville</option></optgroup><optgroup label="â”€â”€ Gauteng: City of Tshwane â”€â”€"><option>Mamelodi</option><option>Soshanguve</option><option>Atteridgeville</option><option>Hammanskraal</option><option>Ga-Rankuwa</option><option>Mabopane</option><option>Winterveld</option><option>Olievenhoutbosch</option></optgroup><optgroup label="â”€â”€ Gauteng: Sedibeng & West Rand â”€â”€"><option>Sebokeng</option><option>Evaton</option><option>Sharpeville</option><option>Ratanda</option><option>Kagiso</option><option>Bekkersdal</option><option>Mohlakeng</option><option>Munsieville</option></optgroup><optgroup label="â”€â”€ Western Cape: City of Cape Town â”€â”€"><option>Khayelitsha</option><option>Mitchells Plain</option><option>Gugulethu</option><option>Nyanga</option><option>Langa</option><option>Philippi</option><option>Delft</option><option>Mfuleni</option><option>Kraaifontein</option><option>Dunoon</option><option>Joe Slovo (Langa)</option><option>Masiphumelele</option><option>Imizamo Yethu</option><option>Ocean View</option><option>Manenberg</option><option>Bonteheuwel</option><option>Hanover Park</option><option>Grassy Park</option></optgroup><optgroup label="â”€â”€ KwaZulu-Natal: eThekwini â”€â”€"><option>Umlazi</option><option>KwaMashu</option><option>Inanda</option><option>Ntuzuma</option><option>Clermont</option><option>Pinetown (KwaDabeka)</option><option>Lamontville</option><option>Chesterville</option><option>Chatsworth</option><option>Phoenix</option><option>Amaoti</option></optgroup><optgroup label="â”€â”€ Eastern Cape: Buffalo City â”€â”€"><option>Mdantsane</option><option>Duncan Village</option><option>Zwelitsha</option><option>Dimbaza</option></optgroup><optgroup label="â”€â”€ Eastern Cape: Nelson Mandela Bay â”€â”€"><option>Ibhayi (Zwide)</option><option>KwaNobantle</option><option>Motherwell</option><option>New Brighton</option><option>KwaDwesi</option><option>Walmer Township</option></optgroup><optgroup label="â”€â”€ Free State: Mangaung â”€â”€"><option>Botshabelo</option><option>Thaba Nchu</option><option>Mangaung (Bloemfontein)</option><option>Batho</option><option>Rocklands</option></optgroup><optgroup label="â”€â”€ Other / Not Listed â”€â”€"><option>Other</option></optgroup></select>
                 </div>
                 <div class="field"><label>Spaza / Shop Name</label><input type="text" id="au-name" placeholder="e.g. Sizwe's Spaza Shop"></div>
                 <div class="field"><label>Primary Sunflower Oil Brand in Stock</label>
@@ -831,13 +831,13 @@
                 <div class="field"><label>Overall Stock Level</label>
                     <select id="au-stock-level"><option>Well-stocked (full shelves)</option><option>Moderate (some gaps)</option><option>Low (many empty shelves)</option></select>
                 </div>
-                <button class="btn btn-ai" onclick="loadAISuggestions('shelf_audit','ai-container-audit')" style="width:100%;margin:10px 0;padding:10px;background:linear-gradient(135deg,rgba(168,85,247,0.2),rgba(0,242,254,0.15));border:1px solid rgba(168,85,247,0.3);border-radius:10px;color:var(--teal);font-weight:700;font-size:0.85rem;cursor:pointer;">💡 AI Suggest More Questions</button>
+                <button class="btn btn-ai" onclick="loadAISuggestions('shelf_audit','ai-container-audit')" style="width:100%;margin:10px 0;padding:10px;background:linear-gradient(135deg,rgba(168,85,247,0.2),rgba(0,242,254,0.15));border:1px solid rgba(168,85,247,0.3);border-radius:10px;color:var(--teal);font-weight:700;font-size:0.85rem;cursor:pointer;">ðŸ’¡ AI Suggest More Questions</button>
                 <div id="ai-container-audit"></div>
-                <button class="earn-btn" onclick="submitAudit()">✓ Submit Audit &amp; Earn R10</button>
+                <button class="earn-btn" onclick="submitAudit()">âœ“ Submit Audit &amp; Earn R10</button>
             </div>
         </div>
 
-        <!-- ══ PRICE BASKET MONITOR ══ -->
+        <!-- â•â• PRICE BASKET MONITOR â•â• -->
         <div class="screen" id="screen-gig-basket">
             <div class="screen-nav">
                 <div class="back-btn" onclick="goTo('home')"><i class="fa-solid fa-arrow-left"></i></div>
@@ -846,26 +846,26 @@
             <div class="form-body">
                 <p class="form-hint">Log the shelf price of each item. Leave blank if the trader doesn't stock it.</p>
                 <div class="field"><label>Location</label>
-                    <select id="bk-township"><option>Soweto</option><option>Khayelitsha</option><option>Tembisa</option><option>Mitchells Plain</option><option>Alexandra</option></select>
+                    <select id="bk-township"><optgroup label="â”€â”€ Gauteng: City of Johannesburg â”€â”€"><option>Soweto</option><option>Alexandra</option><option>Diepsloot</option><option>Orange Farm</option><option>Ivory Park</option><option>Cosmo City</option><option>Zandspruit</option><option>Braamfischerville</option><option>Ennerdale</option><option>Lenasia</option><option>Eldorado Park</option><option>Meadowlands</option><option>Diepkloof</option><option>Orlando</option><option>Dobsonville</option><option>Pimville</option><option>Kliptown</option><option>Protea Glen</option><option>Zola</option><option>Naledi</option><option>Dlamini</option><option>Jabulani</option></optgroup><optgroup label="â”€â”€ Gauteng: City of Ekurhuleni â”€â”€"><option>Tembisa</option><option>Katlehong</option><option>Vosloorus</option><option>Thokoza</option><option>Etwatwa</option><option>Daveyton</option><option>Duduza</option><option>KwaThema</option><option>Tsakane</option><option>Wattville</option></optgroup><optgroup label="â”€â”€ Gauteng: City of Tshwane â”€â”€"><option>Mamelodi</option><option>Soshanguve</option><option>Atteridgeville</option><option>Hammanskraal</option><option>Ga-Rankuwa</option><option>Mabopane</option><option>Winterveld</option><option>Olievenhoutbosch</option></optgroup><optgroup label="â”€â”€ Gauteng: Sedibeng & West Rand â”€â”€"><option>Sebokeng</option><option>Evaton</option><option>Sharpeville</option><option>Ratanda</option><option>Kagiso</option><option>Bekkersdal</option><option>Mohlakeng</option><option>Munsieville</option></optgroup><optgroup label="â”€â”€ Western Cape: City of Cape Town â”€â”€"><option>Khayelitsha</option><option>Mitchells Plain</option><option>Gugulethu</option><option>Nyanga</option><option>Langa</option><option>Philippi</option><option>Delft</option><option>Mfuleni</option><option>Kraaifontein</option><option>Dunoon</option><option>Joe Slovo (Langa)</option><option>Masiphumelele</option><option>Imizamo Yethu</option><option>Ocean View</option><option>Manenberg</option><option>Bonteheuwel</option><option>Hanover Park</option><option>Grassy Park</option></optgroup><optgroup label="â”€â”€ KwaZulu-Natal: eThekwini â”€â”€"><option>Umlazi</option><option>KwaMashu</option><option>Inanda</option><option>Ntuzuma</option><option>Clermont</option><option>Pinetown (KwaDabeka)</option><option>Lamontville</option><option>Chesterville</option><option>Chatsworth</option><option>Phoenix</option><option>Amaoti</option></optgroup><optgroup label="â”€â”€ Eastern Cape: Buffalo City â”€â”€"><option>Mdantsane</option><option>Duncan Village</option><option>Zwelitsha</option><option>Dimbaza</option></optgroup><optgroup label="â”€â”€ Eastern Cape: Nelson Mandela Bay â”€â”€"><option>Ibhayi (Zwide)</option><option>KwaNobantle</option><option>Motherwell</option><option>New Brighton</option><option>KwaDwesi</option><option>Walmer Township</option></optgroup><optgroup label="â”€â”€ Free State: Mangaung â”€â”€"><option>Botshabelo</option><option>Thaba Nchu</option><option>Mangaung (Bloemfontein)</option><option>Batho</option><option>Rocklands</option></optgroup><optgroup label="â”€â”€ Other / Not Listed â”€â”€"><option>Other</option></optgroup></select>
                 </div>
                 <div class="field"><label>Trader / Shop Name</label><input type="text" id="bk-name" placeholder="e.g. Mama Thandi's table"></div>
                 <div class="basket-grid">
-                    <div class="basket-cell"><span class="item-name">White bread (700g)</span><div class="price-row"><span>R</span><input type="number" id="bk-bread" min="0" step="0.5" placeholder="—"></div></div>
-                    <div class="basket-cell"><span class="item-name">Maize meal (2.5kg)</span><div class="price-row"><span>R</span><input type="number" id="bk-maize" min="0" step="0.5" placeholder="—"></div></div>
-                    <div class="basket-cell"><span class="item-name">Cooking oil (750ml)</span><div class="price-row"><span>R</span><input type="number" id="bk-oil" min="0" step="0.5" placeholder="—"></div></div>
-                    <div class="basket-cell"><span class="item-name">Full cream milk (1L)</span><div class="price-row"><span>R</span><input type="number" id="bk-milk" min="0" step="0.5" placeholder="—"></div></div>
-                    <div class="basket-cell"><span class="item-name">Eggs (6-pack)</span><div class="price-row"><span>R</span><input type="number" id="bk-eggs" min="0" step="0.5" placeholder="—"></div></div>
-                    <div class="basket-cell"><span class="item-name">Sugar (1kg)</span><div class="price-row"><span>R</span><input type="number" id="bk-sugar" min="0" step="0.5" placeholder="—"></div></div>
-                    <div class="basket-cell"><span class="item-name">Airtime voucher (R10)</span><div class="price-row"><span>R</span><input type="number" id="bk-airtime" min="0" step="0.5" placeholder="—"></div></div>
-                    <div class="basket-cell"><span class="item-name">Sunflower oil (2L)</span><div class="price-row"><span>R</span><input type="number" id="bk-sunoil" min="0" step="0.5" placeholder="—"></div></div>
+                    <div class="basket-cell"><span class="item-name">White bread (700g)</span><div class="price-row"><span>R</span><input type="number" id="bk-bread" min="0" step="0.5" placeholder="â€”"></div></div>
+                    <div class="basket-cell"><span class="item-name">Maize meal (2.5kg)</span><div class="price-row"><span>R</span><input type="number" id="bk-maize" min="0" step="0.5" placeholder="â€”"></div></div>
+                    <div class="basket-cell"><span class="item-name">Cooking oil (750ml)</span><div class="price-row"><span>R</span><input type="number" id="bk-oil" min="0" step="0.5" placeholder="â€”"></div></div>
+                    <div class="basket-cell"><span class="item-name">Full cream milk (1L)</span><div class="price-row"><span>R</span><input type="number" id="bk-milk" min="0" step="0.5" placeholder="â€”"></div></div>
+                    <div class="basket-cell"><span class="item-name">Eggs (6-pack)</span><div class="price-row"><span>R</span><input type="number" id="bk-eggs" min="0" step="0.5" placeholder="â€”"></div></div>
+                    <div class="basket-cell"><span class="item-name">Sugar (1kg)</span><div class="price-row"><span>R</span><input type="number" id="bk-sugar" min="0" step="0.5" placeholder="â€”"></div></div>
+                    <div class="basket-cell"><span class="item-name">Airtime voucher (R10)</span><div class="price-row"><span>R</span><input type="number" id="bk-airtime" min="0" step="0.5" placeholder="â€”"></div></div>
+                    <div class="basket-cell"><span class="item-name">Sunflower oil (2L)</span><div class="price-row"><span>R</span><input type="number" id="bk-sunoil" min="0" step="0.5" placeholder="â€”"></div></div>
                 </div>
-                <button class="btn btn-ai" onclick="loadAISuggestions('price_basket','ai-container-basket')" style="width:100%;margin:10px 0;padding:10px;background:linear-gradient(135deg,rgba(168,85,247,0.2),rgba(0,242,254,0.15));border:1px solid rgba(168,85,247,0.3);border-radius:10px;color:var(--teal);font-weight:700;font-size:0.85rem;cursor:pointer;">💡 AI Suggest More Questions</button>
+                <button class="btn btn-ai" onclick="loadAISuggestions('price_basket','ai-container-basket')" style="width:100%;margin:10px 0;padding:10px;background:linear-gradient(135deg,rgba(168,85,247,0.2),rgba(0,242,254,0.15));border:1px solid rgba(168,85,247,0.3);border-radius:10px;color:var(--teal);font-weight:700;font-size:0.85rem;cursor:pointer;">ðŸ’¡ AI Suggest More Questions</button>
                 <div id="ai-container-basket"></div>
-                <button class="earn-btn" onclick="submitBasket()">✓ Submit Prices &amp; Earn R8</button>
+                <button class="earn-btn" onclick="submitBasket()">âœ“ Submit Prices &amp; Earn R8</button>
             </div>
         </div>
 
-        <!-- ══ FOOT-TRAFFIC VERIFICATION ══ -->
+        <!-- â•â• FOOT-TRAFFIC VERIFICATION â•â• -->
         <div class="screen" id="screen-gig-verify">
             <div class="screen-nav">
                 <div class="back-btn" onclick="goTo('home')"><i class="fa-solid fa-arrow-left"></i></div>
@@ -877,23 +877,23 @@
                 <div class="field"><label>Location</label><input type="text" id="ft-location" placeholder="e.g. Corner Khumalo &amp; Vilakazi, Soweto"></div>
                 <div class="field"><label>Is the trader currently open and trading?</label>
                     <div class="radio-group">
-                        <label class="radio-opt"><input type="radio" name="ft-status" value="Open"> ✅ Yes — open, stock visible, customers present</label>
-                        <label class="radio-opt"><input type="radio" name="ft-status" value="Closed"> ❌ No — closed / nobody there</label>
-                        <label class="radio-opt"><input type="radio" name="ft-status" value="Partial"> ⚠️ Partially — open but very quiet</label>
+                        <label class="radio-opt"><input type="radio" name="ft-status" value="Open"> âœ… Yes â€” open, stock visible, customers present</label>
+                        <label class="radio-opt"><input type="radio" name="ft-status" value="Closed"> âŒ No â€” closed / nobody there</label>
+                        <label class="radio-opt"><input type="radio" name="ft-status" value="Partial"> âš ï¸ Partially â€” open but very quiet</label>
                     </div>
                 </div>
                 <div class="field"><label>Approx Customers Visible Right Now</label>
-                    <select id="ft-customers"><option value="0">0 — nobody</option><option value="1-5">1–5</option><option value="6-15" selected>6–15</option><option value="15+">15+ (very busy)</option></select>
+                    <select id="ft-customers"><option value="0">0 â€” nobody</option><option value="1-5">1â€“5</option><option value="6-15" selected>6â€“15</option><option value="15+">15+ (very busy)</option></select>
                 </div>
                 <div class="field"><label>Any observation? (optional)</label><input type="text" id="ft-note" placeholder="e.g. Price increase on bread, new stock delivery"></div>
                 <div class="gps-badge"><i class="fa-solid fa-location-crosshairs"></i> GPS timestamp auto-captured on submit</div>
-                <button class="btn btn-ai" onclick="loadAISuggestions('foot_traffic','ai-container-verify')" style="width:100%;margin:10px 0;padding:10px;background:linear-gradient(135deg,rgba(168,85,247,0.2),rgba(0,242,254,0.15));border:1px solid rgba(168,85,247,0.3);border-radius:10px;color:var(--teal);font-weight:700;font-size:0.85rem;cursor:pointer;">💡 AI Suggest More Questions</button>
+                <button class="btn btn-ai" onclick="loadAISuggestions('foot_traffic','ai-container-verify')" style="width:100%;margin:10px 0;padding:10px;background:linear-gradient(135deg,rgba(168,85,247,0.2),rgba(0,242,254,0.15));border:1px solid rgba(168,85,247,0.3);border-radius:10px;color:var(--teal);font-weight:700;font-size:0.85rem;cursor:pointer;">ðŸ’¡ AI Suggest More Questions</button>
                 <div id="ai-container-verify"></div>
-                <button class="earn-btn" onclick="submitVerify()">✓ Confirm &amp; Earn R3</button>
+                <button class="earn-btn" onclick="submitVerify()">âœ“ Confirm &amp; Earn R3</button>
             </div>
         </div>
 
-        <!-- ══ INFRASTRUCTURE REPORT ══ -->
+        <!-- â•â• INFRASTRUCTURE REPORT â•â• -->
         <div class="screen" id="screen-gig-infra">
             <div class="screen-nav">
                 <div class="back-btn" onclick="goTo('home')"><i class="fa-solid fa-arrow-left"></i></div>
@@ -902,25 +902,25 @@
             <div class="form-body">
                 <p class="form-hint">Report any service delivery disruptions in your area.</p>
                 <div class="field"><label>Your Location / Ward</label>
-                    <select id="ir-location"><option>Soweto</option><option>Khayelitsha</option><option>Tembisa</option><option>Mitchells Plain</option><option>Alexandra</option><option>Other</option></select>
+                    <select id="ir-location"><optgroup label="â”€â”€ Gauteng: City of Johannesburg â”€â”€"><option>Soweto</option><option>Alexandra</option><option>Diepsloot</option><option>Orange Farm</option><option>Ivory Park</option><option>Cosmo City</option><option>Zandspruit</option><option>Braamfischerville</option><option>Ennerdale</option><option>Lenasia</option><option>Eldorado Park</option><option>Meadowlands</option><option>Diepkloof</option><option>Orlando</option><option>Dobsonville</option><option>Pimville</option><option>Kliptown</option><option>Protea Glen</option><option>Zola</option><option>Naledi</option><option>Dlamini</option><option>Jabulani</option></optgroup><optgroup label="â”€â”€ Gauteng: City of Ekurhuleni â”€â”€"><option>Tembisa</option><option>Katlehong</option><option>Vosloorus</option><option>Thokoza</option><option>Etwatwa</option><option>Daveyton</option><option>Duduza</option><option>KwaThema</option><option>Tsakane</option><option>Wattville</option></optgroup><optgroup label="â”€â”€ Gauteng: City of Tshwane â”€â”€"><option>Mamelodi</option><option>Soshanguve</option><option>Atteridgeville</option><option>Hammanskraal</option><option>Ga-Rankuwa</option><option>Mabopane</option><option>Winterveld</option><option>Olievenhoutbosch</option></optgroup><optgroup label="â”€â”€ Gauteng: Sedibeng & West Rand â”€â”€"><option>Sebokeng</option><option>Evaton</option><option>Sharpeville</option><option>Ratanda</option><option>Kagiso</option><option>Bekkersdal</option><option>Mohlakeng</option><option>Munsieville</option></optgroup><optgroup label="â”€â”€ Western Cape: City of Cape Town â”€â”€"><option>Khayelitsha</option><option>Mitchells Plain</option><option>Gugulethu</option><option>Nyanga</option><option>Langa</option><option>Philippi</option><option>Delft</option><option>Mfuleni</option><option>Kraaifontein</option><option>Dunoon</option><option>Joe Slovo (Langa)</option><option>Masiphumelele</option><option>Imizamo Yethu</option><option>Ocean View</option><option>Manenberg</option><option>Bonteheuwel</option><option>Hanover Park</option><option>Grassy Park</option></optgroup><optgroup label="â”€â”€ KwaZulu-Natal: eThekwini â”€â”€"><option>Umlazi</option><option>KwaMashu</option><option>Inanda</option><option>Ntuzuma</option><option>Clermont</option><option>Pinetown (KwaDabeka)</option><option>Lamontville</option><option>Chesterville</option><option>Chatsworth</option><option>Phoenix</option><option>Amaoti</option></optgroup><optgroup label="â”€â”€ Eastern Cape: Buffalo City â”€â”€"><option>Mdantsane</option><option>Duncan Village</option><option>Zwelitsha</option><option>Dimbaza</option></optgroup><optgroup label="â”€â”€ Eastern Cape: Nelson Mandela Bay â”€â”€"><option>Ibhayi (Zwide)</option><option>KwaNobantle</option><option>Motherwell</option><option>New Brighton</option><option>KwaDwesi</option><option>Walmer Township</option></optgroup><optgroup label="â”€â”€ Free State: Mangaung â”€â”€"><option>Botshabelo</option><option>Thaba Nchu</option><option>Mangaung (Bloemfontein)</option><option>Batho</option><option>Rocklands</option></optgroup><optgroup label="â”€â”€ Other / Not Listed â”€â”€"><option>Other</option></optgroup></select>
                 </div>
                 <div class="field"><label>Type of Disruption</label>
                     <select id="ir-type"><option>Water outage</option><option>Load shedding / Power outage</option><option>Road closure / Pothole</option><option>Sewage overflow</option><option>Refuse not collected</option></select>
                 </div>
                 <div class="field"><label>How Long Has It Been?</label>
-                    <select id="ir-duration"><option>Less than 2 hours</option><option>2–8 hours</option><option>All day</option><option>Multiple days</option></select>
+                    <select id="ir-duration"><option>Less than 2 hours</option><option>2â€“8 hours</option><option>All day</option><option>Multiple days</option></select>
                 </div>
                 <div class="field"><label>How Many Households / Businesses Affected?</label>
                     <select id="ir-scale"><option>Just my place</option><option>My street</option><option>My block / section</option><option>Whole area</option></select>
                 </div>
                 <div class="field"><label>Additional Details (optional)</label><textarea id="ir-notes" placeholder="e.g. The water was cut at 6am with no warning. Traders can't operate."></textarea></div>
-                <button class="btn btn-ai" onclick="loadAISuggestions('infrastructure','ai-container-infra')" style="width:100%;margin:10px 0;padding:10px;background:linear-gradient(135deg,rgba(168,85,247,0.2),rgba(0,242,254,0.15));border:1px solid rgba(168,85,247,0.3);border-radius:10px;color:var(--teal);font-weight:700;font-size:0.85rem;cursor:pointer;">💡 AI Suggest More Questions</button>
+                <button class="btn btn-ai" onclick="loadAISuggestions('infrastructure','ai-container-infra')" style="width:100%;margin:10px 0;padding:10px;background:linear-gradient(135deg,rgba(168,85,247,0.2),rgba(0,242,254,0.15));border:1px solid rgba(168,85,247,0.3);border-radius:10px;color:var(--teal);font-weight:700;font-size:0.85rem;cursor:pointer;">ðŸ’¡ AI Suggest More Questions</button>
                 <div id="ai-container-infra"></div>
-                <button class="earn-btn" onclick="submitInfra()">✓ Submit Report &amp; Earn R2</button>
+                <button class="earn-btn" onclick="submitInfra()">âœ“ Submit Report &amp; Earn R2</button>
             </div>
         </div>
 
-        <!-- ══ KOTA / FAST-FOOD PROFILE ══ -->
+        <!-- â•â• KOTA / FAST-FOOD PROFILE â•â• -->
         <div class="screen" id="screen-gig-kota">
             <div class="screen-nav">
                 <div class="back-btn" onclick="goTo('home')"><i class="fa-solid fa-arrow-left"></i></div>
@@ -931,7 +931,7 @@
                 <div class="step-node" id="kn2">2</div><div class="step-line" id="kl2"></div>
                 <div class="step-node" id="kn3">3</div>
             </div>
-            <div class="step-caption" id="kota-step-caption">Step 1 of 3 — Identity &amp; Menu</div>
+            <div class="step-caption" id="kota-step-caption">Step 1 of 3 â€” Identity &amp; Menu</div>
             <form onsubmit="return false;">
                 <div class="form-body">
                     <!-- Step 1 -->
@@ -939,7 +939,7 @@
                         <div class="field"><label>Business Name</label><input type="text" id="kt-name"></div>
                         <div class="field"><label>Operator Name</label><input type="text" id="kt-operator"></div>
                         <div class="field"><label>Location / Township</label>
-                            <select id="kt-township"><option>Soweto</option><option>Khayelitsha</option><option>Tembisa</option><option>Mitchells Plain</option><option>Alexandra</option><option>Other</option></select>
+                            <select id="kt-township"><optgroup label="â”€â”€ Gauteng: City of Johannesburg â”€â”€"><option>Soweto</option><option>Alexandra</option><option>Diepsloot</option><option>Orange Farm</option><option>Ivory Park</option><option>Cosmo City</option><option>Zandspruit</option><option>Braamfischerville</option><option>Ennerdale</option><option>Lenasia</option><option>Eldorado Park</option><option>Meadowlands</option><option>Diepkloof</option><option>Orlando</option><option>Dobsonville</option><option>Pimville</option><option>Kliptown</option><option>Protea Glen</option><option>Zola</option><option>Naledi</option><option>Dlamini</option><option>Jabulani</option></optgroup><optgroup label="â”€â”€ Gauteng: City of Ekurhuleni â”€â”€"><option>Tembisa</option><option>Katlehong</option><option>Vosloorus</option><option>Thokoza</option><option>Etwatwa</option><option>Daveyton</option><option>Duduza</option><option>KwaThema</option><option>Tsakane</option><option>Wattville</option></optgroup><optgroup label="â”€â”€ Gauteng: City of Tshwane â”€â”€"><option>Mamelodi</option><option>Soshanguve</option><option>Atteridgeville</option><option>Hammanskraal</option><option>Ga-Rankuwa</option><option>Mabopane</option><option>Winterveld</option><option>Olievenhoutbosch</option></optgroup><optgroup label="â”€â”€ Gauteng: Sedibeng & West Rand â”€â”€"><option>Sebokeng</option><option>Evaton</option><option>Sharpeville</option><option>Ratanda</option><option>Kagiso</option><option>Bekkersdal</option><option>Mohlakeng</option><option>Munsieville</option></optgroup><optgroup label="â”€â”€ Western Cape: City of Cape Town â”€â”€"><option>Khayelitsha</option><option>Mitchells Plain</option><option>Gugulethu</option><option>Nyanga</option><option>Langa</option><option>Philippi</option><option>Delft</option><option>Mfuleni</option><option>Kraaifontein</option><option>Dunoon</option><option>Joe Slovo (Langa)</option><option>Masiphumelele</option><option>Imizamo Yethu</option><option>Ocean View</option><option>Manenberg</option><option>Bonteheuwel</option><option>Hanover Park</option><option>Grassy Park</option></optgroup><optgroup label="â”€â”€ KwaZulu-Natal: eThekwini â”€â”€"><option>Umlazi</option><option>KwaMashu</option><option>Inanda</option><option>Ntuzuma</option><option>Clermont</option><option>Pinetown (KwaDabeka)</option><option>Lamontville</option><option>Chesterville</option><option>Chatsworth</option><option>Phoenix</option><option>Amaoti</option></optgroup><optgroup label="â”€â”€ Eastern Cape: Buffalo City â”€â”€"><option>Mdantsane</option><option>Duncan Village</option><option>Zwelitsha</option><option>Dimbaza</option></optgroup><optgroup label="â”€â”€ Eastern Cape: Nelson Mandela Bay â”€â”€"><option>Ibhayi (Zwide)</option><option>KwaNobantle</option><option>Motherwell</option><option>New Brighton</option><option>KwaDwesi</option><option>Walmer Township</option></optgroup><optgroup label="â”€â”€ Free State: Mangaung â”€â”€"><option>Botshabelo</option><option>Thaba Nchu</option><option>Mangaung (Bloemfontein)</option><option>Batho</option><option>Rocklands</option></optgroup><optgroup label="â”€â”€ Other / Not Listed â”€â”€"><option>Other</option></optgroup></select>
                         </div>
                         <div class="field"><label>Years Trading</label><input type="number" id="kt-years" min="0" max="30"></div>
                         <div class="field"><label>Location Type</label>
@@ -953,7 +953,7 @@
                         </div>
                         <div class="field"><label>Top 3 Items Sold</label><input type="text" id="kt-top-items" placeholder="e.g. Russian kota, chips, polony"></div>
                         <div class="field"><label>Daily Units Sold</label><input type="number" id="kt-daily-units"></div>
-                        <button class="btn btn-primary" onclick="kotaStep(2)">Next → Ingredients</button>
+                        <button class="btn btn-primary" onclick="kotaStep(2)">Next â†’ Ingredients</button>
                     </div>
                     <!-- Step 2 -->
                     <div class="profile-step" id="ks2">
@@ -971,8 +971,8 @@
                         </div>
                         <div class="field"><label>Busiest Hours</label><input type="text" id="kt-busy-hours"></div>
                         <div class="btn-row">
-                            <button class="btn btn-secondary" onclick="kotaStep(1)">← Back</button>
-                            <button class="btn btn-primary" onclick="kotaStep(3)">Next → Infrastructure</button>
+                            <button class="btn btn-secondary" onclick="kotaStep(1)">â† Back</button>
+                            <button class="btn btn-primary" onclick="kotaStep(3)">Next â†’ Infrastructure</button>
                         </div>
                     </div>
                     <!-- Step 3 -->
@@ -994,17 +994,17 @@
                             <select id="kt-supplier-rating"><option value="1">1-Very unreliable</option><option value="2">2-Sometimes late</option><option value="3">3-Usually on time</option><option value="4">4-Very reliable</option><option value="5">5-Excellent</option></select>
                         </div>
                         <div class="btn-row">
-                            <button class="btn btn-secondary" onclick="kotaStep(2)">← Back</button>
+                            <button class="btn btn-secondary" onclick="kotaStep(2)">â† Back</button>
                         </div>
-                        <button class="btn btn-ai" onclick="loadAISuggestions('kota_profile','ai-container-kota')" style="width:100%;margin:10px 0;padding:10px;background:linear-gradient(135deg,rgba(168,85,247,0.2),rgba(0,242,254,0.15));border:1px solid rgba(168,85,247,0.3);border-radius:10px;color:var(--teal);font-weight:700;font-size:0.85rem;cursor:pointer;">💡 AI Suggest More Questions</button>
+                        <button class="btn btn-ai" onclick="loadAISuggestions('kota_profile','ai-container-kota')" style="width:100%;margin:10px 0;padding:10px;background:linear-gradient(135deg,rgba(168,85,247,0.2),rgba(0,242,254,0.15));border:1px solid rgba(168,85,247,0.3);border-radius:10px;color:var(--teal);font-weight:700;font-size:0.85rem;cursor:pointer;">ðŸ’¡ AI Suggest More Questions</button>
                         <div id="ai-container-kota"></div>
-                        <button class="earn-btn" onclick="submitKota()">✓ Submit Profile &amp; Earn R3</button>
+                        <button class="earn-btn" onclick="submitKota()">âœ“ Submit Profile &amp; Earn R3</button>
                     </div>
                 </div>
             </form>
         </div>
 
-        <!-- ══ TAVERN PROFILE ══ -->
+        <!-- â•â• TAVERN PROFILE â•â• -->
         <div class="screen" id="screen-gig-tavern">
             <div class="screen-nav">
                 <div class="back-btn" onclick="goTo('home')"><i class="fa-solid fa-arrow-left"></i></div>
@@ -1015,7 +1015,7 @@
                 <div class="step-node" id="tn2">2</div><div class="step-line" id="tl2"></div>
                 <div class="step-node" id="tn3">3</div>
             </div>
-            <div class="step-caption" id="tavern-step-caption">Step 1 of 3 — Identity &amp; License</div>
+            <div class="step-caption" id="tavern-step-caption">Step 1 of 3 â€” Identity &amp; License</div>
             <form onsubmit="return false;">
                 <div class="form-body">
                     <!-- Step 1 -->
@@ -1023,7 +1023,7 @@
                         <div class="field"><label>Tavern Name</label><input type="text" id="tv-name"></div>
                         <div class="field"><label>Operator Name</label><input type="text" id="tv-operator"></div>
                         <div class="field"><label>Location / Township</label>
-                            <select id="tv-township"><option>Soweto</option><option>Khayelitsha</option><option>Tembisa</option><option>Mitchells Plain</option><option>Alexandra</option><option>Other</option></select>
+                            <select id="tv-township"><optgroup label="â”€â”€ Gauteng: City of Johannesburg â”€â”€"><option>Soweto</option><option>Alexandra</option><option>Diepsloot</option><option>Orange Farm</option><option>Ivory Park</option><option>Cosmo City</option><option>Zandspruit</option><option>Braamfischerville</option><option>Ennerdale</option><option>Lenasia</option><option>Eldorado Park</option><option>Meadowlands</option><option>Diepkloof</option><option>Orlando</option><option>Dobsonville</option><option>Pimville</option><option>Kliptown</option><option>Protea Glen</option><option>Zola</option><option>Naledi</option><option>Dlamini</option><option>Jabulani</option></optgroup><optgroup label="â”€â”€ Gauteng: City of Ekurhuleni â”€â”€"><option>Tembisa</option><option>Katlehong</option><option>Vosloorus</option><option>Thokoza</option><option>Etwatwa</option><option>Daveyton</option><option>Duduza</option><option>KwaThema</option><option>Tsakane</option><option>Wattville</option></optgroup><optgroup label="â”€â”€ Gauteng: City of Tshwane â”€â”€"><option>Mamelodi</option><option>Soshanguve</option><option>Atteridgeville</option><option>Hammanskraal</option><option>Ga-Rankuwa</option><option>Mabopane</option><option>Winterveld</option><option>Olievenhoutbosch</option></optgroup><optgroup label="â”€â”€ Gauteng: Sedibeng & West Rand â”€â”€"><option>Sebokeng</option><option>Evaton</option><option>Sharpeville</option><option>Ratanda</option><option>Kagiso</option><option>Bekkersdal</option><option>Mohlakeng</option><option>Munsieville</option></optgroup><optgroup label="â”€â”€ Western Cape: City of Cape Town â”€â”€"><option>Khayelitsha</option><option>Mitchells Plain</option><option>Gugulethu</option><option>Nyanga</option><option>Langa</option><option>Philippi</option><option>Delft</option><option>Mfuleni</option><option>Kraaifontein</option><option>Dunoon</option><option>Joe Slovo (Langa)</option><option>Masiphumelele</option><option>Imizamo Yethu</option><option>Ocean View</option><option>Manenberg</option><option>Bonteheuwel</option><option>Hanover Park</option><option>Grassy Park</option></optgroup><optgroup label="â”€â”€ KwaZulu-Natal: eThekwini â”€â”€"><option>Umlazi</option><option>KwaMashu</option><option>Inanda</option><option>Ntuzuma</option><option>Clermont</option><option>Pinetown (KwaDabeka)</option><option>Lamontville</option><option>Chesterville</option><option>Chatsworth</option><option>Phoenix</option><option>Amaoti</option></optgroup><optgroup label="â”€â”€ Eastern Cape: Buffalo City â”€â”€"><option>Mdantsane</option><option>Duncan Village</option><option>Zwelitsha</option><option>Dimbaza</option></optgroup><optgroup label="â”€â”€ Eastern Cape: Nelson Mandela Bay â”€â”€"><option>Ibhayi (Zwide)</option><option>KwaNobantle</option><option>Motherwell</option><option>New Brighton</option><option>KwaDwesi</option><option>Walmer Township</option></optgroup><optgroup label="â”€â”€ Free State: Mangaung â”€â”€"><option>Botshabelo</option><option>Thaba Nchu</option><option>Mangaung (Bloemfontein)</option><option>Batho</option><option>Rocklands</option></optgroup><optgroup label="â”€â”€ Other / Not Listed â”€â”€"><option>Other</option></optgroup></select>
                         </div>
                         <div class="field"><label>Years Operating</label><input type="number" id="tv-years"></div>
                         <div class="field"><label>License Status</label>
@@ -1033,7 +1033,7 @@
                         <div class="field"><label>Premises Type</label>
                             <select id="tv-premises"><option>House extension</option><option>Dedicated building</option><option>Container</option><option>Yard/outdoor</option></select>
                         </div>
-                        <button class="btn btn-primary" onclick="tavernStep(2)">Next → Stock &amp; Brands</button>
+                        <button class="btn btn-primary" onclick="tavernStep(2)">Next â†’ Stock &amp; Brands</button>
                     </div>
                     <!-- Step 2 -->
                     <div class="profile-step" id="ts2">
@@ -1053,8 +1053,8 @@
                             <select id="tv-delivery"><option>Daily</option><option>2-3 times/week</option><option>Weekly</option><option>Fortnightly+</option></select>
                         </div>
                         <div class="btn-row">
-                            <button class="btn btn-secondary" onclick="tavernStep(1)">← Back</button>
-                            <button class="btn btn-primary" onclick="tavernStep(3)">Next → Revenue &amp; Infra</button>
+                            <button class="btn btn-secondary" onclick="tavernStep(1)">â† Back</button>
+                            <button class="btn btn-primary" onclick="tavernStep(3)">Next â†’ Revenue &amp; Infra</button>
                         </div>
                     </div>
                     <!-- Step 3 -->
@@ -1081,32 +1081,32 @@
                             <select id="tv-food"><option>Yes - full meals</option><option>Yes - snacks only</option><option>No</option></select>
                         </div>
                         <div class="btn-row">
-                            <button class="btn btn-secondary" onclick="tavernStep(2)">← Back</button>
+                            <button class="btn btn-secondary" onclick="tavernStep(2)">â† Back</button>
                         </div>
-                        <button class="btn btn-ai" onclick="loadAISuggestions('tavern_profile','ai-container-tavern')" style="width:100%;margin:10px 0;padding:10px;background:linear-gradient(135deg,rgba(168,85,247,0.2),rgba(0,242,254,0.15));border:1px solid rgba(168,85,247,0.3);border-radius:10px;color:var(--teal);font-weight:700;font-size:0.85rem;cursor:pointer;">💡 AI Suggest More Questions</button>
+                        <button class="btn btn-ai" onclick="loadAISuggestions('tavern_profile','ai-container-tavern')" style="width:100%;margin:10px 0;padding:10px;background:linear-gradient(135deg,rgba(168,85,247,0.2),rgba(0,242,254,0.15));border:1px solid rgba(168,85,247,0.3);border-radius:10px;color:var(--teal);font-weight:700;font-size:0.85rem;cursor:pointer;">ðŸ’¡ AI Suggest More Questions</button>
                         <div id="ai-container-tavern"></div>
-                        <button class="earn-btn" onclick="submitTavern()">✓ Submit Profile &amp; Earn R3.50</button>
+                        <button class="earn-btn" onclick="submitTavern()">âœ“ Submit Profile &amp; Earn R3.50</button>
                     </div>
                 </div>
             </form>
         </div>
 
-        <!-- ══ WALLET SCREEN ══ -->
+        <!-- â•â• WALLET SCREEN â•â• -->
         <div class="screen" id="screen-wallet">
             <div class="screen-nav">
                 <div class="back-btn" onclick="goTo('home')"><i class="fa-solid fa-arrow-left"></i></div>
                 <h3>My Wallet</h3>
             </div>
             <div class="wallet-hero">
-                <div class="bal-label">⭐ My Pulse Points</div>
+                <div class="bal-label">â­ My Pulse Points</div>
                 <div class="bal-amount" style="font-size:2rem;"><span id="wallet-bal">2,500</span> <span style="font-size:1rem;color:var(--orange);font-weight:800;">pts</span></div>
                 <div class="bal-sub">Pulse Points can be redeemed as airtime or other rewards</div>
             </div>
-            <button class="cashout-btn">💸 Redeem Points</button>
+            <button class="cashout-btn">ðŸ’¸ Redeem Points</button>
             <div class="section-label">Points History</div>
             <div class="history-list" id="history-list">
                 <div class="history-item">
-                    <span class="desc">Welcome bonus — first sign-in</span>
+                    <span class="desc">Welcome bonus â€” first sign-in</span>
                     <span class="amt">+2,500 pts</span>
                 </div>
             </div>
@@ -1127,16 +1127,16 @@
             });
         </script>
 
-        <!-- ══ ABOUT SCREEN ══ -->
+        <!-- â•â• ABOUT SCREEN â•â• -->
         <div class="screen" id="screen-about">
 
             <!-- Header -->
             <div style="background:linear-gradient(160deg,rgba(168,85,247,0.12) 0%,rgba(0,242,254,0.05) 100%);padding:28px 18px 22px;border-bottom:1px solid var(--border);">
                 <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-                    <div style="width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#a855f7,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;">⚡</div>
+                    <div style="width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#a855f7,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;">âš¡</div>
                     <div>
                         <div style="font-size:1rem;font-weight:800;">Pulse SA</div>
-                        <div style="font-size:0.62rem;color:var(--purple);font-weight:700;text-transform:uppercase;letter-spacing:0.8px;">Intelligence Layer · Est. 2025</div>
+                        <div style="font-size:0.62rem;color:var(--purple);font-weight:700;text-transform:uppercase;letter-spacing:0.8px;">Intelligence Layer Â· Est. 2025</div>
                     </div>
                 </div>
                 <p style="font-size:0.75rem;color:var(--text-muted);line-height:1.6;">South Africa's first structured intelligence network for the informal economy.</p>
@@ -1150,7 +1150,7 @@
                         <i class="fa-solid fa-bullseye" style="color:var(--purple);font-size:0.85rem;"></i>
                         <span style="font-size:0.65rem;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:var(--purple);">Our Mission</span>
                     </div>
-                    <p style="font-size:0.78rem;line-height:1.65;color:var(--text);">To make South Africa's informal economy <strong>visible, bankable, and insurable</strong> — one data point at a time.</p>
+                    <p style="font-size:0.78rem;line-height:1.65;color:var(--text);">To make South Africa's informal economy <strong>visible, bankable, and insurable</strong> â€” one data point at a time.</p>
                 </div>
 
                 <!-- Vision -->
@@ -1213,7 +1213,7 @@
 
     </div>
 
-        <!-- ══ PROFILE SCREEN ══ -->
+        <!-- â•â• PROFILE SCREEN â•â• -->
         <div class="screen" id="screen-profile">
             <div class="screen-nav">
                 <div class="back-btn" onclick="goTo('home')"><i class="fa-solid fa-arrow-left"></i></div>
@@ -1258,7 +1258,7 @@
                 <!-- DB Sync Status -->
                 <div id="profile-sync-banner" style="display:none;background:rgba(251,146,60,0.1);border:1px solid rgba(251,146,60,0.25);border-radius:10px;padding:12px 14px;font-size:0.7rem;color:#fb923c;display:flex;align-items:center;gap:8px;">
                     <i class="fa-solid fa-triangle-exclamation"></i>
-                    <span>Your profile wasn't saved to the database yet. <span onclick="retrySyncProfile()" style="text-decoration:underline;cursor:pointer;font-weight:700;">Tap to retry sync →</span></span>
+                    <span>Your profile wasn't saved to the database yet. <span onclick="retrySyncProfile()" style="text-decoration:underline;cursor:pointer;font-weight:700;">Tap to retry sync â†’</span></span>
                 </div>
 
                 <!-- Security / PIN -->
@@ -1282,15 +1282,15 @@
                         <span style="margin-left:auto;font-size:0.5rem;color:#8b8fa8;font-weight:600;text-transform:none;letter-spacing:0;">Tap to view details</span>
                     </div>
                     <div id="profile-submissions-list">
-                        <div style="padding:24px;text-align:center;color:#8b8fa8;font-size:0.75rem;">No submissions yet — complete your first gig!</div>
+                        <div style="padding:24px;text-align:center;color:#8b8fa8;font-size:0.75rem;">No submissions yet â€” complete your first gig!</div>
                     </div>
                 </div>
 
-    <!-- ══ SUBMISSION DETAIL OVERLAY ══ -->
+    <!-- â•â• SUBMISSION DETAIL OVERLAY â•â• -->
     <div id="submission-detail-overlay" style="display:none;position:fixed;inset:0;z-index:9995;background:rgba(8,10,18,0.97);backdrop-filter:blur(12px);overflow-y:auto;">
         <div style="max-width:420px;margin:0 auto;padding:28px 20px 40px;">
             <div style="display:flex;align-items:center;gap:12px;margin-bottom:22px;">
-                <button onclick="closeSubmissionDetail()" style="background:rgba(255,255,255,0.06);border:none;color:#f0f2ff;border-radius:8px;padding:8px 14px;cursor:pointer;font-family:inherit;font-size:0.8rem;">← Back</button>
+                <button onclick="closeSubmissionDetail()" style="background:rgba(255,255,255,0.06);border:none;color:#f0f2ff;border-radius:8px;padding:8px 14px;cursor:pointer;font-family:inherit;font-size:0.8rem;">â† Back</button>
                 <h3 style="font-size:1rem;font-weight:800;">Submission Details</h3>
             </div>
             <div id="submission-detail-content" style="display:flex;flex-direction:column;gap:14px;"></div>
@@ -1308,11 +1308,11 @@
             </div>
         </div>
 
-    <!-- ══ EDIT PROFILE OVERLAY ══ -->
+    <!-- â•â• EDIT PROFILE OVERLAY â•â• -->
     <div id="edit-profile-overlay" style="display:none;position:fixed;inset:0;z-index:9990;background:rgba(8,10,18,0.97);backdrop-filter:blur(12px);overflow-y:auto;">
         <div style="max-width:420px;margin:0 auto;padding:28px 20px 40px;">
             <div style="display:flex;align-items:center;gap:12px;margin-bottom:22px;">
-                <button onclick="closeEditProfile()" style="background:rgba(255,255,255,0.06);border:none;color:#f0f2ff;border-radius:8px;padding:8px 14px;cursor:pointer;font-family:inherit;font-size:0.8rem;">← Back</button>
+                <button onclick="closeEditProfile()" style="background:rgba(255,255,255,0.06);border:none;color:#f0f2ff;border-radius:8px;padding:8px 14px;cursor:pointer;font-family:inherit;font-size:0.8rem;">â† Back</button>
                 <h3 style="font-size:1rem;font-weight:800;">Edit Profile</h3>
             </div>
             <div style="display:flex;flex-direction:column;gap:14px;">
@@ -1339,13 +1339,13 @@
                     <input id="ep-phone" type="tel" style="width:100%;background:#0f1120;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:11px 14px;color:#f0f2ff;font-family:inherit;font-size:0.85rem;outline:none;">
                 </div>
                 <button onclick="saveProfileChanges()" style="width:100%;background:linear-gradient(135deg,#a855f7,#7c3aed);border:none;border-radius:12px;padding:14px;color:#fff;font-family:inherit;font-size:0.9rem;font-weight:800;cursor:pointer;margin-top:4px;">
-                    💾 Save Changes
+                    ðŸ’¾ Save Changes
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- ══ CHANGE PIN OVERLAY ══ -->
+    <!-- â•â• CHANGE PIN OVERLAY â•â• -->
     <div id="pin-overlay" style="display:none;position:fixed;inset:0;z-index:9991;background:rgba(8,10,18,0.97);backdrop-filter:blur(12px);display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px;">
         <div style="width:100%;max-width:360px;text-align:center;">
             <i class="fa-solid fa-lock" style="font-size:2rem;color:#a855f7;margin-bottom:16px;display:block;"></i>
@@ -1410,7 +1410,7 @@
             if (todEl) todEl.textContent = fmtPts(todayPts) + ' pts';
         }
 
-        // ── Navigation ──
+        // â”€â”€ Navigation â”€â”€
         function goTo(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById('screen-' + screenId).classList.add('active');
@@ -1429,14 +1429,14 @@
         }
 
 
-        // ── Trader Profile Steps ──
+        // â”€â”€ Trader Profile Steps â”€â”€
         const stepLabels = {
-            1: 'Step 1 of 6 — Identity & Profile',
-            2: 'Step 2 of 6 — Financial Behaviour',
-            3: 'Step 3 of 6 — Stock & Products',
-            4: 'Step 4 of 6 — Transaction Patterns',
-            5: 'Step 5 of 6 — Location & Infrastructure',
-            6: 'Step 6 of 6 — Risk & Loss History'
+            1: 'Step 1 of 6 â€” Identity & Profile',
+            2: 'Step 2 of 6 â€” Financial Behaviour',
+            3: 'Step 3 of 6 â€” Stock & Products',
+            4: 'Step 4 of 6 â€” Transaction Patterns',
+            5: 'Step 5 of 6 â€” Location & Infrastructure',
+            6: 'Step 6 of 6 â€” Risk & Loss History'
         };
         function profileStep(n) {
             currentStep = n;
@@ -1455,9 +1455,9 @@
         }
 
         const kotaStepLabels = {
-            1: 'Step 1 of 3 — Identity & Menu',
-            2: 'Step 2 of 3 — Ingredients & Sourcing',
-            3: 'Step 3 of 3 — Infrastructure & Challenges'
+            1: 'Step 1 of 3 â€” Identity & Menu',
+            2: 'Step 2 of 3 â€” Ingredients & Sourcing',
+            3: 'Step 3 of 3 â€” Infrastructure & Challenges'
         };
         function kotaStep(n) {
             document.querySelectorAll('#screen-gig-kota .profile-step').forEach(s => s.classList.remove('active'));
@@ -1475,9 +1475,9 @@
         }
 
         const tavernStepLabels = {
-            1: 'Step 1 of 3 — Identity & License',
-            2: 'Step 2 of 3 — Stock & Brands',
-            3: 'Step 3 of 3 — Revenue & Infrastructure'
+            1: 'Step 1 of 3 â€” Identity & License',
+            2: 'Step 2 of 3 â€” Stock & Brands',
+            3: 'Step 3 of 3 â€” Revenue & Infrastructure'
         };
         function tavernStep(n) {
             document.querySelectorAll('#screen-gig-tavern .profile-step').forEach(s => s.classList.remove('active'));
@@ -1494,7 +1494,7 @@
             window.scrollTo(0, 0);
         }
 
-        // ── Points award helper ──
+        // â”€â”€ Points award helper â”€â”€
         function award(pts, description, bonusPts = 0) {
             const total = pts + bonusPts;
             points += total;
@@ -1509,7 +1509,7 @@
             const bonusTag = bonusPts > 0 ? ` <span style="color:var(--orange);font-size:0.6rem;">(+${bonusPts} quality bonus)</span>` : '';
             item.innerHTML = `<span class="desc">${description}${bonusTag}</span><span class="amt">+${fmtPts(total)} pts</span>`;
             list.prepend(item);
-            showToast(`⭐ ${fmtPts(total)} points earned! ${description}`);
+            showToast(`â­ ${fmtPts(total)} points earned! ${description}`);
         }
 
         /**
@@ -1517,16 +1517,16 @@
          * Defined here (not in supabase.js) so it works even if the DB script fails.
          */
         const GIG_META = {
-            trader_profile:  { label: 'Trader Profile Visit', icon: '🏪' },
-            shelf_audit:     { label: 'Spaza Shelf Audit',    icon: '🛒' },
-            price_basket:    { label: 'Price Basket Monitor', icon: '🧺' },
-            foot_traffic:    { label: 'Foot-Traffic Verify',  icon: '🚶' },
-            infrastructure:  { label: 'Infrastructure Report',icon: '💧' },
-            kota_profile:    { label: 'Kota / Fast-Food Profile', icon: '🍔' },
-            tavern_profile:  { label: 'Tavern / Shebeen Profile', icon: '🍺' }
+            trader_profile:  { label: 'Trader Profile Visit', icon: 'ðŸª' },
+            shelf_audit:     { label: 'Spaza Shelf Audit',    icon: 'ðŸ›’' },
+            price_basket:    { label: 'Price Basket Monitor', icon: 'ðŸ§º' },
+            foot_traffic:    { label: 'Foot-Traffic Verify',  icon: 'ðŸš¶' },
+            infrastructure:  { label: 'Infrastructure Report',icon: 'ðŸ’§' },
+            kota_profile:    { label: 'Kota / Fast-Food Profile', icon: 'ðŸ”' },
+            tavern_profile:  { label: 'Tavern / Shebeen Profile', icon: 'ðŸº' }
         };
         function addLocalSubmission({ gigType, pointsEarned, summary, rawData }) {
-            const meta = GIG_META[gigType] || { label: gigType, icon: '📋' };
+            const meta = GIG_META[gigType] || { label: gigType, icon: 'ðŸ“‹' };
             const subs = JSON.parse(localStorage.getItem('pulse_submissions') || '[]');
             subs.unshift({
                 id:     Date.now(),
@@ -1549,7 +1549,7 @@
             setTimeout(() => t.classList.remove('show'), 3500);
         }
 
-        // ── AI Question Suggestions ──
+        // â”€â”€ AI Question Suggestions â”€â”€
         let _activeAIQuestions = {}; // Tracks loaded AI questions per gig type
 
         async function loadAISuggestions(gigType, containerId) {
@@ -1582,7 +1582,7 @@
             return (typeof collectAIAnswers === 'function') ? collectAIAnswers(questions) : {};
         }
 
-        // ── Submit handlers (write to Supabase + award points) ──
+        // â”€â”€ Submit handlers (write to Supabase + award points) â”€â”€
 
         async function submitKota() {
             if (!confirm('Once submitted, this data cannot be changed. Are you sure you want to submit?')) return;
@@ -1622,7 +1622,7 @@
 
             // Audit: hard block check
             const block = (typeof checkHardBlocks === 'function') ? checkHardBlocks('kota_profile', rawData) : { blocked: false };
-            if (block.blocked) { alert('⛔ ' + block.reason); return; }
+            if (block.blocked) { alert('â›” ' + block.reason); return; }
 
             // DQS calculation
             const gps = (typeof getGPSPosition === 'function') ? await getGPSPosition() : null;
@@ -1680,7 +1680,7 @@
             if (Object.keys(aiAnswers).length > 0) rawData.ai_answers = aiAnswers;
 
             const block = (typeof checkHardBlocks === 'function') ? checkHardBlocks('tavern_profile', rawData) : { blocked: false };
-            if (block.blocked) { alert('⛔ ' + block.reason); return; }
+            if (block.blocked) { alert('â›” ' + block.reason); return; }
 
             const gps = (typeof getGPSPosition === 'function') ? await getGPSPosition() : null;
             const dqs = (typeof calculateDQS === 'function') ? calculateDQS('tavern_profile', rawData, { hasGPS: !!gps, gpsCoords: gps }) : null;
@@ -1729,7 +1729,7 @@
             if (Object.keys(aiAnswers).length > 0) rawData.ai_answers = aiAnswers;
 
             const block = (typeof checkHardBlocks === 'function') ? checkHardBlocks('trader_profile', rawData) : { blocked: false };
-            if (block.blocked) { alert('⛔ ' + block.reason); return; }
+            if (block.blocked) { alert('â›” ' + block.reason); return; }
 
             const gps = (typeof getGPSPosition === 'function') ? await getGPSPosition() : null;
             const dqs = (typeof calculateDQS === 'function') ? calculateDQS('trader_profile', rawData, { hasGPS: !!gps, gpsCoords: gps }) : null;
@@ -1764,7 +1764,7 @@
             if (Object.keys(aiAnswers).length > 0) rawData.ai_answers = aiAnswers;
 
             const block = (typeof checkHardBlocks === 'function') ? checkHardBlocks('shelf_audit', rawData) : { blocked: false };
-            if (block.blocked) { alert('⛔ ' + block.reason); return; }
+            if (block.blocked) { alert('â›” ' + block.reason); return; }
 
             const gps = (typeof getGPSPosition === 'function') ? await getGPSPosition() : null;
             const dqs = (typeof calculateDQS === 'function') ? calculateDQS('shelf_audit', rawData, { hasGPS: !!gps, gpsCoords: gps }) : null;
@@ -1790,7 +1790,7 @@
             const location = document.getElementById('bk-township').value;
             const priceIds = ['bk-bread','bk-maize','bk-oil','bk-milk','bk-eggs','bk-sugar','bk-airtime','bk-sunoil'];
             const logged   = priceIds.filter(id => document.getElementById(id) && document.getElementById(id).value !== '').length;
-            const summary  = `Price Basket: ${name}, ${location} — ${logged}/8 items`;
+            const summary  = `Price Basket: ${name}, ${location} â€” ${logged}/8 items`;
 
             const rawData = { trader_name: name, township: location, items_logged: logged,
                 bread_price:         document.getElementById('bk-bread')   ? document.getElementById('bk-bread').value   : null,
@@ -1807,7 +1807,7 @@
             if (Object.keys(aiAnswers).length > 0) rawData.ai_answers = aiAnswers;
 
             const block = (typeof checkHardBlocks === 'function') ? checkHardBlocks('price_basket', rawData) : { blocked: false };
-            if (block.blocked) { alert('⛔ ' + block.reason); return; }
+            if (block.blocked) { alert('â›” ' + block.reason); return; }
 
             const gps = (typeof getGPSPosition === 'function') ? await getGPSPosition() : null;
             const dqs = (typeof calculateDQS === 'function') ? calculateDQS('price_basket', rawData, { hasGPS: !!gps, gpsCoords: gps }) : null;
@@ -1834,8 +1834,8 @@
             if (!confirm('Once submitted, this data cannot be changed. Are you sure you want to submit?')) return;
 
             const name    = document.getElementById('ft-name').value || 'Unknown trader';
-            const icons   = { Open: '✅', Closed: '❌', Partial: '⚠️' };
-            const summary = `${icons[status.value]} Verified: ${name} — ${status.value}`;
+            const icons   = { Open: 'âœ…', Closed: 'âŒ', Partial: 'âš ï¸' };
+            const summary = `${icons[status.value]} Verified: ${name} â€” ${status.value}`;
 
             const rawData = { trader_name: name, status: status.value };
 
@@ -1883,7 +1883,7 @@
             if (Object.keys(aiAnswers).length > 0) rawData.ai_answers = aiAnswers;
 
             const block = (typeof checkHardBlocks === 'function') ? checkHardBlocks('infrastructure', rawData) : { blocked: false };
-            if (block.blocked) { alert('⛔ ' + block.reason); return; }
+            if (block.blocked) { alert('â›” ' + block.reason); return; }
 
             const gps = (typeof getGPSPosition === 'function') ? await getGPSPosition() : null;
             const dqs = (typeof calculateDQS === 'function') ? calculateDQS('infrastructure', rawData, { hasGPS: !!gps, gpsCoords: gps }) : null;
@@ -1903,7 +1903,7 @@
             }
         }
 
-        // ── Offline detection ──
+        // â”€â”€ Offline detection â”€â”€
         function updateOnline() {
             document.body.classList.toggle('offline', !navigator.onLine);
         }
@@ -1911,15 +1911,15 @@
         window.addEventListener('offline', updateOnline);
         updateOnline();
 
-        // ── Service Worker ──
+        // â”€â”€ Service Worker â”€â”€
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('./sw.js').catch(() => {});
         }
 
-        // ── Load Supabase helper ──
-        // (now loaded statically in <head> — no dynamic injection needed)
+        // â”€â”€ Load Supabase helper â”€â”€
+        // (now loaded statically in <head> â€” no dynamic injection needed)
 
-        // ── Profile Screen Logic ──
+        // â”€â”€ Profile Screen Logic â”€â”€
         async function loadProfile() {
             // Step 1: Try to fetch real agent data from DB first
             const agentId = localStorage.getItem('pulse_agent_id') || '';
@@ -1947,16 +1947,16 @@
                             }
                         }
                     }
-                } catch(e) { /* silently fail — use cached localStorage values */ }
+                } catch(e) { /* silently fail â€” use cached localStorage values */ }
             }
 
             // Step 2: Render from localStorage (now potentially updated from DB above)
             const firstname = localStorage.getItem('pulse_agent_firstname') || '';
             const surname   = localStorage.getItem('pulse_agent_surname')   || '';
             const name      = localStorage.getItem('pulse_agent_name')      || 'Agent';
-            const email     = localStorage.getItem('pulse_agent_email')     || '—';
-            const phone     = localStorage.getItem('pulse_agent_phone')     || '—';
-            const address   = localStorage.getItem('pulse_agent_address')   || '—';
+            const email     = localStorage.getItem('pulse_agent_email')     || 'â€”';
+            const phone     = localStorage.getItem('pulse_agent_phone')     || 'â€”';
+            const address   = localStorage.getItem('pulse_agent_address')   || 'â€”';
 
             // Avatar initials
             const fn = firstname || name.split(' ')[0] || '';
@@ -2013,7 +2013,7 @@
         function renderSubmissionHistory(subs) {
             const el = document.getElementById('profile-submissions-list');
             if (!subs.length) {
-                el.innerHTML = '<div style="padding:24px;text-align:center;color:#8b8fa8;font-size:0.75rem;">No submissions yet — complete your first gig!</div>';
+                el.innerHTML = '<div style="padding:24px;text-align:center;color:#8b8fa8;font-size:0.75rem;">No submissions yet â€” complete your first gig!</div>';
                 return;
             }
             // Store globally so we can access by index when tapped
@@ -2022,7 +2022,7 @@
                 const d = new Date(s.date);
                 const dateStr = d.toLocaleDateString('en-ZA', { day:'2-digit', month:'short' }) + ' ' + d.toLocaleTimeString('en-ZA', { hour:'2-digit', minute:'2-digit' });
                 return `<div class="sub-history-item" onclick="showSubmissionDetail(${i})" style="cursor:pointer;">
-                    <div class="sub-history-icon">${s.icon || '📋'}</div>
+                    <div class="sub-history-icon">${s.icon || 'ðŸ“‹'}</div>
                     <div style="flex:1;min-width:0;">
                         <div style="font-size:0.75rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${s.label || s.type}</div>
                         <div class="sub-history-date">${dateStr}</div>
@@ -2067,7 +2067,7 @@
             let html = '';
             // Header card
             html += `<div style="background:linear-gradient(135deg,rgba(168,85,247,0.1),rgba(0,242,254,0.05));border:1px solid rgba(168,85,247,0.2);border-radius:14px;padding:18px;text-align:center;">`;
-            html += `<div style="font-size:2rem;margin-bottom:6px;">${s.icon || '📋'}</div>`;
+            html += `<div style="font-size:2rem;margin-bottom:6px;">${s.icon || 'ðŸ“‹'}</div>`;
             html += `<div style="font-size:0.95rem;font-weight:800;color:#f0f2ff;">${s.label || s.type}</div>`;
             html += `<div style="font-size:0.68rem;color:#8b8fa8;margin-top:4px;">${dateStr}</div>`;
             html += `<div style="margin-top:10px;display:inline-block;background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.25);border-radius:8px;padding:5px 14px;">`;
@@ -2077,10 +2077,10 @@
             // Summary
             html += `<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:14px;">`;
             html += `<div style="font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#00f2fe;margin-bottom:6px;">Summary</div>`;
-            html += `<div style="font-size:0.78rem;color:#d1d5f0;line-height:1.5;">${s.summary || '—'}</div>`;
+            html += `<div style="font-size:0.78rem;color:#d1d5f0;line-height:1.5;">${s.summary || 'â€”'}</div>`;
             html += `</div>`;
 
-            // Data fields — collapsible accordion
+            // Data fields â€” collapsible accordion
             const data = s.data || {};
             const keys = Object.keys(data).filter(k => data[k] !== null && data[k] !== '' && data[k] !== undefined);
             if (keys.length > 0) {
@@ -2176,7 +2176,7 @@
 
             closeEditProfile();
             loadProfile();
-            showToast('Profile updated! ✅');
+            showToast('Profile updated! âœ…');
         }
 
         function openChangePIN() {
@@ -2203,7 +2203,7 @@
             localStorage.setItem('pulse_pin', pin);
             if (typeof updateAgentProfile === 'function') await updateAgentProfile({ pin });
             closePINOverlay();
-            showToast('PIN saved! 🔒');
+            showToast('PIN saved! ðŸ”’');
         }
 
         function confirmSignOut() {
@@ -2223,14 +2223,14 @@
                 await syncAgentToDatabase();
                 loadProfile();
                 if (localStorage.getItem('pulse_agent_id') && !localStorage.getItem('pulse_agent_id').startsWith('local_')) {
-                    showToast('Profile synced to database! ✅');
+                    showToast('Profile synced to database! âœ…');
                 } else {
-                    showToast('Sync failed — check your connection');
+                    showToast('Sync failed â€” check your connection');
                 }
             }
         }
 
-        // ── Onboarding Logic ──
+        // â”€â”€ Onboarding Logic â”€â”€
         function showOnboardingIfNeeded() {
             const agentId = localStorage.getItem('pulse_agent_id');
             if (!agentId) {
@@ -2255,7 +2255,7 @@
                 errEl.style.display = 'block'; return;
             }
             if (!age || parseInt(age) < 16 || parseInt(age) > 80) {
-                errEl.textContent = 'Please enter a valid age (16–80).';
+                errEl.textContent = 'Please enter a valid age (16â€“80).';
                 errEl.style.display = 'block'; return;
             }
             if (!address) {
@@ -2317,15 +2317,15 @@
             // Hide onboarding and show home screen
             document.getElementById('onboarding-overlay').style.display = 'none';
             updateDisplays();
-            showToast(`Sawubona ${firstname}! 🎉 Your profile is live — 2,500 welcome points added!`);
+            showToast(`Sawubona ${firstname}! ðŸŽ‰ Your profile is live â€” 2,500 welcome points added!`);
         }
 
         // Run onboarding check on load
         showOnboardingIfNeeded();
 
-        // ── Clock / title ──
+        // â”€â”€ Clock / title â”€â”€
         function updateClock() {
-            document.title = `Pulse SA — ${fmtPts(points)} pts`;
+            document.title = `Pulse SA â€” ${fmtPts(points)} pts`;
         }
         setInterval(updateClock, 60000);
         updateDisplays();

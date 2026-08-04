@@ -290,11 +290,68 @@ function checkHardBlocks(gigType, rawData, options = {}) {
     // HARD BLOCK 1: GPS mismatch (if we have GPS + reported location)
     if (options.gpsCoords && rawData.township) {
         const townshipGPS = {
+            // Gauteng: City of Johannesburg
             'Soweto':          { lat: -26.27, lng: 27.85, radius: 0.15 },
-            'Khayelitsha':     { lat: -34.04, lng: 18.68, radius: 0.12 },
+            'Alexandra':       { lat: -26.10, lng: 28.10, radius: 0.08 },
+            'Diepsloot':       { lat: -25.93, lng: 28.02, radius: 0.08 },
+            'Orange Farm':     { lat: -26.48, lng: 27.86, radius: 0.10 },
+            'Ivory Park':      { lat: -25.98, lng: 28.18, radius: 0.08 },
+            'Cosmo City':      { lat: -26.01, lng: 27.93, radius: 0.06 },
+            'Lenasia':         { lat: -26.33, lng: 27.83, radius: 0.08 },
+            'Eldorado Park':   { lat: -26.29, lng: 27.90, radius: 0.06 },
+            'Meadowlands':     { lat: -26.22, lng: 27.89, radius: 0.06 },
+            'Diepkloof':       { lat: -26.24, lng: 27.93, radius: 0.06 },
+            'Orlando':         { lat: -26.24, lng: 27.90, radius: 0.06 },
+            'Dobsonville':     { lat: -26.22, lng: 27.86, radius: 0.06 },
+            'Protea Glen':     { lat: -26.30, lng: 27.81, radius: 0.06 },
+            'Zola':            { lat: -26.24, lng: 27.84, radius: 0.05 },
+            // Gauteng: Ekurhuleni
             'Tembisa':         { lat: -25.99, lng: 28.23, radius: 0.10 },
+            'Katlehong':       { lat: -26.33, lng: 28.15, radius: 0.10 },
+            'Vosloorus':       { lat: -26.35, lng: 28.20, radius: 0.08 },
+            'Thokoza':         { lat: -26.36, lng: 28.14, radius: 0.06 },
+            'Etwatwa':         { lat: -26.18, lng: 28.42, radius: 0.08 },
+            'Daveyton':        { lat: -26.15, lng: 28.42, radius: 0.08 },
+            'KwaThema':        { lat: -26.28, lng: 28.39, radius: 0.08 },
+            'Tsakane':         { lat: -26.35, lng: 28.38, radius: 0.08 },
+            // Gauteng: Tshwane
+            'Mamelodi':        { lat: -25.72, lng: 28.40, radius: 0.10 },
+            'Soshanguve':      { lat: -25.53, lng: 28.09, radius: 0.12 },
+            'Atteridgeville':  { lat: -25.78, lng: 28.08, radius: 0.08 },
+            'Hammanskraal':    { lat: -25.40, lng: 28.28, radius: 0.10 },
+            'Ga-Rankuwa':      { lat: -25.61, lng: 28.07, radius: 0.08 },
+            'Mabopane':        { lat: -25.50, lng: 28.10, radius: 0.08 },
+            'Winterveld':      { lat: -25.47, lng: 28.05, radius: 0.10 },
+            // Gauteng: Sedibeng / West Rand
+            'Sebokeng':        { lat: -26.57, lng: 27.84, radius: 0.10 },
+            'Evaton':          { lat: -26.53, lng: 27.85, radius: 0.08 },
+            'Sharpeville':     { lat: -26.68, lng: 27.87, radius: 0.06 },
+            'Kagiso':          { lat: -26.16, lng: 27.78, radius: 0.06 },
+            // Western Cape: City of Cape Town
+            'Khayelitsha':     { lat: -34.04, lng: 18.68, radius: 0.12 },
             'Mitchells Plain': { lat: -34.05, lng: 18.62, radius: 0.10 },
-            'Alexandra':       { lat: -26.10, lng: 28.10, radius: 0.08 }
+            'Gugulethu':       { lat: -33.98, lng: 18.57, radius: 0.06 },
+            'Nyanga':          { lat: -33.99, lng: 18.58, radius: 0.06 },
+            'Langa':           { lat: -33.95, lng: 18.53, radius: 0.05 },
+            'Philippi':        { lat: -34.01, lng: 18.59, radius: 0.08 },
+            'Delft':           { lat: -33.97, lng: 18.63, radius: 0.06 },
+            'Dunoon':          { lat: -33.83, lng: 18.55, radius: 0.05 },
+            // KZN: eThekwini
+            'Umlazi':          { lat: -29.97, lng: 30.89, radius: 0.10 },
+            'KwaMashu':        { lat: -29.75, lng: 30.97, radius: 0.08 },
+            'Inanda':          { lat: -29.72, lng: 30.92, radius: 0.10 },
+            'Ntuzuma':         { lat: -29.76, lng: 30.94, radius: 0.06 },
+            'Clermont':        { lat: -29.82, lng: 30.87, radius: 0.06 },
+            'Chatsworth':      { lat: -29.92, lng: 30.89, radius: 0.08 },
+            'Phoenix':         { lat: -29.72, lng: 31.01, radius: 0.08 },
+            // Eastern Cape
+            'Mdantsane':       { lat: -32.96, lng: 27.75, radius: 0.10 },
+            'Motherwell':      { lat: -33.82, lng: 25.72, radius: 0.08 },
+            'Ibhayi (Zwide)':  { lat: -33.85, lng: 25.60, radius: 0.08 },
+            'New Brighton':    { lat: -33.85, lng: 25.62, radius: 0.06 },
+            // Free State
+            'Botshabelo':      { lat: -29.27, lng: 26.72, radius: 0.10 },
+            'Mangaung (Bloemfontein)': { lat: -29.12, lng: 26.22, radius: 0.12 }
         };
         const expected = townshipGPS[rawData.township];
         if (expected && options.gpsCoords.lat && options.gpsCoords.lng) {
