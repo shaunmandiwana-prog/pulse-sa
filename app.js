@@ -362,7 +362,7 @@ const merchantProfile = {
 // State Variables
 let walletBalance = 25.00;
 let activeScreen = 'home';
-let activeTab = 'profile';
+let activeTab = 'datagap';
 let selectedNodeId = null;
 
 // Chart references
@@ -418,7 +418,7 @@ window.addEventListener('DOMContentLoaded', () => {
     renderMultiplierBars();
     
     // Set initial active tab
-    switchTab('profile');
+    switchTab('datagap');
 });
 
 // Update Simulated phone clock
@@ -782,6 +782,54 @@ function initCharts() {
                     <span style="font-size:0.65rem;font-weight:700;color:${s.color};width:30px;text-align:right;">${s.pct}%</span>
                 </div>
             `).join('');
+        }
+
+        // ── Financial Inclusion: Banking Status Chart ──
+        const bankingCtx = document.getElementById('chart-banking-status');
+        if (bankingCtx) {
+            new Chart(bankingCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Capitec', 'FNB', 'Standard Bank', 'Nedbank', 'TymeBank', 'Unbanked'],
+                    datasets: [{
+                        data: [18, 8, 6, 4, 8, 56],
+                        backgroundColor: ['#a855f7', '#3b82f6', '#10b981', '#f59e0b', '#ec4899', '#ef4444'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    cutout: '55%',
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 9 }, padding: 6, boxWidth: 10 } },
+                        title: { display: false }
+                    }
+                }
+            });
+        }
+
+        // ── Financial Inclusion: Insurance Status Chart ──
+        const insuranceCtx = document.getElementById('chart-insurance-status');
+        if (insuranceCtx) {
+            new Chart(insuranceCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['No Insurance', 'Basic Cover', 'Business Insurance', 'Interested'],
+                    datasets: [{
+                        data: [68, 8, 3, 21],
+                        backgroundColor: ['#ef4444', '#10b981', '#3b82f6', '#f59e0b'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    cutout: '55%',
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 9 }, padding: 6, boxWidth: 10 } },
+                        title: { display: false }
+                    }
+                }
+            });
         }
 }
 

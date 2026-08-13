@@ -912,23 +912,25 @@
 
             <!-- Workspace Tabs -->
             <div class="workspace-tabs">
-                <button class="tab-btn active" id="tab-profile" onclick="switchTab('profile')"><i class="fa-solid fa-building-columns"></i> Credit Intelligence</button>
-                <button class="tab-btn" id="tab-datagap" onclick="switchTab('datagap')"><i class="fa-solid fa-magnifying-glass-chart"></i> Market Intelligence</button>
-                <button class="tab-btn" id="tab-analytics" onclick="switchTab('analytics')"><i class="fa-solid fa-chart-line"></i> Kasi Analytics</button>
+                <button class="tab-btn active" id="tab-datagap" onclick="switchTab('datagap')"><i class="fa-solid fa-lightbulb"></i> The Opportunity</button>
+                <button class="tab-btn" id="tab-profile" onclick="switchTab('profile')"><i class="fa-solid fa-building-columns"></i> Credit Intelligence</button>
+                <button class="tab-btn" id="tab-analytics" onclick="switchTab('analytics')"><i class="fa-solid fa-chart-line"></i> Kasi Ground Truth</button>
                 <button class="tab-btn" id="tab-wardmap" onclick="switchTab('wardmap')"><i class="fa-solid fa-map-location-dot"></i> Ward Map</button>
-                <button class="tab-btn" id="tab-ontology" onclick="switchTab('ontology')"><i class="fa-solid fa-diagram-project"></i> KasiOntology</button>
-                <button class="tab-btn" id="tab-simulator" onclick="switchTab('simulator')"><i class="fa-solid fa-shield-halved"></i> Impact Simulator</button>
-                <button class="tab-btn" id="tab-coverage" onclick="switchTab('coverage')"><i class="fa-solid fa-satellite-dish"></i> Impact & Coverage</button>
+                <button class="tab-btn" id="tab-coverage" onclick="switchTab('coverage')"><i class="fa-solid fa-hand-holding-heart"></i> Impact Dashboard</button>
+                <span style="margin-left:auto; display:flex; gap:0.5rem;">
+                    <button class="tab-btn" style="font-size:0.6rem; padding:6px 10px; opacity:0.6;" id="tab-ontology" onclick="switchTab('ontology')" title="Advanced: Semantic Graph"><i class="fa-solid fa-diagram-project"></i></button>
+                    <button class="tab-btn" style="font-size:0.6rem; padding:6px 10px; opacity:0.6;" id="tab-simulator" onclick="switchTab('simulator')" title="Advanced: Risk Simulator"><i class="fa-solid fa-shield-halved"></i></button>
+                </span>
             </div>
 
             <!-- TAB CONTENT: Data-Gap Explorer (DEFAULT LANDING) -->
-            <div class="tab-content" id="content-datagap">
+            <div class="tab-content active" id="content-datagap">
                 <div class="datagap-workspace">
                     <!-- Hero Header -->
                     <div class="datagap-hero">
                         <div class="hero-text">
-                            <h3><i class="fa-solid fa-bullseye"></i> SA Informal Economy Credit & Data-Gap Map</h3>
-                            <p>Stitching StatsSA SESE 2023, FinScope MSME 2024, and constructed fintech coverage scores to surface <strong>under-served, high-growth informal sectors</strong> invisible to any single data source.</p>
+                        <h2 style="font-size:1.3rem; margin-bottom:0.5rem;"><i class="fa-solid fa-lightbulb" style="color:#f59e0b;"></i> The Opportunity: 3 Million Invisible Businesses</h2>
+                        <p style="font-size:0.78rem; color:var(--text-secondary); line-height:1.6;">South Africa has <strong>3 million+</strong> informal micro-enterprises generating <strong>R5.3 trillion</strong> in annual turnover. Yet <strong>56% have no bank account</strong>, <strong>92% have never received a business loan</strong>, and <strong>97% have no insurance</strong>. They are invisible to the formal financial system — not because they aren't viable, but because no one has collected the data to prove it. <strong>Until now.</strong></p>
                         </div>
                         <div class="confidence-legend">
                             <div class="confidence-tag verified"><i class="fa-solid fa-badge-check"></i> <span class="conf-dot verified-dot"></span> National Survey Data</div>
@@ -1382,8 +1384,72 @@
             </div>
 
             <!-- TAB CONTENT: Trader Profile Output -->
-            <div class="tab-content active" id="content-profile">
+            <div class="tab-content" id="content-profile">
                 <div class="profile-output-workspace">
+                    <!-- Formalization Pipeline -->
+                    <div style="background: linear-gradient(135deg, rgba(16,185,129,0.06) 0%, rgba(59,130,246,0.06) 100%); border: 1px solid rgba(16,185,129,0.12); border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                        <h3 style="font-size:1rem; margin-bottom:0.3rem;"><i class="fa-solid fa-route" style="color:#10b981;"></i> Formalization Pipeline</h3>
+                        <p style="font-size:0.7rem; color:var(--text-secondary); margin-bottom:1rem;">Every trader journey: Invisible → Profiled → Verified → Credit-Ready → Bankable. Here's where our network stands.</p>
+                        <div style="display:flex; gap:0; align-items:stretch; margin-bottom:1rem;">
+                            <div style="flex:1; text-align:center; padding:1rem 0.5rem; background:rgba(168,85,247,0.08); border-radius:12px 0 0 12px; border-right:1px solid rgba(255,255,255,0.05);">
+                                <div style="font-size:1.6rem; font-weight:800; color:#a855f7;">1,842</div>
+                                <div style="font-size:0.6rem; color:var(--text-secondary); margin-top:2px;">Profiled</div>
+                                <div style="font-size:0.55rem; color:var(--text-muted);">Agent visited</div>
+                            </div>
+                            <div style="display:flex;align-items:center;color:rgba(255,255,255,0.15);font-size:1.2rem;">▶</div>
+                            <div style="flex:1; text-align:center; padding:1rem 0.5rem; background:rgba(59,130,246,0.08); border-right:1px solid rgba(255,255,255,0.05);">
+                                <div style="font-size:1.6rem; font-weight:800; color:#3b82f6;">1,456</div>
+                                <div style="font-size:0.6rem; color:var(--text-secondary); margin-top:2px;">GPS Verified</div>
+                                <div style="font-size:0.55rem; color:var(--text-muted);">Photo + GPS match</div>
+                            </div>
+                            <div style="display:flex;align-items:center;color:rgba(255,255,255,0.15);font-size:1.2rem;">▶</div>
+                            <div style="flex:1; text-align:center; padding:1rem 0.5rem; background:rgba(0,242,254,0.08); border-right:1px solid rgba(255,255,255,0.05);">
+                                <div style="font-size:1.6rem; font-weight:800; color:#00f2fe;">1,102</div>
+                                <div style="font-size:0.6rem; color:var(--text-secondary); margin-top:2px;">Credit-Ready</div>
+                                <div style="font-size:0.55rem; color:var(--text-muted);">DQS ≥ 80/100</div>
+                            </div>
+                            <div style="display:flex;align-items:center;color:rgba(255,255,255,0.15);font-size:1.2rem;">▶</div>
+                            <div style="flex:1; text-align:center; padding:1rem 0.5rem; background:rgba(16,185,129,0.1); border-radius:0 12px 12px 0;">
+                                <div style="font-size:1.6rem; font-weight:800; color:#10b981;">634</div>
+                                <div style="font-size:0.6rem; color:var(--text-secondary); margin-top:2px;">Loan-Ready</div>
+                                <div style="font-size:0.55rem; color:var(--text-muted);">3+ verified visits</div>
+                            </div>
+                        </div>
+                        <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:0.8rem;">
+                            <div style="text-align:center; padding:0.6rem; background:rgba(255,255,255,0.02); border-radius:8px; border:1px solid rgba(255,255,255,0.04);">
+                                <div style="font-size:1.1rem; font-weight:700; color:#f59e0b;">84</div>
+                                <div style="font-size:0.6rem; color:var(--text-secondary);">Avg DQS Score</div>
+                            </div>
+                            <div style="text-align:center; padding:0.6rem; background:rgba(255,255,255,0.02); border-radius:8px; border:1px solid rgba(255,255,255,0.04);">
+                                <div style="font-size:1.1rem; font-weight:700; color:#10b981;">96%</div>
+                                <div style="font-size:0.6rem; color:var(--text-secondary);">GPS Match Rate</div>
+                            </div>
+                            <div style="text-align:center; padding:0.6rem; background:rgba(255,255,255,0.02); border-radius:8px; border:1px solid rgba(255,255,255,0.04);">
+                                <div style="font-size:1.1rem; font-weight:700; color:#3b82f6;">78%</div>
+                                <div style="font-size:0.6rem; color:var(--text-secondary);">Photo Evidence Rate</div>
+                            </div>
+                            <div style="text-align:center; padding:0.6rem; background:rgba(255,255,255,0.02); border-radius:8px; border:1px solid rgba(255,255,255,0.04);">
+                                <div style="font-size:1.1rem; font-weight:700; color:#a855f7;">2.4</div>
+                                <div style="font-size:0.6rem; color:var(--text-secondary);">Avg Visits/Trader</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- How Agent Data Becomes Credit Scores -->
+                    <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 1.2rem; margin-bottom: 1.5rem;">
+                        <h4 style="font-size:0.8rem; margin-bottom:0.8rem; color:var(--text-secondary);"><i class="fa-solid fa-arrows-spin" style="color:#00f2fe;"></i> How Agent Data Becomes a Credit Score</h4>
+                        <div style="display:flex; gap:0.3rem; align-items:center; flex-wrap:wrap; justify-content:center;">
+                            <span style="background:rgba(168,85,247,0.1); padding:6px 12px; border-radius:20px; font-size:0.65rem; border:1px solid rgba(168,85,247,0.2);">📱 Agent visits trader</span>
+                            <span style="color:rgba(255,255,255,0.2);">→</span>
+                            <span style="background:rgba(59,130,246,0.1); padding:6px 12px; border-radius:20px; font-size:0.65rem; border:1px solid rgba(59,130,246,0.2);">📝 30-field profile + photo</span>
+                            <span style="color:rgba(255,255,255,0.2);">→</span>
+                            <span style="background:rgba(0,242,254,0.1); padding:6px 12px; border-radius:20px; font-size:0.65rem; border:1px solid rgba(0,242,254,0.2);">📍 GPS + DQS verification</span>
+                            <span style="color:rgba(255,255,255,0.2);">→</span>
+                            <span style="background:rgba(249,115,22,0.1); padding:6px 12px; border-radius:20px; font-size:0.65rem; border:1px solid rgba(249,115,22,0.2);">🧳 Receipt cross-reference</span>
+                            <span style="color:rgba(255,255,255,0.2);">→</span>
+                            <span style="background:rgba(16,185,129,0.15); padding:6px 14px; border-radius:20px; font-size:0.65rem; font-weight:700; border:1px solid rgba(16,185,129,0.3); color:#10b981;">✅ Credit Score Generated</span>
+                        </div>
+                    </div>
                     <div class="profile-output-hero">
                         <h3><i class="fa-solid fa-id-card-clip"></i> Institutional Profile Output</h3>
                         <p>This is what institutional buyers receive via API. Same underlying data, different lenses for different customers.</p>
@@ -1417,6 +1483,89 @@
             <!-- TAB CONTENT: Impact & Coverage -->
             <div class="tab-content" id="content-coverage">
                 <div class="coverage-workspace">
+                    <!-- Financial Inclusion Headline -->
+                    <div style="background: linear-gradient(135deg, rgba(245,158,11,0.06) 0%, rgba(239,68,68,0.06) 100%); border: 1px solid rgba(245,158,11,0.12); border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                        <h3 style="font-size:1.1rem; margin-bottom:0.3rem;"><i class="fa-solid fa-hand-holding-heart" style="color:#f59e0b;"></i> Financial Inclusion Progress</h3>
+                        <p style="font-size:0.7rem; color:var(--text-secondary); margin-bottom:1.2rem;">Tracking the journey from invisible to included. Every data point our agents collect moves a trader closer to formal financial services.</p>
+                        
+                        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap:1rem; margin-bottom:1.2rem;">
+                            <div style="text-align:center; padding:1rem; background:rgba(239,68,68,0.06); border-radius:12px; border:1px solid rgba(239,68,68,0.1);">
+                                <div style="font-size:1.8rem; font-weight:800; color:#ef4444;">56%</div>
+                                <div style="font-size:0.65rem; color:var(--text-secondary);">Unbanked When Profiled</div>
+                                <div style="font-size:0.55rem; color:#10b981; margin-top:4px;"><i class="fa-solid fa-arrow-down"></i> Down from 62% (Jan)</div>
+                            </div>
+                            <div style="text-align:center; padding:1rem; background:rgba(168,85,247,0.06); border-radius:12px; border:1px solid rgba(168,85,247,0.1);">
+                                <div style="font-size:1.8rem; font-weight:800; color:#a855f7;">234</div>
+                                <div style="font-size:0.65rem; color:var(--text-secondary);">First-Time Bank Accounts</div>
+                                <div style="font-size:0.55rem; color:var(--text-muted); margin-top:4px;">Opened via Pulse data</div>
+                            </div>
+                            <div style="text-align:center; padding:1rem; background:rgba(16,185,129,0.06); border-radius:12px; border:1px solid rgba(16,185,129,0.1);">
+                                <div style="font-size:1.8rem; font-weight:800; color:#10b981;">R8.2M</div>
+                                <div style="font-size:0.65rem; color:var(--text-secondary);">Credit Disbursed</div>
+                                <div style="font-size:0.55rem; color:var(--text-muted); margin-top:4px;">Avg loan: R12,940</div>
+                            </div>
+                            <div style="text-align:center; padding:1rem; background:rgba(59,130,246,0.06); border-radius:12px; border:1px solid rgba(59,130,246,0.1);">
+                                <div style="font-size:1.8rem; font-weight:800; color:#3b82f6;">89%</div>
+                                <div style="font-size:0.65rem; color:var(--text-secondary);">Repayment Rate</div>
+                                <div style="font-size:0.55rem; color:#10b981; margin-top:4px;">vs 78% industry avg</div>
+                            </div>
+                        </div>
+
+                        <!-- Banking Status Distribution -->
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem;">
+                            <div>
+                                <h4 style="font-size:0.75rem; color:var(--text-secondary); margin-bottom:0.5rem;">Banking Status (Profiled Traders)</h4>
+                                <canvas id="chart-banking-status" height="160"></canvas>
+                            </div>
+                            <div>
+                                <h4 style="font-size:0.75rem; color:var(--text-secondary); margin-bottom:0.5rem;">Insurance Coverage</h4>
+                                <canvas id="chart-insurance-status" height="160"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Agent Data Flow Explainer -->
+                    <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 1.2rem; margin-bottom: 1.5rem;">
+                        <h4 style="font-size:0.8rem; margin-bottom:0.8rem; color:var(--text-secondary);"><i class="fa-solid fa-diagram-project" style="color:#a855f7;"></i> How We Collect: Agent Gig Data Flow</h4>
+                        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:0.6rem;">
+                            <div style="text-align:center; padding:0.8rem; background:rgba(168,85,247,0.06); border-radius:10px; border:1px solid rgba(168,85,247,0.1);">
+                                <div style="font-size:1.2rem; margin-bottom:4px;">🏠</div>
+                                <div style="font-size:0.7rem; font-weight:600;">Trader Profile</div>
+                                <div style="font-size:0.55rem; color:var(--text-muted);">30 fields + photo</div>
+                                <div style="font-size:0.6rem; color:#a855f7; font-weight:700; margin-top:4px;">500 pts</div>
+                            </div>
+                            <div style="text-align:center; padding:0.8rem; background:rgba(249,115,22,0.06); border-radius:10px; border:1px solid rgba(249,115,22,0.1);">
+                                <div style="font-size:1.2rem; margin-bottom:4px;">🍔</div>
+                                <div style="font-size:0.7rem; font-weight:600;">Kota Profile</div>
+                                <div style="font-size:0.55rem; color:var(--text-muted);">22 fields + AI Qs</div>
+                                <div style="font-size:0.6rem; color:#f97316; font-weight:700; margin-top:4px;">300 pts</div>
+                            </div>
+                            <div style="text-align:center; padding:0.8rem; background:rgba(168,85,247,0.06); border-radius:10px; border:1px solid rgba(168,85,247,0.1);">
+                                <div style="font-size:1.2rem; margin-bottom:4px;">🍺</div>
+                                <div style="font-size:0.7rem; font-weight:600;">Tavern Profile</div>
+                                <div style="font-size:0.55rem; color:var(--text-muted);">23 fields + AI Qs</div>
+                                <div style="font-size:0.6rem; color:#a855f7; font-weight:700; margin-top:4px;">350 pts</div>
+                            </div>
+                            <div style="text-align:center; padding:0.8rem; background:rgba(0,242,254,0.06); border-radius:10px; border:1px solid rgba(0,242,254,0.1);">
+                                <div style="font-size:1.2rem; margin-bottom:4px;">📷</div>
+                                <div style="font-size:0.7rem; font-weight:600;">Receipt Snap</div>
+                                <div style="font-size:0.55rem; color:var(--text-muted);">Photo + amount</div>
+                                <div style="font-size:0.6rem; color:#00f2fe; font-weight:700; margin-top:4px;">50 pts</div>
+                            </div>
+                            <div style="text-align:center; padding:0.8rem; background:rgba(16,185,129,0.06); border-radius:10px; border:1px solid rgba(16,185,129,0.1);">
+                                <div style="font-size:1.2rem; margin-bottom:4px;">💰</div>
+                                <div style="font-size:0.7rem; font-weight:600;">Price Basket</div>
+                                <div style="font-size:0.55rem; color:var(--text-muted);">8 staple prices</div>
+                                <div style="font-size:0.6rem; color:#10b981; font-weight:700; margin-top:4px;">150 pts</div>
+                            </div>
+                            <div style="text-align:center; padding:0.8rem; background:rgba(59,130,246,0.06); border-radius:10px; border:1px solid rgba(59,130,246,0.1);">
+                                <div style="font-size:1.2rem; margin-bottom:4px;">🚶</div>
+                                <div style="font-size:0.7rem; font-weight:600;">Foot Traffic</div>
+                                <div style="font-size:0.55rem; color:var(--text-muted);">Verify + photo</div>
+                                <div style="font-size:0.6rem; color:#3b82f6; font-weight:700; margin-top:4px;">80 pts</div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="section-hero" style="background: linear-gradient(135deg, rgba(16,185,129,0.08) 0%, rgba(59,130,246,0.08) 100%); border: 1px solid rgba(16,185,129,0.15); border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem;">
                         <h3 style="font-size:1.1rem; margin-bottom:0.3rem;"><i class="fa-solid fa-satellite-dish"></i> Impact & Coverage Dashboard</h3>
                         <p style="font-size:0.75rem; color:var(--text-secondary);">Real-time overview of the Pulse agent network, data coverage, and ESD impact metrics. Designed for DFI and corporate impact reporting.</p>
