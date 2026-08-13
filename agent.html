@@ -155,7 +155,7 @@
             flex-shrink: 0;
         }
         .gig-icon.profile { background: rgba(168,85,247,0.15); color: var(--purple); }
-        .gig-icon.audit { background: rgba(0,242,254,0.1); color: var(--teal); }
+
         .gig-icon.basket { background: rgba(16,185,129,0.1); color: var(--green); }
         .gig-icon.verify { background: rgba(245,158,11,0.1); color: var(--orange); }
         .gig-icon.infra { background: rgba(59,130,246,0.1); color: #60a5fa; }
@@ -449,6 +449,10 @@
         }
         .sub-history-pts { font-size: 0.72rem; font-weight: 800; color: var(--orange); white-space: nowrap; }
         .sub-history-date { font-size: 0.58rem; color: #8b8fa8; margin-top: 1px; }
+        .photo-input { width: 100%; padding: 10px; background: rgba(0,242,254,0.05); border: 2px dashed rgba(0,242,254,0.2); border-radius: 10px; color: var(--text-secondary); cursor: pointer; }
+        .photo-input::-webkit-file-upload-button { background: var(--accent-teal); color: #000; border: none; padding: 6px 14px; border-radius: 6px; font-weight: 700; cursor: pointer; margin-right: 8px; }
+        .photo-preview { max-height: 200px; object-fit: cover; border: 2px solid rgba(0,242,254,0.2); }
+        .gig-icon.receipt { background: linear-gradient(135deg, #10b981, #059669); color: #fff; }
     </style>
 </head>
 <body>
@@ -582,15 +586,15 @@
                     </div>
                     <i class="fa-solid fa-chevron-right gig-arrow"></i>
                 </div>
-                <div class="gig-card" onclick="goTo('gig-audit')">
-                    <div class="gig-icon audit"><i class="fa-solid fa-cart-shopping"></i></div>
+                <div class="gig-card" onclick="goTo('gig-receipt')">
+                    <div class="gig-icon receipt"><i class="fa-solid fa-receipt"></i></div>
                     <div class="gig-info">
-                        <h4>Spaza Shelf Audit</h4>
-                        <p>Log brands, stock levels &amp; shelf prices</p>
+                        <h3>Receipt Snap</h3>
+                        <p>Photo a wholesale purchase receipt (30 sec)</p>
                     </div>
-                    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0;">
-                        <span class="gig-reward">+200 pts</span>
-                        <span style="font-size:0.6rem;color:var(--text-muted);">â‰ˆ R2 airtime</span>
+                    <div class="gig-reward">
+                        <span class="gig-pts">+50 pts</span>
+                        <span style="font-size:0.6rem;color:var(--text-muted);">≈ R0.50 airtime</span>
                     </div>
                     <i class="fa-solid fa-chevron-right gig-arrow"></i>
                 </div>
@@ -613,8 +617,8 @@
                         <p>Confirm a known trader is open &amp; trading</p>
                     </div>
                     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0;">
-                        <span class="gig-reward">+60 pts</span>
-                        <span style="font-size:0.6rem;color:var(--text-muted);">â‰ˆ R0.60 airtime</span>
+                        <span class="gig-reward">+80 pts</span>
+                        <span style="font-size:0.6rem;color:var(--text-muted);">â‰ˆ R0.80 airtime</span>
                     </div>
                     <i class="fa-solid fa-chevron-right gig-arrow"></i>
                 </div>
@@ -625,8 +629,8 @@
                         <p>Report water, electricity or road disruptions</p>
                     </div>
                     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0;">
-                        <span class="gig-reward">+40 pts</span>
-                        <span style="font-size:0.6rem;color:var(--text-muted);">â‰ˆ R0.40 airtime</span>
+                        <span class="gig-reward">+60 pts</span>
+                        <span style="font-size:0.6rem;color:var(--text-muted);">â‰ˆ R0.60 airtime</span>
                     </div>
                     <i class="fa-solid fa-chevron-right gig-arrow"></i>
                 </div>
@@ -799,7 +803,7 @@
                             <select id="a-crime"><option>None</option><option>1 incident</option><option>2 or more incidents</option></select>
                         </div>
                         <div class="btn-row">
-                            <button class="btn btn-secondary" onclick="profileStep(5)">â† Back</button>
+                            <button class="btn btn-secondary" onclick="profileStep(5)">â†  Back</button>
                         </div>
                         <button class="btn btn-ai" onclick="loadAISuggestions('trader_profile','ai-container-profile')" style="width:100%;margin:10px 0;padding:10px;background:linear-gradient(135deg,rgba(168,85,247,0.2),rgba(0,242,254,0.15));border:1px solid rgba(168,85,247,0.3);border-radius:10px;color:var(--teal);font-weight:700;font-size:0.85rem;cursor:pointer;">ðŸ’¡ AI Suggest More Questions</button>
                         <div id="ai-container-profile"></div>
@@ -809,31 +813,6 @@
             </form>
         </div>
 
-        <!-- â•â• SPAZA SHELF AUDIT â•â• -->
-        <div class="screen" id="screen-gig-audit">
-            <div class="screen-nav">
-                <div class="back-btn" onclick="goTo('home')"><i class="fa-solid fa-arrow-left"></i></div>
-                <h3>Spaza Shelf Audit</h3>
-            </div>
-            <div class="form-body">
-                <p class="form-hint">Walk into the spaza and record what you see on the shelves. Takes about 5 minutes.</p>
-                <div class="field"><label>Spaza Location</label>
-                    <select id="au-township"><optgroup label="â”€â”€ Gauteng: City of Johannesburg â”€â”€"><option>Soweto</option><option>Alexandra</option><option>Diepsloot</option><option>Orange Farm</option><option>Ivory Park</option><option>Cosmo City</option><option>Zandspruit</option><option>Braamfischerville</option><option>Ennerdale</option><option>Lenasia</option><option>Eldorado Park</option><option>Meadowlands</option><option>Diepkloof</option><option>Orlando</option><option>Dobsonville</option><option>Pimville</option><option>Kliptown</option><option>Protea Glen</option><option>Zola</option><option>Naledi</option><option>Dlamini</option><option>Jabulani</option></optgroup><optgroup label="â”€â”€ Gauteng: City of Ekurhuleni â”€â”€"><option>Tembisa</option><option>Katlehong</option><option>Vosloorus</option><option>Thokoza</option><option>Etwatwa</option><option>Daveyton</option><option>Duduza</option><option>KwaThema</option><option>Tsakane</option><option>Wattville</option></optgroup><optgroup label="â”€â”€ Gauteng: City of Tshwane â”€â”€"><option>Mamelodi</option><option>Soshanguve</option><option>Atteridgeville</option><option>Hammanskraal</option><option>Ga-Rankuwa</option><option>Mabopane</option><option>Winterveld</option><option>Olievenhoutbosch</option></optgroup><optgroup label="â”€â”€ Gauteng: Sedibeng & West Rand â”€â”€"><option>Sebokeng</option><option>Evaton</option><option>Sharpeville</option><option>Ratanda</option><option>Kagiso</option><option>Bekkersdal</option><option>Mohlakeng</option><option>Munsieville</option></optgroup><optgroup label="â”€â”€ Western Cape: City of Cape Town â”€â”€"><option>Khayelitsha</option><option>Mitchells Plain</option><option>Gugulethu</option><option>Nyanga</option><option>Langa</option><option>Philippi</option><option>Delft</option><option>Mfuleni</option><option>Kraaifontein</option><option>Dunoon</option><option>Joe Slovo (Langa)</option><option>Masiphumelele</option><option>Imizamo Yethu</option><option>Ocean View</option><option>Manenberg</option><option>Bonteheuwel</option><option>Hanover Park</option><option>Grassy Park</option></optgroup><optgroup label="â”€â”€ KwaZulu-Natal: eThekwini â”€â”€"><option>Umlazi</option><option>KwaMashu</option><option>Inanda</option><option>Ntuzuma</option><option>Clermont</option><option>Pinetown (KwaDabeka)</option><option>Lamontville</option><option>Chesterville</option><option>Chatsworth</option><option>Phoenix</option><option>Amaoti</option></optgroup><optgroup label="â”€â”€ Eastern Cape: Buffalo City â”€â”€"><option>Mdantsane</option><option>Duncan Village</option><option>Zwelitsha</option><option>Dimbaza</option></optgroup><optgroup label="â”€â”€ Eastern Cape: Nelson Mandela Bay â”€â”€"><option>Ibhayi (Zwide)</option><option>KwaNobantle</option><option>Motherwell</option><option>New Brighton</option><option>KwaDwesi</option><option>Walmer Township</option></optgroup><optgroup label="â”€â”€ Free State: Mangaung â”€â”€"><option>Botshabelo</option><option>Thaba Nchu</option><option>Mangaung (Bloemfontein)</option><option>Batho</option><option>Rocklands</option></optgroup><optgroup label="â”€â”€ Other / Not Listed â”€â”€"><option>Other</option></optgroup></select>
-                </div>
-                <div class="field"><label>Spaza / Shop Name</label><input type="text" id="au-name" placeholder="e.g. Sizwe's Spaza Shop"></div>
-                <div class="field"><label>Primary Sunflower Oil Brand in Stock</label>
-                    <select id="au-oil"><option>Sunfoil</option><option>D'lite</option><option>Excella</option><option>Generic / Other</option><option>Out of Stock</option></select>
-                </div>
-                <div class="field"><label>Price for Sunflower Oil 2L</label>
-                    <div class="currency-row"><span class="curr-sym">R</span><input type="number" id="au-oil-price" min="30" max="200" value="72"></div>
-                </div>
-                <div class="field"><label>Other Brands Visible on Shelves</label><input type="text" id="au-brands" placeholder="e.g. Koo beans, Omo washing powder, Lucky Star tuna"></div>
-                <div class="field"><label>Overall Stock Level</label>
-                    <select id="au-stock-level"><option>Well-stocked (full shelves)</option><option>Moderate (some gaps)</option><option>Low (many empty shelves)</option></select>
-                </div>
-                <button class="btn btn-ai" onclick="loadAISuggestions('shelf_audit','ai-container-audit')" style="width:100%;margin:10px 0;padding:10px;background:linear-gradient(135deg,rgba(168,85,247,0.2),rgba(0,242,254,0.15));border:1px solid rgba(168,85,247,0.3);border-radius:10px;color:var(--teal);font-weight:700;font-size:0.85rem;cursor:pointer;">ðŸ’¡ AI Suggest More Questions</button>
-                <div id="ai-container-audit"></div>
-                <button class="earn-btn" onclick="submitAudit()">âœ“ Submit Audit &amp; Earn R10</button>
             </div>
         </div>
 
@@ -920,7 +899,48 @@
             </div>
         </div>
 
-        <!-- â•â• KOTA / FAST-FOOD PROFILE â•â• -->
+        <!-- ═══ GIG: Receipt Snap ═══ -->
+        <div class="screen" id="screen-gig-receipt">
+            <div class="screen-header">
+                <button class="back-btn" onclick="goTo('home')"><i class="fa-solid fa-arrow-left"></i></button>
+                <h2>Receipt Snap</h2>
+            </div>
+            <div class="form-body">
+                <p style="font-size:0.75rem;color:var(--text-muted);margin-bottom:1rem;">📸 Photo the trader's most recent wholesale purchase receipt. This verifies their buying patterns and revenue claims.</p>
+                <div class="field"><label>Trader Name</label>
+                    <input type="text" id="rc-name" placeholder="e.g. Sizwe's Spaza" required>
+                </div>
+                <div class="field"><label>Township / Area</label>
+                    <select id="rc-township"><optgroup label="── Gauteng: City of Johannesburg ──"><option>Soweto</option><option>Alexandra</option><option>Diepsloot</option><option>Orange Farm</option><option>Ivory Park</option><option>Cosmo City</option><option>Lenasia</option></optgroup><optgroup label="── Gauteng: City of Ekurhuleni ──"><option>Tembisa</option><option>Katlehong</option><option>Vosloorus</option><option>Daveyton</option></optgroup><optgroup label="── Gauteng: City of Tshwane ──"><option>Mamelodi</option><option>Soshanguve</option><option>Atteridgeville</option><option>Ga-Rankuwa</option></optgroup><optgroup label="── Western Cape: City of Cape Town ──"><option>Khayelitsha</option><option>Mitchells Plain</option><option>Gugulethu</option><option>Nyanga</option><option>Langa</option><option>Delft</option></optgroup><optgroup label="── KwaZulu-Natal: eThekwini ──"><option>Umlazi</option><option>KwaMashu</option><option>Inanda</option></optgroup><optgroup label="── Eastern Cape ──"><option>Mdantsane</option><option>Motherwell</option></optgroup><optgroup label="── Free State: Mangaung ──"><option>Botshabelo</option><option>Mangaung (Bloemfontein)</option></optgroup><optgroup label="── Other ──"><option>Other</option></optgroup></select>
+                </div>
+                <div class="field"><label>Wholesaler / Supplier Name</label>
+                    <select id="rc-supplier">
+                        <option>Metro Cash & Carry</option>
+                        <option>Makro</option>
+                        <option>Kit Kat Cash & Carry</option>
+                        <option>Jumbo Cash & Carry</option>
+                        <option>Cambridge Food</option>
+                        <option>Shoprite / Checkers</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+                <div class="field"><label>Total Receipt Amount (R)</label>
+                    <div class="price-row"><span>R</span><input type="number" id="rc-amount" min="10" max="100000" step="0.01" placeholder="e.g. 2450.00"></div>
+                </div>
+                <div class="field"><label>Receipt Date</label>
+                    <input type="date" id="rc-date">
+                </div>
+                <div class="field">
+                    <label>📸 Photo of Receipt</label>
+                    <input type="file" id="rc-photo" accept="image/*" capture="environment" class="photo-input">
+                    <img id="rc-photo-preview" class="photo-preview" style="display:none;max-width:100%;border-radius:8px;margin-top:8px;">
+                </div>
+                <div id="ai-container-receipt"></div>
+                <button class="submit-btn" onclick="submitReceipt()">📸 Submit Receipt Snap — Earn 50 pts</button>
+            </div>
+        </div>
+
+        <!-- â• â•  KOTA / FAST-FOOD PROFILE â• â•  -->
         <div class="screen" id="screen-gig-kota">
             <div class="screen-nav">
                 <div class="back-btn" onclick="goTo('home')"><i class="fa-solid fa-arrow-left"></i></div>
@@ -1115,6 +1135,10 @@
         <!-- Script: rebuild wallet history from local submissions on load -->
         <script>
             document.addEventListener('DOMContentLoaded', function() {
+                setupPhotoCapture('a-photo', 'a-photo-preview');
+                setupPhotoCapture('ft-photo', 'ft-photo-preview');
+                setupPhotoCapture('ir-photo', 'ir-photo-preview');
+                setupPhotoCapture('rc-photo', 'rc-photo-preview');
                 const histList = document.getElementById('history-list');
                 const subs = JSON.parse(localStorage.getItem('pulse_submissions') || '[]');
                 // Prepend saved submissions (newest first) above the welcome bonus
@@ -1383,6 +1407,71 @@
     <div class="toast" id="toast"></div>
 
     <script>
+        // ── Photo Capture Utility ──
+        function setupPhotoCapture(inputId, previewId) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            input.addEventListener('change', async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const preview = document.getElementById(previewId);
+                try {
+                    const compressed = await compressPhoto(file, 800, 0.7);
+                    if (preview) {
+                        preview.src = compressed;
+                        preview.style.display = 'block';
+                    }
+                    input.dataset.base64 = compressed;
+                } catch(err) {
+                    console.warn('Photo compress failed:', err);
+                }
+            });
+        }
+
+        async function compressPhoto(file, maxSize, quality) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let w = img.width, h = img.height;
+                        if (w > maxSize || h > maxSize) {
+                            const ratio = Math.min(maxSize/w, maxSize/h);
+                            w = Math.round(w * ratio);
+                            h = Math.round(h * ratio);
+                        }
+                        canvas.width = w;
+                        canvas.height = h;
+                        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                        resolve(canvas.toDataURL('image/jpeg', quality));
+                    };
+                    img.onerror = reject;
+                    img.src = e.target.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Generate a stable trader ID from name + township for repeat visit tracking
+        function generateTraderId(name, township) {
+            const key = (name + '|' + township).toLowerCase().trim();
+            let hash = 0;
+            for (let i = 0; i < key.length; i++) {
+                const chr = key.charCodeAt(i);
+                hash = ((hash << 5) - hash) + chr;
+                hash |= 0;
+            }
+            return 'trader_' + Math.abs(hash).toString(36);
+        }
+
+        // Check for previous visits to this trader
+        function checkPreviousVisits(traderId) {
+            const submissions = JSON.parse(localStorage.getItem('pulse_submissions') || '[]');
+            return submissions.filter(s => s.rawData && s.rawData.trader_id === traderId);
+        }
+
         // Points system: 100 pts = R1
         const PTS_PER_RAND = 100;
         // Load persisted points from localStorage (fallback to 2500 welcome bonus)
@@ -1518,7 +1607,7 @@
          */
         const GIG_META = {
             trader_profile:  { label: 'Trader Profile Visit', icon: 'ðŸª' },
-            shelf_audit:     { label: 'Spaza Shelf Audit',    icon: 'ðŸ›’' },
+            receipt_snap:    { label: 'Receipt Snap',         icon: '📸' },
             price_basket:    { label: 'Price Basket Monitor', icon: 'ðŸ§º' },
             foot_traffic:    { label: 'Foot-Traffic Verify',  icon: 'ðŸš¶' },
             infrastructure:  { label: 'Infrastructure Report',icon: 'ðŸ’§' },
@@ -1737,7 +1826,14 @@
                 distance_wholesale: document.getElementById('a-distance')      ? document.getElementById('a-distance').value      : '',
                 restock_transport:  document.getElementById('a-transport')     ? document.getElementById('a-transport').value     : '',
                 previous_losses:    document.getElementById('a-losses')        ? document.getElementById('a-losses').value        : '',
-                crime_incidents:    document.getElementById('a-crime')         ? document.getElementById('a-crime').value         : ''
+                crime_incidents:    document.getElementById('a-crime')         ? document.getElementById('a-crime').value         : '',
+                photo: document.getElementById('a-photo') && document.getElementById('a-photo').dataset.base64 ? '📸 Photo attached' : 'No photo',
+                photo_data: document.getElementById('a-photo') && document.getElementById('a-photo').dataset.base64 ? document.getElementById('a-photo').dataset.base64 : null,
+                oil_brand: document.getElementById('a-oil-brand') ? document.getElementById('a-oil-brand').value : '',
+                bread_brand: document.getElementById('a-bread-brand') ? document.getElementById('a-bread-brand').value : '',
+                beverage_brand: document.getElementById('a-beverage-brand') ? document.getElementById('a-beverage-brand').value : '',
+                brand_switch: document.getElementById('a-brand-switch') ? document.getElementById('a-brand-switch').value : '',
+                trader_id: generateTraderId(document.getElementById('a-name').value.trim(), document.getElementById('a-township').value)
             };
 
             const aiAnswers = getAIAnswersForGig('trader_profile');
@@ -1767,42 +1863,6 @@
             }
         }
 
-        async function submitAudit() {
-            if (!confirm('Once submitted, this data cannot be changed. Are you sure you want to submit?')) return;
-
-            const name     = document.getElementById('au-name').value || 'Unnamed Spaza';
-            const location = document.getElementById('au-township').value;
-            const summary  = `Shelf Audit: ${name}, ${location}`;
-
-            const rawData = { trader_name: name, location,
-                oil_brand: document.getElementById('au-oil') ? document.getElementById('au-oil').value : '',
-                oil_price: document.getElementById('au-oil-price') ? document.getElementById('au-oil-price').value : '',
-                other_brands: document.getElementById('au-brands')      ? document.getElementById('au-brands').value      : '',
-                stock_level:  document.getElementById('au-stock-level') ? document.getElementById('au-stock-level').value : ''
-            };
-
-            const aiAnswers = getAIAnswersForGig('shelf_audit');
-            if (Object.keys(aiAnswers).length > 0) rawData.ai_answers = aiAnswers;
-
-            const block = (typeof checkHardBlocks === 'function') ? checkHardBlocks('shelf_audit', rawData) : { blocked: false };
-            if (block.blocked) { alert('â›” ' + block.reason); return; }
-
-            const gps = (typeof getGPSPosition === 'function') ? await getGPSPosition() : null;
-            const dqs = (typeof calculateDQS === 'function') ? calculateDQS('shelf_audit', rawData, { hasGPS: !!gps, gpsCoords: gps }) : null;
-            const basePoints = 200;
-            const qualityBonus = dqs ? Math.round(basePoints * dqs.bonusPct) : 0;
-
-            award(basePoints, summary, qualityBonus);
-            addLocalSubmission({ gigType: 'shelf_audit', pointsEarned: basePoints + qualityBonus, summary, rawData });
-            goTo('home');
-
-            if (dqs && typeof showDQSResult === 'function') showDQSResult(dqs, basePoints);
-
-            if (!navigator.onLine) { if (typeof queueOffline === 'function') queueOffline({ gigType: 'shelf_audit', pointsEarned: basePoints, bonusPoints: qualityBonus, summary, rawData }); }
-            else {
-                try { if (typeof saveGigToDatabase === 'function') await saveGigToDatabase({ gigType: 'shelf_audit', pointsEarned: basePoints, bonusPoints: qualityBonus, summary, rawData }); } catch(e) { console.error('[Submit] Gig DB error:', e); }
-            }
-        }
 
         async function submitBasket() {
             if (!confirm('Once submitted, this data cannot be changed. Are you sure you want to submit?')) return;
@@ -1863,7 +1923,10 @@
                 status: status.value,
                 location: document.getElementById('ft-location')   ? document.getElementById('ft-location').value   : '',
                 customers_visible: document.getElementById('ft-customers') ? document.getElementById('ft-customers').value : '',
-                observation: document.getElementById('ft-note')     ? document.getElementById('ft-note').value     : ''
+                observation: document.getElementById('ft-note')     ? document.getElementById('ft-note').value     : '',
+                photo: document.getElementById('ft-photo') && document.getElementById('ft-photo').dataset.base64 ? '📸 Photo attached' : 'No photo',
+                photo_data: document.getElementById('ft-photo') && document.getElementById('ft-photo').dataset.base64 ? document.getElementById('ft-photo').dataset.base64 : null,
+                trader_id: generateTraderId(name, document.getElementById('ft-location') ? document.getElementById('ft-location').value : '')
             };
 
             const aiAnswers = getAIAnswersForGig('foot_traffic');
@@ -1872,7 +1935,7 @@
             if (block.blocked) { alert('⛔ ' + block.reason); return; }
             const gps = (typeof getGPSPosition === 'function') ? await getGPSPosition() : null;
             const dqs = (typeof calculateDQS === 'function') ? calculateDQS('foot_traffic', rawData, { hasGPS: !!gps, gpsCoords: gps }) : null;
-            const basePoints = 60;
+            const basePoints = 80;
             const qualityBonus = dqs ? Math.round(basePoints * dqs.bonusPct) : 0;
 
             award(basePoints, summary, qualityBonus);
@@ -1905,7 +1968,9 @@
                 description: `${notes} [Duration: ${duration}, Scale: ${scale}]`,
                 duration:    duration,
                 scale:       scale,
-                notes:       notes
+                notes:       notes,
+                photo: document.getElementById('ir-photo') && document.getElementById('ir-photo').dataset.base64 ? '📸 Photo attached' : 'No photo',
+                photo_data: document.getElementById('ir-photo') && document.getElementById('ir-photo').dataset.base64 ? document.getElementById('ir-photo').dataset.base64 : null
             };
 
             const aiAnswers = getAIAnswersForGig('infrastructure');
@@ -1916,7 +1981,7 @@
 
             const gps = (typeof getGPSPosition === 'function') ? await getGPSPosition() : null;
             const dqs = (typeof calculateDQS === 'function') ? calculateDQS('infrastructure', rawData, { hasGPS: !!gps, gpsCoords: gps }) : null;
-            const basePoints = 40;
+            const basePoints = 60;
             const qualityBonus = dqs ? Math.round(basePoints * dqs.bonusPct) : 0;
 
             award(basePoints, summary, qualityBonus);
@@ -1930,6 +1995,51 @@
                 try { if (typeof saveGigToDatabase === 'function') await saveGigToDatabase({ gigType: 'infrastructure', pointsEarned: basePoints, bonusPoints: qualityBonus, summary, rawData }); } catch(e) { console.error('[Submit] Gig DB error:', e); }
                 try { if (typeof saveInfraReport === 'function') await saveInfraReport(rawData); } catch(e) { console.error('[Submit] Infra DB error:', e); }
             }
+        }
+
+        async function submitReceipt() {
+            const name = document.getElementById('rc-name').value.trim();
+            if (!name) { alert('Please enter the trader name.'); return; }
+
+            const township = document.getElementById('rc-township').value;
+            const traderId = generateTraderId(name, township);
+            const photoInput = document.getElementById('rc-photo');
+            const photoBase64 = photoInput && photoInput.dataset.base64 ? photoInput.dataset.base64 : null;
+
+            if (!photoBase64) { alert('📸 Please take a photo of the receipt.'); return; }
+
+            const rawData = {
+                trader_name: name,
+                township: township,
+                trader_id: traderId,
+                supplier: document.getElementById('rc-supplier') ? document.getElementById('rc-supplier').value : '',
+                receipt_amount: document.getElementById('rc-amount') ? document.getElementById('rc-amount').value : '',
+                receipt_date: document.getElementById('rc-date') ? document.getElementById('rc-date').value : '',
+                photo: photoBase64 ? '📸 Photo attached' : 'No photo',
+                photo_data: photoBase64
+            };
+
+            // Collect AI answers if any
+            if (typeof getAIAnswersForGig === 'function') getAIAnswersForGig('receipt_snap');
+
+            const gpsCoords = await getGPSPosition();
+            const dqs = calculateDQS('receipt_snap', rawData);
+            const qualityBonus = dqs.score >= 80 ? Math.round((dqs.score - 70) / 3) : 0;
+
+            await saveGigToDatabase({ gigType: 'receipt_snap', pointsEarned: 50, bonusPoints: qualityBonus, summary: `Receipt: ${rawData.supplier} R${rawData.receipt_amount} for ${name}`, rawData });
+            addLocalSubmission({ gigType: 'receipt_snap', pointsEarned: 50 + qualityBonus, summary: `Receipt: ${rawData.supplier} R${rawData.receipt_amount}`, rawData });
+            award(50, `📸 Receipt Snap — ${name}`, qualityBonus);
+            showDQSResult(dqs);
+
+            // Reset form
+            document.getElementById('rc-name').value = '';
+            document.getElementById('rc-amount').value = '';
+            document.getElementById('rc-date').value = '';
+            if (photoInput) { photoInput.value = ''; photoInput.dataset.base64 = ''; }
+            const preview = document.getElementById('rc-photo-preview');
+            if (preview) preview.style.display = 'none';
+
+            setTimeout(() => goTo('home'), 2000);
         }
 
         // â”€â”€ Offline detection â”€â”€

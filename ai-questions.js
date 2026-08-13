@@ -132,16 +132,25 @@ const QUESTION_BANK = {
           category: 'Sourcing', dataValue: 'Procurement behavior for supply chain partners', priority: 4 }
     ],
 
-    shelf_audit: [
-        { id: 'ai-sa-expired', text: 'Any expired products visible on shelves?', type: 'select',
-          options: ['No', 'Yes — a few', 'Yes — several', 'Didn\'t check'],
-          category: 'Quality', dataValue: 'Food safety compliance for regulators/brands', priority: 5 },
-        { id: 'ai-sa-cold-chain', text: 'Is the fridge working and cold?', type: 'select',
-          options: ['Yes — cold', 'Warm — not cooling well', 'Off — no electricity', 'No fridge'],
-          category: 'Infrastructure', dataValue: 'Cold chain compliance for dairy/beverage brands', priority: 5 },
-        { id: 'ai-sa-signage', text: 'Any brand signage/posters visible?', type: 'text',
-          placeholder: 'e.g. Coca-Cola, Vodacom, Omo', category: 'Marketing',
-          dataValue: 'Brand visibility ROI for marketing teams', priority: 3 }
+    receipt_snap: [
+        {
+            id: 'ai-rs-frequency',
+            question: 'How often does this trader buy from this supplier?',
+            type: 'select',
+            options: ['Daily', 'Every 2-3 days', 'Weekly', 'Fortnightly', 'Monthly']
+        },
+        {
+            id: 'ai-rs-payment',
+            question: 'How did they pay for this purchase?',
+            type: 'select',
+            options: ['Cash', 'Card/EFT', 'Account/Credit', 'Mixed']
+        },
+        {
+            id: 'ai-rs-transport',
+            question: 'How was the stock transported?',
+            type: 'select',
+            options: ['Own vehicle', 'Taxi with stock', 'Wholesaler delivery', 'Hired bakkie']
+        }
     ],
 
     infrastructure: [
@@ -198,7 +207,7 @@ async function suggestQuestionsAI(gigType, existingData = {}, maxQuestions = 5) 
             tavern_profile: 'Tavern / Shebeen',
             trader_profile: 'Informal Trader (Spaza Shop)',
             price_basket: 'Price Basket Monitor',
-            shelf_audit: 'Spaza Shelf Audit',
+            receipt_snap: 'Receipt Snap (Wholesale Purchase)',
             infrastructure: 'Infrastructure Report',
             foot_traffic: 'Foot Traffic Verification'
         };

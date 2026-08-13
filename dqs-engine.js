@@ -60,7 +60,7 @@ const SECTOR_CONFIG = {
         mandatoryFields: ['name', 'type', 'township'],
         optionalFields: ['bank_account', 'years_operating', 'premises_type', 'employees', 'payment_methods',
                          'top_products', 'fastest_seller', 'turnover_good_day', 'turnover_bad_day',
-                         'insurance_status', 'biggest_challenge'],
+                         'insurance_status', 'biggest_challenge', 'oil_brand', 'bread_brand', 'beverage_brand', 'brand_switch', 'photo', 'trader_id'],
         revenueFields: [],
         priceFields: [],
         priceRanges: {},
@@ -87,15 +87,14 @@ const SECTOR_CONFIG = {
         revenueRange: null,
         consistencyChecks: []
     },
-    shelf_audit: {
-        label: 'Shelf Audit',
-        mandatoryFields: ['trader_name', 'location'],
-        optionalFields: ['oil_brand', 'oil_price'],
-        revenueFields: [],
-        priceFields: ['oil_price'],
-        priceRanges: { oil_price: { min: 30, max: 200, label: 'Sunflower Oil (2L)' } },
-        revenueRange: null,
-        consistencyChecks: []
+    receipt_snap: {
+        label: 'Receipt Snap',
+        mandatoryFields: ['trader_name', 'township', 'receipt_amount'],
+        optionalFields: ['supplier', 'receipt_date', 'photo'],
+        revenueRange: { label: 'Receipt Amount', min: 50, max: 100000 },
+        revenueFields: ['receipt_amount'],
+        consistencyChecks: [],
+        priceRanges: {}
     },
     infrastructure: {
         label: 'Infrastructure',

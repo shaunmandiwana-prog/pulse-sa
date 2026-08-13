@@ -226,7 +226,7 @@ async function saveGigToDatabase({ gigType, pointsEarned, bonusPoints = 0, summa
 function saveSubmissionLocally({ gigType, pointsEarned, summary, rawData }) {
     const GIG_LABELS = {
         trader_profile:  { label: 'Trader Profile Visit', icon: '🏪' },
-        shelf_audit:     { label: 'Spaza Shelf Audit',    icon: '🛒' },
+        receipt_snap:    { label: 'Receipt Snap', icon: '📸' },
         price_basket:    { label: 'Price Basket Monitor', icon: '🧺' },
         foot_traffic:    { label: 'Foot-Traffic Verify',  icon: '🚶' },
         infrastructure:  { label: 'Infrastructure Report',icon: '💧' },
