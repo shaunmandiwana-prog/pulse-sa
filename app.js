@@ -1,4 +1,4 @@
-﻿// Pulse SA Core Logic (Extended version with FMCG & POS Gigs)
+// Pulse SA Core Logic (Extended version with FMCG & POS Gigs)
 
 // --- GLOBAL STATE MANAGER ---
 const globalState = {
@@ -362,7 +362,7 @@ const merchantProfile = {
 // State Variables
 let walletBalance = 25.00;
 let activeScreen = 'home';
-let activeTab = 'datagap';
+let activeTab = 'profile';
 let selectedNodeId = null;
 
 // Chart references
@@ -416,6 +416,9 @@ window.addEventListener('DOMContentLoaded', () => {
     initDataGapBubbleChart();
     renderSectorCards();
     renderMultiplierBars();
+    
+    // Set initial active tab
+    switchTab('profile');
 });
 
 // Update Simulated phone clock
@@ -446,6 +449,8 @@ function switchTab(tabId) {
     if (tabId === 'ontology') {
         // Redraw graph to match container width changes
         setTimeout(drawOntologyGraph, 100);
+    } else if (tabId === 'coverage') {
+        // Coverage tab uses static HTML, no dynamic rendering needed
     } else if (tabId === 'wardmap') {
         // Initialize map if it doesn't exist yet
         setTimeout(() => {
@@ -691,6 +696,93 @@ function initCharts() {
             cutout: '70%'
         }
     });
+
+        // ── Kota: Polony Brand Share Chart ──
+        const polonyCtx = document.getElementById('chart-polony-brand');
+        if (polonyCtx) {
+            new Chart(polonyCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Enterprise', 'Rainbow', 'Eskort', 'No Name/Generic', 'Not Stocked'],
+                    datasets: [{
+                        data: [38, 22, 15, 18, 7],
+                        backgroundColor: ['#a855f7', '#f97316', '#3b82f6', '#6b7280', '#1f2937'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 10 }, padding: 8 } },
+                        title: { display: false }
+                    }
+                }
+            });
+        }
+
+        // ── Kota: Supplier Bars ──
+        const kotaSupplierEl = document.getElementById('kota-supplier-bars');
+        if (kotaSupplierEl) {
+            const suppliers = [
+                { name: 'Albany', pct: 42, color: '#a855f7' },
+                { name: 'Sasko', pct: 28, color: '#f97316' },
+                { name: 'Blue Ribbon', pct: 18, color: '#3b82f6' },
+                { name: 'Local Bakery', pct: 12, color: '#10b981' }
+            ];
+            kotaSupplierEl.innerHTML = suppliers.map(s => `
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                    <span style="font-size:0.7rem;color:var(--text-secondary);width:80px;">${s.name}</span>
+                    <div style="flex:1;height:14px;background:rgba(255,255,255,0.04);border-radius:7px;overflow:hidden;">
+                        <div style="width:${s.pct}%;height:100%;background:${s.color};border-radius:7px;transition:width 1s;"></div>
+                    </div>
+                    <span style="font-size:0.65rem;font-weight:700;color:${s.color};width:30px;text-align:right;">${s.pct}%</span>
+                </div>
+            `).join('');
+        }
+
+        // ── Tavern: Beer Brand Share Chart ──
+        const beerCtx = document.getElementById('chart-beer-brands');
+        if (beerCtx) {
+            new Chart(beerCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Castle Lager', 'Black Label', 'Hansa Pilsener', 'Amstel', 'Savanna', 'Other'],
+                    datasets: [{
+                        data: [28, 35, 12, 8, 10, 7],
+                        backgroundColor: ['#f59e0b', '#a855f7', '#3b82f6', '#10b981', '#ef4444', '#6b7280'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: '#94a3b8', font: { size: 10 }, padding: 8 } },
+                        title: { display: false }
+                    }
+                }
+            });
+        }
+
+        // ── Tavern: Safety Incident Bars ──
+        const safetyEl = document.getElementById('tavern-safety-bars');
+        if (safetyEl) {
+            const incidents = [
+                { name: 'No incidents', pct: 45, color: '#10b981' },
+                { name: 'Theft', pct: 28, color: '#f59e0b' },
+                { name: 'Fight/Assault', pct: 15, color: '#ef4444' },
+                { name: 'Break-in', pct: 8, color: '#f97316' },
+                { name: 'Multiple', pct: 4, color: '#dc2626' }
+            ];
+            safetyEl.innerHTML = incidents.map(s => `
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                    <span style="font-size:0.7rem;color:var(--text-secondary);width:90px;">${s.name}</span>
+                    <div style="flex:1;height:14px;background:rgba(255,255,255,0.04);border-radius:7px;overflow:hidden;">
+                        <div style="width:${s.pct}%;height:100%;background:${s.color};border-radius:7px;transition:width 1s;"></div>
+                    </div>
+                    <span style="font-size:0.65rem;font-weight:700;color:${s.color};width:30px;text-align:right;">${s.pct}%</span>
+                </div>
+            `).join('');
+        }
 }
 
 // 4. Update Calculations & Refresh Charts

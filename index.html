@@ -912,16 +912,17 @@
 
             <!-- Workspace Tabs -->
             <div class="workspace-tabs">
-                <button class="tab-btn active" id="tab-datagap" onclick="switchTab('datagap')"><i class="fa-solid fa-magnifying-glass-chart"></i> Data-Gap Explorer</button>
-                <button class="tab-btn" id="tab-analytics" onclick="switchTab('analytics')"><i class="fa-solid fa-chart-line"></i> Micro Analytics</button>
-                <button class="tab-btn" id="tab-ontology" onclick="switchTab('ontology')"><i class="fa-solid fa-diagram-project"></i> KasiOntology Explorer</button>
-                <button class="tab-btn" id="tab-simulator" onclick="switchTab('simulator')"><i class="fa-solid fa-shield-halved"></i> Impact Simulator</button>
+                <button class="tab-btn active" id="tab-profile" onclick="switchTab('profile')"><i class="fa-solid fa-building-columns"></i> Credit Intelligence</button>
+                <button class="tab-btn" id="tab-datagap" onclick="switchTab('datagap')"><i class="fa-solid fa-magnifying-glass-chart"></i> Market Intelligence</button>
+                <button class="tab-btn" id="tab-analytics" onclick="switchTab('analytics')"><i class="fa-solid fa-chart-line"></i> Kasi Analytics</button>
                 <button class="tab-btn" id="tab-wardmap" onclick="switchTab('wardmap')"><i class="fa-solid fa-map-location-dot"></i> Ward Map</button>
-                <button class="tab-btn" id="tab-profile" onclick="switchTab('profile')"><i class="fa-solid fa-id-card-clip"></i> Trader Profile</button>
+                <button class="tab-btn" id="tab-ontology" onclick="switchTab('ontology')"><i class="fa-solid fa-diagram-project"></i> KasiOntology</button>
+                <button class="tab-btn" id="tab-simulator" onclick="switchTab('simulator')"><i class="fa-solid fa-shield-halved"></i> Impact Simulator</button>
+                <button class="tab-btn" id="tab-coverage" onclick="switchTab('coverage')"><i class="fa-solid fa-satellite-dish"></i> Impact & Coverage</button>
             </div>
 
             <!-- TAB CONTENT: Data-Gap Explorer (DEFAULT LANDING) -->
-            <div class="tab-content active" id="content-datagap">
+            <div class="tab-content" id="content-datagap">
                 <div class="datagap-workspace">
                     <!-- Hero Header -->
                     <div class="datagap-hero">
@@ -1127,6 +1128,78 @@
                             </div>
                         </div>
                     </div>
+
+                <!-- KOTA ANALYTICS -->
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <h3><i class="fa-solid fa-burger"></i> Kota & Street Food Index</h3>
+                        <span class="conf-badge conf-pulse"><span class="conf-dot pulse-dot"></span>Pulse Ground Data</span>
+                    </div>
+                    <div class="metric-body">
+                        <div class="metric-kpi-row">
+                            <div class="metric-kpi">
+                                <span class="kpi-value" id="kota-avg-basic">R22</span>
+                                <span class="kpi-label">Avg Basic Kota</span>
+                            </div>
+                            <div class="metric-kpi">
+                                <span class="kpi-value" id="kota-avg-full">R45</span>
+                                <span class="kpi-label">Avg Full House</span>
+                            </div>
+                            <div class="metric-kpi">
+                                <span class="kpi-value" id="kota-margin">38%</span>
+                                <span class="kpi-label">Avg Gross Margin</span>
+                            </div>
+                            <div class="metric-kpi">
+                                <span class="kpi-value" id="kota-waste">12%</span>
+                                <span class="kpi-label">Food Waste Rate</span>
+                            </div>
+                        </div>
+                        <div style="margin-top:1rem;">
+                            <h4 style="font-size:0.75rem;color:var(--text-secondary);margin-bottom:0.5rem;">Top Bread Suppliers</h4>
+                            <div id="kota-supplier-bars"></div>
+                        </div>
+                        <div style="margin-top:1rem;">
+                            <h4 style="font-size:0.75rem;color:var(--text-secondary);margin-bottom:0.5rem;">Polony Brand Share</h4>
+                            <canvas id="chart-polony-brand" height="180"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAVERN ANALYTICS -->
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <h3><i class="fa-solid fa-beer-mug-empty"></i> Tavern & Shebeen Intelligence</h3>
+                        <span class="conf-badge conf-pulse"><span class="conf-dot pulse-dot"></span>Pulse Ground Data</span>
+                    </div>
+                    <div class="metric-body">
+                        <div class="metric-kpi-row">
+                            <div class="metric-kpi">
+                                <span class="kpi-value" id="tavern-avg-quart">R32</span>
+                                <span class="kpi-label">Avg Quart Price</span>
+                            </div>
+                            <div class="metric-kpi">
+                                <span class="kpi-value" id="tavern-licensed">34%</span>
+                                <span class="kpi-label">Licensed Rate</span>
+                            </div>
+                            <div class="metric-kpi">
+                                <span class="kpi-value" id="tavern-monthend">+85%</span>
+                                <span class="kpi-label">Month-End Revenue Spike</span>
+                            </div>
+                            <div class="metric-kpi">
+                                <span class="kpi-value" id="tavern-food-pct">22%</span>
+                                <span class="kpi-label">Revenue from Food</span>
+                            </div>
+                        </div>
+                        <div style="margin-top:1rem;">
+                            <h4 style="font-size:0.75rem;color:var(--text-secondary);margin-bottom:0.5rem;">Top Beer Brands</h4>
+                            <canvas id="chart-beer-brands" height="180"></canvas>
+                        </div>
+                        <div style="margin-top:1rem;">
+                            <h4 style="font-size:0.75rem;color:var(--text-secondary);margin-bottom:0.5rem;">Security Incidents (Last 6 Months)</h4>
+                            <div id="tavern-safety-bars"></div>
+                        </div>
+                    </div>
+                </div>
                 </div>
             </div>
 
@@ -1309,7 +1382,7 @@
             </div>
 
             <!-- TAB CONTENT: Trader Profile Output -->
-            <div class="tab-content" id="content-profile">
+            <div class="tab-content active" id="content-profile">
                 <div class="profile-output-workspace">
                     <div class="profile-output-hero">
                         <h3><i class="fa-solid fa-id-card-clip"></i> Institutional Profile Output</h3>
@@ -1337,6 +1410,105 @@
                     <!-- Profile Card -->
                     <div class="profile-card" id="profile-output-card">
                         <!-- Rendered dynamically by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB CONTENT: Impact & Coverage -->
+            <div class="tab-content" id="content-coverage">
+                <div class="coverage-workspace">
+                    <div class="section-hero" style="background: linear-gradient(135deg, rgba(16,185,129,0.08) 0%, rgba(59,130,246,0.08) 100%); border: 1px solid rgba(16,185,129,0.15); border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                        <h3 style="font-size:1.1rem; margin-bottom:0.3rem;"><i class="fa-solid fa-satellite-dish"></i> Impact & Coverage Dashboard</h3>
+                        <p style="font-size:0.75rem; color:var(--text-secondary);">Real-time overview of the Pulse agent network, data coverage, and ESD impact metrics. Designed for DFI and corporate impact reporting.</p>
+                    </div>
+
+                    <div class="dashboard-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                        <div class="metric-card" style="padding:1.2rem;">
+                            <div style="font-size:2rem; font-weight:800; background: linear-gradient(135deg, #10b981, #3b82f6); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">247</div>
+                            <div style="font-size:0.7rem; color:var(--text-secondary);">Active Agents</div>
+                            <div style="font-size:0.6rem; color:#10b981; margin-top:4px;"><i class="fa-solid fa-arrow-up"></i> +23 this month</div>
+                        </div>
+                        <div class="metric-card" style="padding:1.2rem;">
+                            <div style="font-size:2rem; font-weight:800; background: linear-gradient(135deg, #a855f7, #ec4899); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">1,842</div>
+                            <div style="font-size:0.7rem; color:var(--text-secondary);">Traders Profiled</div>
+                            <div style="font-size:0.6rem; color:#10b981; margin-top:4px;"><i class="fa-solid fa-arrow-up"></i> +156 this month</div>
+                        </div>
+                        <div class="metric-card" style="padding:1.2rem;">
+                            <div style="font-size:2rem; font-weight:800; background: linear-gradient(135deg, #f59e0b, #ef4444); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">8</div>
+                            <div style="font-size:0.7rem; color:var(--text-secondary);">Metros Covered</div>
+                            <div style="font-size:0.6rem; color:var(--text-muted); margin-top:4px;">JHB • CPT • DBN • TSH • EKU • NMB • BCM • MNG</div>
+                        </div>
+                        <div class="metric-card" style="padding:1.2rem;">
+                            <div style="font-size:2rem; font-weight:800; background: linear-gradient(135deg, #00f2fe, #4facfe); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">14,506</div>
+                            <div style="font-size:0.7rem; color:var(--text-secondary);">Total Submissions</div>
+                            <div style="font-size:0.6rem; color:#10b981; margin-top:4px;">Avg DQS: 84/100</div>
+                        </div>
+                    </div>
+
+                    <!-- Submission Breakdown -->
+                    <div class="metric-card" style="margin-bottom:1.5rem;">
+                        <div class="metric-header">
+                            <h3><i class="fa-solid fa-chart-pie"></i> Submissions by Gig Type</h3>
+                        </div>
+                        <div class="metric-body">
+                            <div id="coverage-gig-breakdown" style="display:grid; grid-template-columns: 1fr 1fr; gap: 0.8rem;">
+                                <div style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem; background:rgba(168,85,247,0.06); border-radius:8px;">
+                                    <span style="font-size:0.75rem;"><i class="fa-solid fa-store"></i> Trader Profiles</span>
+                                    <span style="font-weight:700; color:#a855f7;">4,231</span>
+                                </div>
+                                <div style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem; background:rgba(249,115,22,0.06); border-radius:8px;">
+                                    <span style="font-size:0.75rem;"><i class="fa-solid fa-burger"></i> Kota Profiles</span>
+                                    <span style="font-weight:700; color:#f97316;">1,847</span>
+                                </div>
+                                <div style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem; background:rgba(168,85,247,0.06); border-radius:8px;">
+                                    <span style="font-size:0.75rem;"><i class="fa-solid fa-beer-mug-empty"></i> Tavern Profiles</span>
+                                    <span style="font-weight:700; color:#a855f7;">1,203</span>
+                                </div>
+                                <div style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem; background:rgba(0,242,254,0.06); border-radius:8px;">
+                                    <span style="font-size:0.75rem;"><i class="fa-solid fa-tags"></i> Price Baskets</span>
+                                    <span style="font-weight:700; color:#00f2fe;">3,412</span>
+                                </div>
+                                <div style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem; background:rgba(16,185,129,0.06); border-radius:8px;">
+                                    <span style="font-size:0.75rem;"><i class="fa-solid fa-receipt"></i> Receipt Snaps</span>
+                                    <span style="font-weight:700; color:#10b981;">2,156</span>
+                                </div>
+                                <div style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem; background:rgba(239,68,68,0.06); border-radius:8px;">
+                                    <span style="font-size:0.75rem;"><i class="fa-solid fa-wrench"></i> Infra Reports</span>
+                                    <span style="font-weight:700; color:#ef4444;">892</span>
+                                </div>
+                                <div style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem; background:rgba(59,130,246,0.06); border-radius:8px;">
+                                    <span style="font-size:0.75rem;"><i class="fa-solid fa-person-walking"></i> Foot Traffic</span>
+                                    <span style="font-weight:700; color:#3b82f6;">765</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ESD Impact -->
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <h3><i class="fa-solid fa-hand-holding-heart"></i> ESD Impact Scorecard</h3>
+                            <span class="conf-badge conf-pulse"><span class="conf-dot pulse-dot"></span>Pulse Verified</span>
+                        </div>
+                        <div class="metric-body">
+                            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:1rem; text-align:center; margin-bottom:1rem;">
+                                <div>
+                                    <div style="font-size:1.5rem; font-weight:800; color:#10b981;">R4.2B</div>
+                                    <div style="font-size:0.65rem; color:var(--text-secondary);">Informal Turnover Mapped</div>
+                                </div>
+                                <div>
+                                    <div style="font-size:1.5rem; font-weight:800; color:#a855f7;">6,840</div>
+                                    <div style="font-size:0.65rem; color:var(--text-secondary);">Jobs Supported</div>
+                                </div>
+                                <div>
+                                    <div style="font-size:1.5rem; font-weight:800; color:#f59e0b;">28,500</div>
+                                    <div style="font-size:0.65rem; color:var(--text-secondary);">Dependents Reached</div>
+                                </div>
+                            </div>
+                            <p style="font-size:0.7rem; color:var(--text-muted); background:rgba(16,185,129,0.05); padding:0.8rem; border-radius:8px; border-left:3px solid #10b981;">
+                                <strong>Audit Note:</strong> All impact figures derived from GPS-verified, DQS-scored field data. Each trader profile carries a minimum 3-point verification chain: Agent GPS match, foot-traffic confirmation, and wholesaler receipt cross-reference. Data available via API for BBBEE/ESD compliance reporting.
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
