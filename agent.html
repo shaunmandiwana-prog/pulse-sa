@@ -1716,13 +1716,28 @@
                 years_operating:   document.getElementById('a-years')    ? document.getElementById('a-years').value    : '',
                 premises_type:     document.getElementById('a-premises') ? document.getElementById('a-premises').value : '',
                 employees:         document.getElementById('a-employees') ? document.getElementById('a-employees').value : '',
-                payment_methods:   document.getElementById('a-payment')  ? document.getElementById('a-payment').value  : '',
+                payment_methods:   document.getElementById('a-payments')  ? document.getElementById('a-payments').value  : '',
                 top_products:      document.getElementById('a-products') ? document.getElementById('a-products').value : '',
                 fastest_seller:    document.getElementById('a-fastest')  ? document.getElementById('a-fastest').value  : '',
-                turnover_good_day: document.getElementById('a-turnover-good') ? document.getElementById('a-turnover-good').value : '',
-                turnover_bad_day:  document.getElementById('a-turnover-bad')  ? document.getElementById('a-turnover-bad').value  : '',
+                turnover_good_day: document.getElementById('a-good-day') ? document.getElementById('a-good-day').value : '',
+                turnover_bad_day:  document.getElementById('a-bad-day')  ? document.getElementById('a-bad-day').value  : '',
                 insurance_status:  document.getElementById('a-insurance')    ? document.getElementById('a-insurance').value    : '',
-                biggest_challenge: document.getElementById('a-challenge')    ? document.getElementById('a-challenge').value    : ''
+                biggest_challenge: document.getElementById('a-challenge')    ? document.getElementById('a-challenge').value    : '',
+                mobile_money:       document.getElementById('a-mobile-money')  ? document.getElementById('a-mobile-money').value  : '',
+                stokvel:            document.getElementById('a-stokvel')       ? document.getElementById('a-stokvel').value       : '',
+                existing_loans:     document.getElementById('a-loans')         ? document.getElementById('a-loans').value         : '',
+                restock_frequency:  document.getElementById('a-restock')       ? document.getElementById('a-restock').value       : '',
+                wanted_product:     document.getElementById('a-wanted')        ? document.getElementById('a-wanted').value        : '',
+                primary_supplier:   document.getElementById('a-supplier')      ? document.getElementById('a-supplier').value      : '',
+                busiest_hours:      document.getElementById('a-hours')         ? document.getElementById('a-hours').value         : '',
+                wholesaler_terms:   document.getElementById('a-terms')         ? document.getElementById('a-terms').value         : '',
+                customers_per_day:  document.getElementById('a-customers')     ? document.getElementById('a-customers').value     : '',
+                water_supply:       document.getElementById('a-water')         ? document.getElementById('a-water').value         : '',
+                electricity:        document.getElementById('a-electricity')   ? document.getElementById('a-electricity').value   : '',
+                distance_wholesale: document.getElementById('a-distance')      ? document.getElementById('a-distance').value      : '',
+                restock_transport:  document.getElementById('a-transport')     ? document.getElementById('a-transport').value     : '',
+                previous_losses:    document.getElementById('a-losses')        ? document.getElementById('a-losses').value        : '',
+                crime_incidents:    document.getElementById('a-crime')         ? document.getElementById('a-crime').value         : ''
             };
 
             const aiAnswers = getAIAnswersForGig('trader_profile');
@@ -1745,6 +1760,10 @@
             if (!navigator.onLine) { if (typeof queueOffline === 'function') queueOffline({ gigType: 'trader_profile', pointsEarned: basePoints, bonusPoints: qualityBonus, summary, rawData }); }
             else {
                 try { if (typeof saveGigToDatabase === 'function') await saveGigToDatabase({ gigType: 'trader_profile', pointsEarned: basePoints, bonusPoints: qualityBonus, summary, rawData }); } catch(e) { console.error('[Submit] Gig DB error:', e); }
+                // Also save to dedicated traders table
+                if (typeof saveTraderProfile === 'function') {
+                    saveTraderProfile(rawData, localStorage.getItem('pulse_agent_id'));
+                }
             }
         }
 
@@ -1756,8 +1775,10 @@
             const summary  = `Shelf Audit: ${name}, ${location}`;
 
             const rawData = { trader_name: name, location,
-                oil_brand: document.getElementById('fmcg-oil-brand') ? document.getElementById('fmcg-oil-brand').value : '',
-                oil_price: document.getElementById('fmcg-oil-price') ? document.getElementById('fmcg-oil-price').value : ''
+                oil_brand: document.getElementById('au-oil') ? document.getElementById('au-oil').value : '',
+                oil_price: document.getElementById('au-oil-price') ? document.getElementById('au-oil-price').value : '',
+                other_brands: document.getElementById('au-brands')      ? document.getElementById('au-brands').value      : '',
+                stock_level:  document.getElementById('au-stock-level') ? document.getElementById('au-stock-level').value : ''
             };
 
             const aiAnswers = getAIAnswersForGig('shelf_audit');
@@ -1837,10 +1858,18 @@
             const icons   = { Open: 'âœ…', Closed: 'âŒ', Partial: 'âš ️' };
             const summary = `${icons[status.value]} Verified: ${name} â€” ${status.value}`;
 
-            const rawData = { trader_name: name, status: status.value };
+            const rawData = {
+                trader_name: name,
+                status: status.value,
+                location: document.getElementById('ft-location')   ? document.getElementById('ft-location').value   : '',
+                customers_visible: document.getElementById('ft-customers') ? document.getElementById('ft-customers').value : '',
+                observation: document.getElementById('ft-note')     ? document.getElementById('ft-note').value     : ''
+            };
 
             const aiAnswers = getAIAnswersForGig('foot_traffic');
             if (Object.keys(aiAnswers).length > 0) rawData.ai_answers = aiAnswers;
+            const block = (typeof checkHardBlocks === 'function') ? checkHardBlocks('foot_traffic', rawData) : { blocked: false };
+            if (block.blocked) { alert('⛔ ' + block.reason); return; }
             const gps = (typeof getGPSPosition === 'function') ? await getGPSPosition() : null;
             const dqs = (typeof calculateDQS === 'function') ? calculateDQS('foot_traffic', rawData, { hasGPS: !!gps, gpsCoords: gps }) : null;
             const basePoints = 60;

@@ -20,6 +20,12 @@ function getDB() {
     return _supabase;
 }
 
+function toNum(val) {
+    if (val === '' || val === null || val === undefined) return null;
+    const n = parseFloat(val);
+    return isNaN(n) ? null : n;
+}
+
 /** Check if Supabase is configured and client is available */
 function isDBReady() {
     if (SUPABASE_URL === 'YOUR_SUPABASE_URL') return false;
@@ -318,7 +324,8 @@ async function savePriceBasket(basketData) {
             eggs_price:         basketData.eggs_price     || null,
             sugar_price:        basketData.sugar_price    || null,
             airtime_price:      basketData.airtime_price  || null,
-            sunflower_oil_price: basketData.sunflower_oil_price || null
+            sunflower_oil_price: basketData.sunflower_oil_price || null,
+            items_logged:       basketData.items_logged || 0
         };
         console.log('[Pulse DB] Price basket payload:', payload);
 
@@ -375,23 +382,23 @@ async function saveKotaProfile(kotaData) {
             township: kotaData.township || null,
             years_trading: kotaData.years_trading || null,
             location_type: kotaData.location_type || null,
-            price_basic: kotaData.price_basic || null,
-            price_full: kotaData.price_full || null,
+            price_basic: toNum(kotaData.price_basic),
+            price_full: toNum(kotaData.price_full),
             top_items: kotaData.top_items || null,
-            daily_units: kotaData.daily_units || null,
+            daily_units: toNum(kotaData.daily_units),
             bread_supplier: kotaData.bread_supplier || null,
             protein_source: kotaData.protein_source || null,
             chips_supplier: kotaData.chips_supplier || null,
             polony_brand: kotaData.polony_brand || null,
-            good_day_revenue: kotaData.good_day_revenue || null,
-            bad_day_revenue: kotaData.bad_day_revenue || null,
+            good_day_revenue: toNum(kotaData.good_day_revenue),
+            bad_day_revenue: toNum(kotaData.bad_day_revenue),
             busy_hours: kotaData.busy_hours || null,
             electricity: kotaData.electricity || null,
             refrigeration: kotaData.refrigeration || null,
             water_access: kotaData.water_access || null,
             challenge: kotaData.challenge || null,
-            food_waste_pct: kotaData.food_waste_pct || null,
-            supplier_rating: kotaData.supplier_rating || null
+            food_waste_pct: toNum(kotaData.food_waste_pct),
+            supplier_rating: toNum(kotaData.supplier_rating)
         };
         console.log('[Pulse DB] Kota profile payload:', payload);
 
@@ -420,20 +427,20 @@ async function saveTavernProfile(tavernData) {
             township: tavernData.township || null,
             years_operating: tavernData.years_operating || null,
             license_status: tavernData.license_status || null,
-            capacity: tavernData.capacity || null,
+            capacity: toNum(tavernData.capacity),
             premises_type: tavernData.premises_type || null,
             beer_brands: tavernData.beer_brands || null,
             spirits: tavernData.spirits || null,
             mixers: tavernData.mixers || null,
-            quart_price: tavernData.quart_price || null,
-            can_price: tavernData.can_price || null,
+            quart_price: toNum(tavernData.quart_price),
+            can_price: toNum(tavernData.can_price),
             supplier_type: tavernData.supplier_type || null,
             delivery_frequency: tavernData.delivery_frequency || null,
-            good_day_revenue: tavernData.good_day_revenue || null,
-            bad_day_revenue: tavernData.bad_day_revenue || null,
+            good_day_revenue: toNum(tavernData.good_day_revenue),
+            bad_day_revenue: toNum(tavernData.bad_day_revenue),
             peak_days: tavernData.peak_days || null,
             payment_methods: tavernData.payment_methods || null,
-            fridge_count: tavernData.fridge_count || null,
+            fridge_count: toNum(tavernData.fridge_count),
             electricity: tavernData.electricity || null,
             security: tavernData.security || null,
             entertainment: tavernData.entertainment || null,
@@ -462,16 +469,31 @@ function queueOffline(payload) {
  * Flush the offline queue when connectivity is restored.
  */
 async function flushOfflineQueue() {
-    if (!navigator.onLine || !isDBReady()) return;
     const queue = JSON.parse(localStorage.getItem('pulse_offline_queue') || '[]');
-    if (!queue.length) return;
-
-    console.log(`[Pulse DB] Flushing ${queue.length} offline submissions...`);
+    if (queue.length === 0) return;
+    console.log(`[Pulse] Flushing ${queue.length} offline submissions...`);
+    const remaining = [];
     for (const item of queue) {
-        await saveGigToDatabase(item);
+        try {
+            await saveGigToDatabase(item);
+            // Also save to specialized tables
+            if (item.rawData) {
+                switch (item.gigType) {
+                    case 'price_basket':    if (typeof savePriceBasket === 'function') await savePriceBasket(item.rawData); break;
+                    case 'infrastructure':  if (typeof saveInfraReport === 'function') await saveInfraReport(item.rawData); break;
+                    case 'kota_profile':    if (typeof saveKotaProfile === 'function') await saveKotaProfile(item.rawData); break;
+                    case 'tavern_profile':  if (typeof saveTavernProfile === 'function') await saveTavernProfile(item.rawData); break;
+                    case 'trader_profile':  if (typeof saveTraderProfile === 'function') await saveTraderProfile(item.rawData, localStorage.getItem('pulse_agent_id')); break;
+                }
+            }
+            console.log(`[Pulse] Flushed: ${item.gigType}`);
+        } catch (e) {
+            console.warn('[Pulse] Flush failed for item, re-queuing:', e);
+            remaining.push(item);
+        }
     }
-    localStorage.removeItem('pulse_offline_queue');
-    console.log('[Pulse DB] Offline queue flushed.');
+    localStorage.setItem('pulse_offline_queue', JSON.stringify(remaining));
+    if (remaining.length === 0) console.log('[Pulse] Offline queue fully flushed!');
 }
 
 // Auto-flush when coming back online

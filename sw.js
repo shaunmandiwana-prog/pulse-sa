@@ -1,7 +1,7 @@
-﻿// Pulse SA Ã¢â‚¬â€ Service Worker
+// Pulse SA — Service Worker
 // Caches everything on first load. Works fully offline after that.
 
-const CACHE_NAME = 'pulse-sa-v16';
+const CACHE_NAME = 'pulse-sa-v17';
 
 // Everything we need to cache for full offline use
 const STATIC_ASSETS = [
@@ -9,11 +9,13 @@ const STATIC_ASSETS = [
     './index.html',
     './agent.html',
     './supabase.js',
+    './dqs-engine.js',
+    './ai-questions.js',
     './style.css',
     './app.js',
-    // Google Fonts Ã¢â‚¬â€ cache them so no data needed after first load
+    // Google Fonts — cache them so no data needed after first load
     'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap',
-    // Font Awesome Ã¢â‚¬â€ icons
+    // Font Awesome — icons
     'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css',
     // Leaflet (ward map)
     'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
@@ -26,7 +28,7 @@ self.addEventListener('install', event => {
         caches.open(CACHE_NAME).then(cache => {
             console.log('[SW] Caching static assets...');
             // Cache local files first (must succeed), then try external
-            const localAssets = ['./', './index.html', './agent.html', './supabase.js', './style.css', './app.js'];
+            const localAssets = ['./', './index.html', './agent.html', './supabase.js', './dqs-engine.js', './ai-questions.js', './style.css', './app.js'];
             const externalAssets = STATIC_ASSETS.filter(a => !localAssets.includes(a));
             return cache.addAll(localAssets).then(() => {
                 // External assets: try each individually, don't fail if one is unavailable
