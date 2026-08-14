@@ -63,7 +63,7 @@ self.addEventListener('fetch', event => {
     const isLocalFile = url.origin === self.location.origin;
 
     if (isLocalFile) {
-        // NETWORK-FIRST for our own files â€” always try to get the latest
+        // NETWORK-FIRST for our own files — always try to get the latest
         event.respondWith(
             fetch(event.request)
                 .then(response => {
