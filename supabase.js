@@ -498,3 +498,148 @@ async function flushOfflineQueue() {
 
 // Auto-flush when coming back online
 window.addEventListener('online', flushOfflineQueue);
+
+/**
+ * Fetch live aggregated stats from Supabase for the Pulse SA Dashboard.
+ */
+async function fetchLiveDashboardStats() {
+    if (!isDBReady()) {
+        console.warn('[Pulse DB] Supabase not ready or offline for dashboard stats');
+        return null;
+    }
+    try {
+        const db = getDB();
+
+        // 1. Agents count
+        const { count: agentCount } = await db
+            .from('agents')
+            .select('*', { count: 'exact', head: true });
+
+        // 2. Gig completions stats
+        const { data: completions } = await db
+            .from('gig_completions')
+            .select('id, gig_type, points_earned, bonus_points, raw_data, gps_lat, gps_lng, submitted_at, agent_id')
+            .order('submitted_at', { ascending: false });
+
+        // 3. Traders table stats
+        const { data: tradersList } = await db
+            .from('traders')
+            .select('*')
+            .order('submitted_at', { ascending: false });
+
+        // 4. Kota profiles
+        const { data: kotas } = await db
+            .from('kota_profiles')
+            .select('price_basic, price_full, bread_supplier, polony_brand, good_day_revenue, food_waste_pct');
+
+        // 5. Tavern profiles
+        const { data: taverns } = await db
+            .from('tavern_profiles')
+            .select('quart_price, license_status, beer_brands, good_day_revenue, food_sold');
+
+        // 6. Price basket readings
+        const { data: baskets } = await db
+            .from('price_basket_readings')
+            .select('bread_price, maize_price, oil_price, milk_price, eggs_price, sugar_price');
+
+        // Aggregate gig completion counts by type
+        const gigBreakdown = {
+            trader_profile: 0,
+            kota_profile: 0,
+            tavern_profile: 0,
+            price_basket: 0,
+            receipt_snap: 0,
+            infrastructure: 0,
+            foot_traffic: 0
+        };
+
+        let totalPoints = 0;
+        let dqsSum = 0;
+        let dqsCount = 0;
+        let gpsVerifiedCount = 0;
+        let photoEvidenceCount = 0;
+
+        if (completions && completions.length > 0) {
+            completions.forEach(c => {
+                if (gigBreakdown.hasOwnProperty(c.gig_type)) {
+                    gigBreakdown[c.gig_type]++;
+                }
+                totalPoints += (c.points_earned || 0) + (c.bonus_points || 0);
+
+                const raw = c.raw_data || {};
+                if (c.gps_lat || (raw.gps && raw.gps !== '')) gpsVerifiedCount++;
+                if (raw.photo_data || (raw.photo && typeof raw.photo === 'string' && raw.photo.includes('attached'))) photoEvidenceCount++;
+
+                // DQS score check
+                if (raw.dqs_score) {
+                    dqsSum += parseFloat(raw.dqs_score);
+                    dqsCount++;
+                } else if (c.bonus_points > 0) {
+                    const inferredDqs = Math.min(100, 70 + (c.bonus_points * 3));
+                    dqsSum += inferredDqs;
+                    dqsCount++;
+                }
+            });
+        }
+
+        // Live traders list: merge from traders table and trader_profile gig completions
+        const liveTraders = [];
+        if (tradersList && tradersList.length > 0) {
+            tradersList.forEach(t => {
+                liveTraders.push({
+                    id: 'live_trader_' + t.id,
+                    dbId: t.id,
+                    name: t.name,
+                    label: t.name,
+                    township: t.township || 'Township',
+                    type: t.business_type || 'Spaza Shop',
+                    raw: t,
+                    source: 'traders_table'
+                });
+            });
+        }
+        if (completions) {
+            completions.filter(c => c.gig_type === 'trader_profile' && c.raw_data).forEach(c => {
+                const r = c.raw_data;
+                const traderName = r.name || r.trader_name;
+                if (traderName) {
+                    const existing = liveTraders.find(t => t.name.toLowerCase() === traderName.toLowerCase());
+                    if (!existing) {
+                        liveTraders.push({
+                            id: 'live_gig_' + c.id,
+                            dbId: c.id,
+                            name: traderName,
+                            label: traderName,
+                            township: r.township || 'Township',
+                            type: r.business_type || r.type || 'Spaza Shop',
+                            raw: r,
+                            gps_lat: c.gps_lat,
+                            gps_lng: c.gps_lng,
+                            submitted_at: c.submitted_at,
+                            source: 'gig_completion'
+                        });
+                    }
+                }
+            });
+        }
+
+        return {
+            isLive: true,
+            agentCount: agentCount || (completions ? new Set(completions.map(c => c.agent_id)).size : 0),
+            totalCompletions: completions ? completions.length : 0,
+            gigBreakdown,
+            avgDqs: dqsCount > 0 ? Math.round(dqsSum / dqsCount) : 84,
+            gpsVerifiedCount,
+            photoEvidenceCount,
+            liveTraders,
+            kotas: kotas || [],
+            taverns: taverns || [],
+            baskets: baskets || [],
+            completions: completions || []
+        };
+    } catch (err) {
+        console.error('[Pulse DB] Error fetching dashboard live stats:', err);
+        return null;
+    }
+}
+

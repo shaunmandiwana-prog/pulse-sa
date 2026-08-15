@@ -1387,49 +1387,59 @@
             <div class="tab-content" id="content-profile">
                 <div class="profile-output-workspace">
                     <!-- Formalization Pipeline -->
+                    <!-- Formalization Pipeline -->
                     <div style="background: linear-gradient(135deg, rgba(16,185,129,0.06) 0%, rgba(59,130,246,0.06) 100%); border: 1px solid rgba(16,185,129,0.12); border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem;">
-                        <h3 style="font-size:1rem; margin-bottom:0.3rem;"><i class="fa-solid fa-route" style="color:#10b981;"></i> Formalization Pipeline</h3>
-                        <p style="font-size:0.7rem; color:var(--text-secondary); margin-bottom:1rem;">Every trader journey: Invisible → Profiled → Verified → Credit-Ready → Bankable. Here's where our network stands.</p>
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;flex-wrap:wrap;gap:8px;">
+                            <div>
+                                <h3 style="font-size:1rem; margin-bottom:0.2rem;"><i class="fa-solid fa-route" style="color:#10b981;"></i> Formalization Pipeline</h3>
+                                <p style="font-size:0.7rem; color:var(--text-secondary);">Every trader journey: Invisible → Profiled → Verified → Credit-Ready → Bankable.</p>
+                            </div>
+                            <div id="db-sync-pill" style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;font-size:0.62rem;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);color:#10b981;font-weight:600;cursor:pointer;" onclick="syncDashboardLiveSupabase()" title="Click to refresh from live Supabase database">
+                                <span class="conf-dot pulse-dot" style="background:#10b981;"></span>
+                                <span id="db-sync-text">Supabase Live Sync</span>
+                                <i class="fa-solid fa-arrows-rotate" style="font-size:0.55rem;opacity:0.8;"></i>
+                            </div>
+                        </div>
                         <div style="display:flex; gap:0; align-items:stretch; margin-bottom:1rem;">
                             <div style="flex:1; text-align:center; padding:1rem 0.5rem; background:rgba(168,85,247,0.08); border-radius:12px 0 0 12px; border-right:1px solid rgba(255,255,255,0.05);">
-                                <div style="font-size:1.6rem; font-weight:800; color:#a855f7;">1,842</div>
+                                <div style="font-size:1.6rem; font-weight:800; color:#a855f7;" id="pipe-profiled">1,842</div>
                                 <div style="font-size:0.6rem; color:var(--text-secondary); margin-top:2px;">Profiled</div>
                                 <div style="font-size:0.55rem; color:var(--text-muted);">Agent visited</div>
                             </div>
                             <div style="display:flex;align-items:center;color:rgba(255,255,255,0.15);font-size:1.2rem;">▶</div>
                             <div style="flex:1; text-align:center; padding:1rem 0.5rem; background:rgba(59,130,246,0.08); border-right:1px solid rgba(255,255,255,0.05);">
-                                <div style="font-size:1.6rem; font-weight:800; color:#3b82f6;">1,456</div>
+                                <div style="font-size:1.6rem; font-weight:800; color:#3b82f6;" id="pipe-gps-verified">1,456</div>
                                 <div style="font-size:0.6rem; color:var(--text-secondary); margin-top:2px;">GPS Verified</div>
                                 <div style="font-size:0.55rem; color:var(--text-muted);">Photo + GPS match</div>
                             </div>
                             <div style="display:flex;align-items:center;color:rgba(255,255,255,0.15);font-size:1.2rem;">▶</div>
                             <div style="flex:1; text-align:center; padding:1rem 0.5rem; background:rgba(0,242,254,0.08); border-right:1px solid rgba(255,255,255,0.05);">
-                                <div style="font-size:1.6rem; font-weight:800; color:#00f2fe;">1,102</div>
+                                <div style="font-size:1.6rem; font-weight:800; color:#00f2fe;" id="pipe-credit-ready">1,102</div>
                                 <div style="font-size:0.6rem; color:var(--text-secondary); margin-top:2px;">Credit-Ready</div>
                                 <div style="font-size:0.55rem; color:var(--text-muted);">DQS ≥ 80/100</div>
                             </div>
                             <div style="display:flex;align-items:center;color:rgba(255,255,255,0.15);font-size:1.2rem;">▶</div>
                             <div style="flex:1; text-align:center; padding:1rem 0.5rem; background:rgba(16,185,129,0.1); border-radius:0 12px 12px 0;">
-                                <div style="font-size:1.6rem; font-weight:800; color:#10b981;">634</div>
+                                <div style="font-size:1.6rem; font-weight:800; color:#10b981;" id="pipe-loan-ready">634</div>
                                 <div style="font-size:0.6rem; color:var(--text-secondary); margin-top:2px;">Loan-Ready</div>
                                 <div style="font-size:0.55rem; color:var(--text-muted);">3+ verified visits</div>
                             </div>
                         </div>
                         <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:0.8rem;">
                             <div style="text-align:center; padding:0.6rem; background:rgba(255,255,255,0.02); border-radius:8px; border:1px solid rgba(255,255,255,0.04);">
-                                <div style="font-size:1.1rem; font-weight:700; color:#f59e0b;">84</div>
+                                <div style="font-size:1.1rem; font-weight:700; color:#f59e0b;" id="pipe-dqs-avg">84</div>
                                 <div style="font-size:0.6rem; color:var(--text-secondary);">Avg DQS Score</div>
                             </div>
                             <div style="text-align:center; padding:0.6rem; background:rgba(255,255,255,0.02); border-radius:8px; border:1px solid rgba(255,255,255,0.04);">
-                                <div style="font-size:1.1rem; font-weight:700; color:#10b981;">96%</div>
+                                <div style="font-size:1.1rem; font-weight:700; color:#10b981;" id="pipe-gps-rate">96%</div>
                                 <div style="font-size:0.6rem; color:var(--text-secondary);">GPS Match Rate</div>
                             </div>
                             <div style="text-align:center; padding:0.6rem; background:rgba(255,255,255,0.02); border-radius:8px; border:1px solid rgba(255,255,255,0.04);">
-                                <div style="font-size:1.1rem; font-weight:700; color:#3b82f6;">78%</div>
+                                <div style="font-size:1.1rem; font-weight:700; color:#3b82f6;" id="pipe-photo-rate">78%</div>
                                 <div style="font-size:0.6rem; color:var(--text-secondary);">Photo Evidence Rate</div>
                             </div>
                             <div style="text-align:center; padding:0.6rem; background:rgba(255,255,255,0.02); border-radius:8px; border:1px solid rgba(255,255,255,0.04);">
-                                <div style="font-size:1.1rem; font-weight:700; color:#a855f7;">2.4</div>
+                                <div style="font-size:1.1rem; font-weight:700; color:#a855f7;" id="pipe-visits-avg">2.4</div>
                                 <div style="font-size:0.6rem; color:var(--text-secondary);">Avg Visits/Trader</div>
                             </div>
                         </div>
@@ -1573,14 +1583,14 @@
 
                     <div class="dashboard-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
                         <div class="metric-card" style="padding:1.2rem;">
-                            <div style="font-size:2rem; font-weight:800; background: linear-gradient(135deg, #10b981, #3b82f6); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">247</div>
+                            <div style="font-size:2rem; font-weight:800; background: linear-gradient(135deg, #10b981, #3b82f6); -webkit-background-clip:text; -webkit-text-fill-color:transparent;" id="cov-active-agents">247</div>
                             <div style="font-size:0.7rem; color:var(--text-secondary);">Active Agents</div>
-                            <div style="font-size:0.6rem; color:#10b981; margin-top:4px;"><i class="fa-solid fa-arrow-up"></i> +23 this month</div>
+                            <div style="font-size:0.6rem; color:#10b981; margin-top:4px;"><i class="fa-solid fa-arrow-up"></i> Live in field</div>
                         </div>
                         <div class="metric-card" style="padding:1.2rem;">
-                            <div style="font-size:2rem; font-weight:800; background: linear-gradient(135deg, #a855f7, #ec4899); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">1,842</div>
+                            <div style="font-size:2rem; font-weight:800; background: linear-gradient(135deg, #a855f7, #ec4899); -webkit-background-clip:text; -webkit-text-fill-color:transparent;" id="cov-traders-profiled">1,842</div>
                             <div style="font-size:0.7rem; color:var(--text-secondary);">Traders Profiled</div>
-                            <div style="font-size:0.6rem; color:#10b981; margin-top:4px;"><i class="fa-solid fa-arrow-up"></i> +156 this month</div>
+                            <div style="font-size:0.6rem; color:#10b981; margin-top:4px;"><i class="fa-solid fa-arrow-up"></i> Verified dossiers</div>
                         </div>
                         <div class="metric-card" style="padding:1.2rem;">
                             <div style="font-size:2rem; font-weight:800; background: linear-gradient(135deg, #f59e0b, #ef4444); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">8</div>
@@ -1588,9 +1598,9 @@
                             <div style="font-size:0.6rem; color:var(--text-muted); margin-top:4px;">JHB • CPT • DBN • TSH • EKU • NMB • BCM • MNG</div>
                         </div>
                         <div class="metric-card" style="padding:1.2rem;">
-                            <div style="font-size:2rem; font-weight:800; background: linear-gradient(135deg, #00f2fe, #4facfe); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">14,506</div>
+                            <div style="font-size:2rem; font-weight:800; background: linear-gradient(135deg, #00f2fe, #4facfe); -webkit-background-clip:text; -webkit-text-fill-color:transparent;" id="cov-total-submissions">14,506</div>
                             <div style="font-size:0.7rem; color:var(--text-secondary);">Total Submissions</div>
-                            <div style="font-size:0.6rem; color:#10b981; margin-top:4px;">Avg DQS: 84/100</div>
+                            <div style="font-size:0.6rem; color:#10b981; margin-top:4px;" id="cov-avg-dqs">Avg DQS: 84/100</div>
                         </div>
                     </div>
 
@@ -1603,31 +1613,31 @@
                             <div id="coverage-gig-breakdown" style="display:grid; grid-template-columns: 1fr 1fr; gap: 0.8rem;">
                                 <div style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem; background:rgba(168,85,247,0.06); border-radius:8px;">
                                     <span style="font-size:0.75rem;"><i class="fa-solid fa-store"></i> Trader Profiles</span>
-                                    <span style="font-weight:700; color:#a855f7;">4,231</span>
+                                    <span style="font-weight:700; color:#a855f7;" id="cov-cnt-trader">4,231</span>
                                 </div>
                                 <div style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem; background:rgba(249,115,22,0.06); border-radius:8px;">
                                     <span style="font-size:0.75rem;"><i class="fa-solid fa-burger"></i> Kota Profiles</span>
-                                    <span style="font-weight:700; color:#f97316;">1,847</span>
+                                    <span style="font-weight:700; color:#f97316;" id="cov-cnt-kota">1,847</span>
                                 </div>
                                 <div style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem; background:rgba(168,85,247,0.06); border-radius:8px;">
                                     <span style="font-size:0.75rem;"><i class="fa-solid fa-beer-mug-empty"></i> Tavern Profiles</span>
-                                    <span style="font-weight:700; color:#a855f7;">1,203</span>
+                                    <span style="font-weight:700; color:#a855f7;" id="cov-cnt-tavern">1,203</span>
                                 </div>
                                 <div style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem; background:rgba(0,242,254,0.06); border-radius:8px;">
                                     <span style="font-size:0.75rem;"><i class="fa-solid fa-tags"></i> Price Baskets</span>
-                                    <span style="font-weight:700; color:#00f2fe;">3,412</span>
+                                    <span style="font-weight:700; color:#00f2fe;" id="cov-cnt-basket">3,412</span>
                                 </div>
                                 <div style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem; background:rgba(16,185,129,0.06); border-radius:8px;">
                                     <span style="font-size:0.75rem;"><i class="fa-solid fa-receipt"></i> Receipt Snaps</span>
-                                    <span style="font-weight:700; color:#10b981;">2,156</span>
+                                    <span style="font-weight:700; color:#10b981;" id="cov-cnt-receipt">2,156</span>
                                 </div>
                                 <div style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem; background:rgba(239,68,68,0.06); border-radius:8px;">
                                     <span style="font-size:0.75rem;"><i class="fa-solid fa-wrench"></i> Infra Reports</span>
-                                    <span style="font-weight:700; color:#ef4444;">892</span>
+                                    <span style="font-weight:700; color:#ef4444;" id="cov-cnt-infra">892</span>
                                 </div>
                                 <div style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem; background:rgba(59,130,246,0.06); border-radius:8px;">
                                     <span style="font-size:0.75rem;"><i class="fa-solid fa-person-walking"></i> Foot Traffic</span>
-                                    <span style="font-weight:700; color:#3b82f6;">765</span>
+                                    <span style="font-weight:700; color:#3b82f6;" id="cov-cnt-traffic">765</span>
                                 </div>
                             </div>
                         </div>
@@ -1669,6 +1679,9 @@
         <!-- Injected via JS -->
     </div>
 
+    <!-- Supabase JS client + Pulse SA DB layer -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.min.js"></script>
+    <script src="supabase.js"></script>
     <script src="app.js"></script>
 
     <!-- Service Worker Registration + Offline Detection -->
