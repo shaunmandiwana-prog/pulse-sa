@@ -39,7 +39,7 @@ const ontologyData = {
             'Turnover (Bad Day)': 'R1,200',
             'Busiest Hours': '11am-2pm & 5-8pm',
             'Wholesaler Terms': 'Cash on delivery',
-            'Monthly Turnover (Reconciled)': 'R58,000 ±15%',
+            'Monthly Turnover (Reconciled)': 'R58,000 +/-15%',
             'Customers Per Day': '~60',
             // Location & Infrastructure
             'GPS': '-26.2678, 27.8547',
@@ -84,7 +84,7 @@ const ontologyData = {
             'Turnover (Bad Day)': 'R1,800',
             'Busiest Hours': '6-8am & 4-7pm',
             'Wholesaler Terms': 'Cash on delivery',
-            'Monthly Turnover (Reconciled)': 'R92,000 ±12%',
+            'Monthly Turnover (Reconciled)': 'R92,000 +/-12%',
             'Customers Per Day': '~80',
             // Location & Infrastructure
             'GPS': '-26.2712, 27.8623',
@@ -129,7 +129,7 @@ const ontologyData = {
             'Turnover (Bad Day)': 'R400',
             'Busiest Hours': 'Fri-Sat all day',
             'Wholesaler Terms': '30-day account with supplier',
-            'Monthly Turnover (Reconciled)': 'R24,000 ±20%',
+            'Monthly Turnover (Reconciled)': 'R24,000 +/-20%',
             'Customers Per Day': '~12',
             // Location & Infrastructure
             'GPS': '-34.0453, 18.6758',
@@ -174,7 +174,7 @@ const ontologyData = {
             'Turnover (Bad Day)': 'R300',
             'Busiest Hours': '6-9am commuter rush',
             'Wholesaler Terms': 'Cash on delivery',
-            'Monthly Turnover (Reconciled)': 'R18,000 ±25%',
+            'Monthly Turnover (Reconciled)': 'R18,000 +/-25%',
             'Customers Per Day': '~50',
             // Location & Infrastructure
             'GPS': '-34.0475, 18.6287',
@@ -2283,7 +2283,7 @@ function renderProfileOutput() {
             'Turnover (Bad Day)': raw.turnover_bad_day ? ('R' + Number(raw.turnover_bad_day).toLocaleString()) : (raw.bad_day_revenue ? 'R' + Number(raw.bad_day_revenue).toLocaleString() : 'R1,000'),
             'Busiest Hours': raw.busiest_hours || raw.busiest || '6-8am & 4-7pm',
             'Wholesaler Terms': raw.wholesaler_terms || raw.terms || 'Cash on delivery',
-            'Monthly Turnover (Reconciled)': raw.monthly_turnover ? ('R' + Number(raw.monthly_turnover).toLocaleString()) : 'R42,000 ±10%',
+            'Monthly Turnover (Reconciled)': raw.monthly_turnover ? ('R' + Number(raw.monthly_turnover).toLocaleString()) : 'R42,000 +/-10%',
             'Customers Per Day': raw.customers_per_day ? raw.customers_per_day.toString() : '~65',
             'GPS': (raw.gps_lat && raw.gps_lng) ? `${Number(raw.gps_lat).toFixed(4)}, ${Number(raw.gps_lng).toFixed(4)}` : (raw.gps || '-26.2678, 27.8547'),
             'Water Supply': raw.water_supply || raw.water || 'Municipal tap (working)',
