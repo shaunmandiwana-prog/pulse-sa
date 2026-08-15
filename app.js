@@ -2701,3 +2701,106 @@ window.addEventListener('DOMContentLoaded', () => {
     setTimeout(syncDashboardLiveSupabase, 800);
 });
 
+// ============================================
+// API DOCUMENTATION & EXPORT CONTROLLER
+// ============================================
+function openApiDocsModal() {
+    const modal = document.getElementById('api-docs-modal');
+    if (modal) {
+        modal.style.display = 'flex';
+        updateCurlSnippet();
+    }
+}
+
+function closeApiDocsModal() {
+    const modal = document.getElementById('api-docs-modal');
+    if (modal) modal.style.display = 'none';
+}
+
+function updateCurlSnippet() {
+    const selectEl = document.getElementById('profile-trader-select');
+    const traderId = selectEl ? selectEl.value : 'sizwe_spaza';
+    const snippet = document.getElementById('curl-snippet');
+    if (snippet) {
+        snippet.textContent = `curl -X GET "https://api.pulseintel.co.za/v1/traders/${traderId}/credit-profile" \\\n  -H "Authorization: Bearer YOUR_API_TOKEN" \\\n  -H "Accept: application/json"`;
+    }
+}
+
+function copyCurlSnippet() {
+    const snippet = document.getElementById('curl-snippet');
+    if (snippet && navigator.clipboard) {
+        navigator.clipboard.writeText(snippet.textContent).then(() => {
+            alert('cURL command copied to clipboard!');
+        });
+    }
+}
+
+function downloadTraderJsonPayload() {
+    const selectEl = document.getElementById('profile-trader-select');
+    const traderId = selectEl ? selectEl.value : 'sizwe_spaza';
+    
+    let trader = ontologyData.nodes.find(n => n.id === traderId);
+    let rawProps = {};
+    let traderName = traderId;
+
+    if (trader) {
+        rawProps = trader.properties;
+        traderName = rawProps['Name'] || trader.label;
+    } else if (window.liveTradersMap && window.liveTradersMap[traderId]) {
+        const lt = window.liveTradersMap[traderId];
+        rawProps = lt.raw || {};
+        traderName = lt.name || traderId;
+    }
+
+    const payload = {
+        pulse_reference: "PSA-" + traderId.replace('live_','').toUpperCase().slice(0,4) + "-" + Math.floor(1000 + Math.random()*9000),
+        schema_version: "2026.1",
+        generated_at: new Date().toISOString(),
+        trader: {
+            id: traderId,
+            name: traderName,
+            business_type: rawProps['Type'] || rawProps['business_type'] || "Spaza Shop",
+            township: rawProps['Township'] || rawProps['township'] || "Soweto",
+            ward: rawProps['Ward'] || rawProps['ward'] || "15",
+            gps: rawProps['GPS'] || (rawProps.gps_lat ? `${rawProps.gps_lat}, ${rawProps.gps_lng}` : "-26.2712, 27.8623"),
+            verification_status: "Verified_Ground_Truth"
+        },
+        credit_intelligence: {
+            pulse_score: 88,
+            risk_tier: "B+",
+            dqs_audit_rating: 91,
+            reconciled_monthly_turnover: rawProps['Monthly Turnover (Reconciled)'] || rawProps['monthly_turnover'] || "R42,000",
+            recommended_stock_facility: {
+                min: 5000,
+                max: 10000,
+                currency: "ZAR",
+                disbursement_type: "Closed-Loop Supplier Stock Voucher"
+            },
+            wholesaler_crosscheck_match_rate: 0.94,
+            foottraffic_confirmation: 0.88,
+            longitudinal_consistency_months: 6
+        },
+        fmcg_distribution: {
+            top_products: rawProps['Top Products'] || rawProps['top_products'] || "Omo, Coke, Maize, Bread",
+            primary_supplier: rawProps['Primary Supplier'] || rawProps['primary_supplier'] || "Metro Cash & Carry",
+            restock_cycle: rawProps['Restock Frequency'] || rawProps['restock_frequency'] || "Every 2-3 days",
+            unmet_stock_demand: rawProps['Wanted But Unaffordable'] || "Bulk Cooking Oil"
+        },
+        underwriting_risk: {
+            premises_type: rawProps['Premises'] || rawProps['premises_type'] || "Brick structure",
+            loss_history: rawProps['Previous Losses'] || "None",
+            estimated_stock_value: "R12,000 - R18,000",
+            recommended_premium_monthly: "R120 - R180"
+        }
+    };
+
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(payload, null, 2));
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute("href", dataStr);
+    downloadAnchor.setAttribute("download", `pulse_intelligence_${traderId}.json`);
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+}
+
+

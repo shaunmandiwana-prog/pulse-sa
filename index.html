@@ -1460,9 +1460,14 @@
                             <span style="background:rgba(16,185,129,0.15); padding:6px 14px; border-radius:20px; font-size:0.65rem; font-weight:700; border:1px solid rgba(16,185,129,0.3); color:#10b981;">✅ Credit Score Generated</span>
                         </div>
                     </div>
-                    <div class="profile-output-hero">
-                        <h3><i class="fa-solid fa-id-card-clip"></i> Institutional Profile Output</h3>
-                        <p>This is what institutional buyers receive via API. Same underlying data, different lenses for different customers.</p>
+                    <div class="profile-output-hero" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+                        <div>
+                            <h3><i class="fa-solid fa-id-card-clip"></i> Institutional Profile Output</h3>
+                            <p>This is what institutional buyers receive via API. Same underlying data, different lenses for different customers.</p>
+                        </div>
+                        <button class="btn-api-docs" onclick="openApiDocsModal()" style="background:rgba(0,242,254,0.1);border:1px solid rgba(0,242,254,0.35);color:#00f2fe;padding:8px 14px;border-radius:10px;font-size:0.72rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;">
+                            <i class="fa-solid fa-code"></i> API Explorer &amp; JSON Export
+                        </button>
                     </div>
                     
                     <!-- Lens Selector -->
@@ -1472,15 +1477,22 @@
                         <button class="lens-btn" id="lens-insurer" onclick="switchLens('insurer')"><i class="fa-solid fa-shield-halved"></i> What Hollard Sees</button>
                     </div>
                     
-                    <!-- Trader Selector -->
-                    <div class="profile-trader-selector">
-                        <label>Select Trader:</label>
-                        <select id="profile-trader-select" onchange="renderProfileOutput()">
-                            <option value="sizwe_spaza">Sizwe's Spaza Shop</option>
-                            <option value="mkhize_inhloko">Bab' uMkhize's Inhloko</option>
-                            <option value="nomsa_salon">Nomsa's Hair Salon</option>
-                            <option value="gary_fruit">Uncle Gary's Fruits</option>
-                        </select>
+                    <!-- Trader Selector & Actions Toolbar -->
+                    <div class="profile-trader-selector" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+                        <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:260px;">
+                            <label style="flex-shrink:0;">Select Trader:</label>
+                            <select id="profile-trader-select" onchange="renderProfileOutput()" style="flex:1;">
+                                <option value="sizwe_spaza">Sizwe's Spaza Shop</option>
+                                <option value="mkhize_inhloko">Bab' uMkhize's Inhloko</option>
+                                <option value="nomsa_salon">Nomsa's Hair Salon</option>
+                                <option value="gary_fruit">Uncle Gary's Fruits</option>
+                            </select>
+                        </div>
+                        <div style="display:flex;gap:8px;">
+                            <button onclick="downloadTraderJsonPayload()" style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);color:#10b981;padding:6px 12px;border-radius:8px;font-size:0.68rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:5px;">
+                                <i class="fa-solid fa-download"></i> Export JSON
+                            </button>
+                        </div>
                     </div>
                     
                     <!-- Profile Card -->
@@ -1488,6 +1500,72 @@
                         <!-- Rendered dynamically by JS -->
                     </div>
                 </div>
+
+    <!-- API DOCUMENTATION & EXPLORER MODAL -->
+    <div id="api-docs-modal" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(8,10,18,0.96);backdrop-filter:blur(14px);align-items:center;justify-content:center;padding:20px;">
+        <div style="width:100%;max-width:760px;background:#0f1120;border:1px solid rgba(0,242,254,0.3);border-radius:18px;padding:26px;max-height:88vh;overflow-y:auto;display:flex;flex-direction:column;gap:18px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,0.08);padding-bottom:14px;">
+                <div>
+                    <h3 style="font-size:1.15rem;font-weight:800;color:#f0f2ff;"><i class="fa-solid fa-code" style="color:#00f2fe;margin-right:8px;"></i>Pulse SA REST API Documentation</h3>
+                    <p style="font-size:0.68rem;color:#8b8fa8;margin-top:2px;">Institutional API endpoints for credit scoring engines, FMCG distribution planning, and risk underwriting.</p>
+                </div>
+                <button onclick="closeApiDocsModal()" style="background:none;border:none;color:#8b8fa8;font-size:1.3rem;cursor:pointer;">&times;</button>
+            </div>
+
+            <!-- API Endpoints List -->
+            <div style="display:flex;flex-direction:column;gap:14px;">
+                <!-- Endpoint 1: Credit Profile -->
+                <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:14px;">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                        <span style="background:rgba(16,185,129,0.15);color:#10b981;font-size:0.6rem;font-weight:800;padding:2px 8px;border-radius:4px;">GET</span>
+                        <code style="color:#00f2fe;font-size:0.75rem;">/v1/traders/{trader_id}/credit-profile</code>
+                        <span style="font-size:0.6rem;color:#8b8fa8;margin-left:auto;">For Banks / Lenders</span>
+                    </div>
+                    <p style="font-size:0.68rem;color:#cbd5e1;line-height:1.5;">Returns verified 3-factor audit scores, DQS metric, 14-month reconciled turnover, and loan sizing recommendation.</p>
+                </div>
+
+                <!-- Endpoint 2: FMCG Shelf Intel -->
+                <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:14px;">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                        <span style="background:rgba(16,185,129,0.15);color:#10b981;font-size:0.6rem;font-weight:800;padding:2px 8px;border-radius:4px;">GET</span>
+                        <code style="color:#00f2fe;font-size:0.75rem;">/v1/market/shelf-intelligence?ward={ward_no}&amp;category={category}</code>
+                        <span style="font-size:0.6rem;color:#8b8fa8;margin-left:auto;">For FMCG Brands</span>
+                    </div>
+                    <p style="font-size:0.68rem;color:#cbd5e1;line-height:1.5;">Returns ward-level product penetration, competitor brand share shifts, retail price dispersion, and unmet stock demand.</p>
+                </div>
+
+                <!-- Endpoint 3: Insurance Risk -->
+                <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:14px;">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                        <span style="background:rgba(16,185,129,0.15);color:#10b981;font-size:0.6rem;font-weight:800;padding:2px 8px;border-radius:4px;">GET</span>
+                        <code style="color:#00f2fe;font-size:0.75rem;">/v1/underwriting/risk-dossier/{trader_id}</code>
+                        <span style="font-size:0.6rem;color:#8b8fa8;margin-left:auto;">For Micro-Insurers</span>
+                    </div>
+                    <p style="font-size:0.68rem;color:#cbd5e1;line-height:1.5;">Returns premises structure safety, loss history, stock valuation, and suggested monthly premium rating.</p>
+                </div>
+            </div>
+
+            <!-- Live Sample cURL & Payload Viewer -->
+            <div style="background:#080a12;border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                    <span style="font-size:0.62rem;font-weight:700;text-transform:uppercase;color:#8b8fa8;"><i class="fa-solid fa-terminal" style="color:#a855f7;margin-right:6px;"></i>Sample cURL Request</span>
+                    <button onclick="copyCurlSnippet()" style="background:rgba(255,255,255,0.06);border:none;color:#00f2fe;font-size:0.6rem;padding:3px 8px;border-radius:4px;cursor:pointer;">Copy cURL</button>
+                </div>
+                <pre id="curl-snippet" style="font-size:0.65rem;color:#10b981;line-height:1.5;margin:0;overflow-x:auto;">curl -X GET "https://api.pulseintel.co.za/v1/traders/sizwe_spaza/credit-profile" \
+  -H "Authorization: Bearer YOUR_API_TOKEN" \
+  -H "Accept: application/json"</pre>
+            </div>
+
+            <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:6px;">
+                <button onclick="downloadTraderJsonPayload()" style="background:linear-gradient(135deg,#00f2fe,#0284c7);border:none;border-radius:10px;padding:10px 18px;color:#000;font-weight:800;font-size:0.75rem;cursor:pointer;display:inline-flex;align-items:center;gap:6px;">
+                    <i class="fa-solid fa-download"></i> Download Active Profile Payload (.json)
+                </button>
+                <button onclick="closeApiDocsModal()" style="background:rgba(255,255,255,0.08);border:none;border-radius:10px;padding:10px 16px;color:#f0f2ff;font-weight:700;font-size:0.75rem;cursor:pointer;">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
             </div>
 
             <!-- TAB CONTENT: Impact & Coverage -->

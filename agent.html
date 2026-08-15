@@ -526,6 +526,14 @@
                         style="width:100%;background:#0f1120;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 14px;color:#f0f2ff;font-family:inherit;font-size:0.85rem;outline:none;-webkit-appearance:none;">
                 </div>
 
+                <!-- Terms & POPIA Acceptance Checkbox -->
+                <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:12px 14px;">
+                    <label style="display:flex;align-items:flex-start;gap:10px;font-size:0.7rem;color:#cbd5e1;cursor:pointer;line-height:1.45;">
+                        <input type="checkbox" id="ob-terms-check" style="margin-top:3px;accent-color:#a855f7;width:16px;height:16px;cursor:pointer;">
+                        <span>I accept the <a href="javascript:void(0)" onclick="openTermsModal()" style="color:#00f2fe;font-weight:700;text-decoration:underline;">Agent Terms &amp; POPIA Privacy Policy</a> and certify that all data I log will be accurate, truthful, and collected with trader consent.</span>
+                    </label>
+                </div>
+
                 <!-- Error message -->
                 <div id="ob-error" style="display:none;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:8px;padding:10px 14px;font-size:0.72rem;color:#f87171;"></div>
 
@@ -537,10 +545,40 @@
             </div>
 
             <p style="text-align:center;font-size:0.6rem;color:#8b8fa8;margin-top:16px;line-height:1.6;">
-                <span style="color:#a855f7;">*</span> All fields are required &nbsp;-&nbsp;
-                Your information is collected solely for agent verification and earnings tracking.
-                Pulse SA does not sell or share your personal data.
+                <span style="color:#a855f7;">*</span> All fields and agreement required &nbsp;-&nbsp;
+                Your information is collected solely for agent verification and earnings tracking under POPIA compliance.
             </p>
+        </div>
+    </div>
+
+    <!-- TERMS & CONDITIONS MODAL -->
+    <div id="terms-modal" style="display:none;position:fixed;inset:0;z-index:10000;background:rgba(8,10,18,0.96);backdrop-filter:blur(14px);flex-direction:column;align-items:center;justify-content:center;padding:20px;">
+        <div style="width:100%;max-width:440px;background:#0f1120;border:1px solid rgba(168,85,247,0.3);border-radius:18px;padding:24px;max-height:85vh;overflow-y:auto;display:flex;flex-direction:column;gap:14px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,0.08);padding-bottom:12px;">
+                <h3 style="font-size:1.05rem;font-weight:800;color:#f0f2ff;"><i class="fa-solid fa-shield-halved" style="color:#00f2fe;margin-right:8px;"></i>Agent Terms &amp; POPIA Agreement</h3>
+                <button onclick="closeTermsModal()" style="background:none;border:none;color:#8b8fa8;font-size:1.2rem;cursor:pointer;">&times;</button>
+            </div>
+            <div style="font-size:0.72rem;color:#cbd5e1;line-height:1.6;display:flex;flex-direction:column;gap:12px;">
+                <div>
+                    <strong style="color:#00f2fe;display:block;margin-bottom:2px;">1. Accuracy &amp; Integrity Policy</strong>
+                    All survey data, price readings, and receipt photos submitted must be 100% genuine and observed in person. Submitting fake, altered, or duplicate data results in immediate account forfeiture and point confiscation.
+                </div>
+                <div>
+                    <strong style="color:#00f2fe;display:block;margin-bottom:2px;">2. POPIA &amp; Trader Consent</strong>
+                    Agents must verbally explain the purpose of the data collection to informal traders and respect their privacy. Personal ID numbers are verified visually and never recorded directly without consent.
+                </div>
+                <div>
+                    <strong style="color:#00f2fe;display:block;margin-bottom:2px;">3. Rewards &amp; Payouts</strong>
+                    Pulse Points are earned upon automated verification (DQS audit) and are redeemable for airtime, retail vouchers, or bank cashout per published redemption tiers.
+                </div>
+                <div>
+                    <strong style="color:#00f2fe;display:block;margin-bottom:2px;">4. Independent Contractor Status</strong>
+                    Pulse Agents operate as independent field researchers and gig participants, earning rewards per completed verified task.
+                </div>
+            </div>
+            <button onclick="acceptTermsFromModal()" style="width:100%;background:linear-gradient(135deg,#10b981,#059669);border:none;border-radius:12px;padding:13px;color:#fff;font-weight:800;font-size:0.85rem;cursor:pointer;margin-top:6px;">
+                ✓ I Understand and Agree
+            </button>
         </div>
     </div>
 
@@ -2409,6 +2447,11 @@
                 errEl.textContent = 'Please enter a valid email address.';
                 errEl.style.display = 'block'; return;
             }
+            const termsChecked = document.getElementById('ob-terms-check').checked;
+            if (!termsChecked) {
+                errEl.textContent = 'Please accept the Agent Terms & POPIA Privacy Policy to continue.';
+                errEl.style.display = 'block'; return;
+            }
             errEl.style.display = 'none';
 
             const btn = document.getElementById('ob-submit-btn');
@@ -2457,6 +2500,22 @@
             document.getElementById('onboarding-overlay').style.display = 'none';
             updateDisplays();
             showToast(`Sawubona ${firstname}! 🎉 Your profile is live - 2,500 welcome points added!`);
+        }
+
+        function openTermsModal() {
+            const modal = document.getElementById('terms-modal');
+            if (modal) modal.style.display = 'flex';
+        }
+
+        function closeTermsModal() {
+            const modal = document.getElementById('terms-modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function acceptTermsFromModal() {
+            const check = document.getElementById('ob-terms-check');
+            if (check) check.checked = true;
+            closeTermsModal();
         }
 
         // Run onboarding check on load
