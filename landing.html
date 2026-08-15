@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pulse SA | Intelligence Platform for the Informal Economy</title>
-    <meta name="description" content="Mapping South Africa's R5.3 Trillion informal economy with auditable ground truth data for banks, FMCG brands, and insurers.">
+    <title>Pulse SA | Alternative Credit & Risk Intelligence Platform</title>
+    <meta name="description" content="Auditable ground-truth data infrastructure to formalize and finance South Africa's township SMEs. Built for commercial lenders, developmental finance institutions, and micro-insurers.">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,7 +24,7 @@
             --text-primary: #f8fafc;
             --text-secondary: #94a3b8;
             --text-muted: #64748b;
-            --container-max: 1200px;
+            --container-max: 1140px;
         }
 
         * {
@@ -41,7 +41,6 @@
             overflow-x: hidden;
         }
 
-        /* Ambient background glow */
         .bg-glow-1 {
             position: fixed;
             top: -150px;
@@ -54,7 +53,7 @@
         }
         .bg-glow-2 {
             position: fixed;
-            top: 40%;
+            top: 45%;
             right: -100px;
             width: 500px;
             height: 500px;
@@ -77,7 +76,7 @@
             position: sticky;
             top: 0;
             z-index: 100;
-            background: rgba(8, 10, 20, 0.85);
+            background: rgba(8, 10, 20, 0.88);
             backdrop-filter: blur(16px);
             border-bottom: 1px solid var(--border-color);
             padding: 16px 0;
@@ -190,7 +189,7 @@
 
         /* Hero Section */
         .hero {
-            padding: 90px 0 60px;
+            padding: 100px 0 70px;
             text-align: center;
         }
 
@@ -198,23 +197,23 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: rgba(0, 242, 254, 0.08);
-            border: 1px solid rgba(0, 242, 254, 0.25);
+            background: rgba(16, 185, 129, 0.08);
+            border: 1px solid rgba(16, 185, 129, 0.25);
             padding: 6px 16px;
             border-radius: 30px;
             font-size: 0.75rem;
             font-weight: 700;
-            color: var(--accent-teal);
+            color: #34d399;
             margin-bottom: 24px;
         }
 
         .hero h2 {
-            font-size: 3.2rem;
+            font-size: 3.3rem;
             font-weight: 800;
             line-height: 1.15;
             letter-spacing: -1.5px;
-            max-width: 960px;
-            margin: 0 auto 20px;
+            max-width: 920px;
+            margin: 0 auto 22px;
         }
 
         .hero h2 .highlight {
@@ -222,11 +221,11 @@
         }
 
         .hero-sub {
-            font-size: 1.1rem;
+            font-size: 1.12rem;
             color: var(--text-secondary);
-            max-width: 720px;
-            margin: 0 auto 36px;
-            line-height: 1.6;
+            max-width: 700px;
+            margin: 0 auto 38px;
+            line-height: 1.65;
         }
 
         .hero-buttons {
@@ -234,13 +233,13 @@
             justify-content: center;
             gap: 16px;
             flex-wrap: wrap;
-            margin-bottom: 50px;
+            margin-bottom: 30px;
         }
 
         .btn-primary-lg {
             background: linear-gradient(135deg, var(--accent-teal), #0284c7);
             color: #000;
-            padding: 14px 30px;
+            padding: 14px 32px;
             border-radius: 12px;
             font-size: 0.95rem;
             font-weight: 800;
@@ -276,43 +275,26 @@
             border-color: rgba(255, 255, 255, 0.2);
         }
 
-        /* Metric Ticker */
-        .ticker-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            background: var(--bg-surface);
-            border: 1px solid var(--border-color);
-            border-radius: 18px;
-            padding: 24px;
-            max-width: 1040px;
-            margin: 0 auto;
-        }
-
-        .ticker-item {
-            text-align: center;
-            border-right: 1px solid var(--border-color);
-            padding: 0 12px;
-        }
-
-        .ticker-item:last-child {
-            border-right: none;
-        }
-
-        .ticker-num {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: var(--text-primary);
-            letter-spacing: -0.5px;
-        }
-
-        .ticker-label {
-            font-size: 0.72rem;
+        .trust-strip {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 32px;
             color: var(--text-muted);
-            text-transform: uppercase;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            margin-top: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .trust-strip span {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .trust-strip i {
+            color: var(--accent-teal);
         }
 
         /* Section Layout */
@@ -358,7 +340,7 @@
             background: var(--bg-surface);
             border: 1px solid var(--border-color);
             border-radius: 18px;
-            padding: 32px 26px;
+            padding: 34px 28px;
             transition: all 0.3s;
             display: flex;
             flex-direction: column;
@@ -382,8 +364,8 @@
         }
 
         .solution-icon.bank { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
-        .solution-icon.fmcg { background: rgba(16, 185, 129, 0.15); color: #34d399; }
         .solution-icon.insurance { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+        .solution-icon.esd { background: rgba(16, 185, 129, 0.15); color: #34d399; }
 
         .solution-card h3 {
             font-size: 1.25rem;
@@ -544,13 +526,11 @@
 
         /* Responsive */
         @media (max-width: 900px) {
-            .ticker-grid, .solutions-grid, .method-grid, .footer-grid {
+            .solutions-grid, .method-grid, .footer-grid {
                 grid-template-columns: 1fr;
             }
             .hero h2 { font-size: 2.2rem; }
             .nav-links { display: none; }
-            .ticker-item { border-right: none; border-bottom: 1px solid var(--border-color); padding: 12px 0; }
-            .ticker-item:last-child { border-bottom: none; }
         }
     </style>
 </head>
@@ -566,9 +546,9 @@
                 <h1>Pulse <span>SA</span></h1>
             </a>
             <ul class="nav-links">
-                <li><a href="#solutions">Solutions</a></li>
-                <li><a href="#methodology">Audited Ground Truth</a></li>
-                <li><a href="#network">Agent Network</a></li>
+                <li><a href="#solutions">Institutional Solutions</a></li>
+                <li><a href="#methodology">3-Factor Audit Model</a></li>
+                <li><a href="#network">Agent Network &amp; ESD</a></li>
                 <li><a href="exec_sum.html" target="_blank">Executive Summary</a></li>
             </ul>
             <div class="nav-actions">
@@ -582,41 +562,29 @@
     <section class="hero">
         <div class="container">
             <div class="hero-badge">
-                <i class="fa-solid fa-shield-halved"></i> Verified Township Economic Intelligence
+                <i class="fa-solid fa-shield-check"></i> Audit-Grade Informal Economy Infrastructure
             </div>
             <h2>
-                Mapping South Africa's R5.3 Trillion Informal Economy with <span class="highlight">Auditable Ground Truth</span>.
+                Formalising &amp; De-Risking South Africa's Township SMEs with <span class="highlight">Auditable Ground Truth</span>.
             </h2>
             <p class="hero-sub">
-                Alternative credit scoring, real-time FMCG distribution telemetry, and hyper-local risk intelligence powered by a nationwide network of verified youth field researchers.
+                Bridging the data gap between 3 million invisible township businesses and institutional capital. We deliver 3-way verified credit scoring, longitudinal cash flow audits, and micro-underwriting intelligence for South Africa's leading financial institutions.
             </p>
             <div class="hero-buttons">
                 <a href="index.html" class="btn-primary-lg">
-                    <i class="fa-solid fa-chart-pie"></i> Launch Intelligence Dashboard
+                    <i class="fa-solid fa-chart-pie"></i> Launch Credit Intelligence Hub
                 </a>
                 <a href="agent.html" class="btn-secondary-lg">
-                    <i class="fa-solid fa-id-card"></i> Join as Field Research Agent
+                    <i class="fa-solid fa-id-card"></i> Join Field Agent Network
                 </a>
             </div>
 
-            <!-- Ticker Stats -->
-            <div class="ticker-grid">
-                <div class="ticker-item">
-                    <div class="ticker-num">3,000,000+</div>
-                    <div class="ticker-label">Informal SMEs Mapped</div>
-                </div>
-                <div class="ticker-item">
-                    <div class="ticker-num">R5.3 Trillion</div>
-                    <div class="ticker-label">Annual Turnover Activity</div>
-                </div>
-                <div class="ticker-item">
-                    <div class="ticker-num">56%</div>
-                    <div class="ticker-label">Unbanked Pipeline Pipeline</div>
-                </div>
-                <div class="ticker-item">
-                    <div class="ticker-num">4,488</div>
-                    <div class="ticker-label">Official 2026 MDB Wards</div>
-                </div>
+            <!-- Trust / Audit Strip -->
+            <div class="trust-strip">
+                <span><i class="fa-solid fa-location-crosshairs"></i> Hardware GPS &amp; Photo Audit</span>
+                <span><i class="fa-solid fa-receipt"></i> Wholesale Invoice Cross-Referencing</span>
+                <span><i class="fa-solid fa-lock"></i> POPIA Act 4 of 2013 Compliant</span>
+                <span><i class="fa-solid fa-code"></i> Institutional REST API</span>
             </div>
         </div>
     </section>
@@ -625,45 +593,45 @@
     <section class="section" id="solutions">
         <div class="container">
             <div class="section-header">
-                <div class="section-tag">Enterprise Products</div>
-                <h3 class="section-title">Built for Institutional Scale</h3>
-                <p class="section-desc">Single source of truth for commercial lenders, FMCG manufacturers, and micro-underwriters operating in township markets.</p>
+                <div class="section-tag">Institutional Solutions</div>
+                <h3 class="section-title">Built for Financial Inclusion at Scale</h3>
+                <p class="section-desc">Transforming unbanked informal vendors into credit-ready, loan-ready, and insurable commercial enterprises.</p>
             </div>
 
             <div class="solutions-grid">
-                <!-- Card 1: Banking -->
+                <!-- Card 1: Banking & Lending -->
                 <div class="solution-card">
                     <div class="solution-icon bank"><i class="fa-solid fa-building-columns"></i></div>
                     <h3>Credit Intelligence</h3>
-                    <p>De-risk informal SME lending. Convert 30-field visit dossiers, receipt cross-referencing, and foot traffic consistency into formal loan-ready credit scores.</p>
+                    <p>De-risk informal SME lending. Convert 30-field visit dossiers, receipt cross-referencing, and longitudinal foot traffic consistency into bank-grade credit limits.</p>
                     <ul class="solution-features">
                         <li><i class="fa-solid fa-check"></i> 14-Month Reconciled Cash Flow</li>
                         <li><i class="fa-solid fa-check"></i> Wholesaler Triangulation &amp; Invoices</li>
-                        <li><i class="fa-solid fa-check"></i> Closed-Loop Stock Facility Sizing</li>
+                        <li><i class="fa-solid fa-check"></i> Closed-Loop Stock Voucher Sizing</li>
                     </ul>
                 </div>
 
-                <!-- Card 2: FMCG -->
-                <div class="solution-card">
-                    <div class="solution-icon fmcg"><i class="fa-solid fa-cart-shopping"></i></div>
-                    <h3>Shelf &amp; Brand Telemetry</h3>
-                    <p>Eliminate wholesale blindness. Monitor SKU pricing dispersion, brand switching rationale, and unmet product demand in spazas, kotas, and taverns.</p>
-                    <ul class="solution-features">
-                        <li><i class="fa-solid fa-check"></i> Ward-Level Brand Market Shares</li>
-                        <li><i class="fa-solid fa-check"></i> Real-time Price Basket Dispersions</li>
-                        <li><i class="fa-solid fa-check"></i> Kota &amp; Tavern Index Monitoring</li>
-                    </ul>
-                </div>
-
-                <!-- Card 3: Insurance -->
+                <!-- Card 2: Micro-Insurance -->
                 <div class="solution-card">
                     <div class="solution-icon insurance"><i class="fa-solid fa-shield-halved"></i></div>
-                    <h3>Underwriting &amp; Risk Dossiers</h3>
-                    <p>Underwrite physical township assets with verified ground truth. Property construction ratings, load-shedding spoilage risk, and infrastructure resilience logs.</p>
+                    <h3>Risk &amp; Asset Underwriting</h3>
+                    <p>Underwrite physical township assets with verified ground truth. Premises construction ratings, load-shedding stock spoilage exposure, and parametric claim logs.</p>
                     <ul class="solution-features">
                         <li><i class="fa-solid fa-check"></i> Premises Safety &amp; Fire Hazard Rating</li>
-                        <li><i class="fa-solid fa-check"></i> Water &amp; Electricity Outage Tracking</li>
+                        <li><i class="fa-solid fa-check"></i> Water &amp; Electricity Outage History</li>
                         <li><i class="fa-solid fa-check"></i> Parametric Micro-Claim Verification</li>
+                    </ul>
+                </div>
+
+                <!-- Card 3: ESD & DFI Impact -->
+                <div class="solution-card">
+                    <div class="solution-icon esd"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+                    <h3>ESD &amp; DFI Impact Telemetry</h3>
+                    <p>Auditable tracking for Enterprise Supplier Development funds, provincial development grants, and B-BBEE scorecard formalization mandates.</p>
+                    <ul class="solution-features">
+                        <li><i class="fa-solid fa-check"></i> Ward-Level Formalization Pipeline</li>
+                        <li><i class="fa-solid fa-check"></i> Verified Youth Stipend Disbursement</li>
+                        <li><i class="fa-solid fa-check"></i> Auditable B-BBEE Impact Reports</li>
                     </ul>
                 </div>
             </div>
@@ -677,23 +645,23 @@
                 <div class="section-header" style="margin-bottom:20px;">
                     <div class="section-tag" style="color:var(--accent-teal);">Audit &amp; Verification Methodology</div>
                     <h3 class="section-title">The 3-Factor Ground Truth Model</h3>
-                    <p class="section-desc">How Pulse SA guarantees data relevance and reliability for institutional decision committees.</p>
+                    <p class="section-desc">How Pulse SA guarantees data relevance, reliability, and fraud prevention for credit committees.</p>
                 </div>
 
                 <div class="method-grid">
                     <div class="method-step">
                         <span class="method-step-badge">Pillar 01</span>
-                        <h4>Physical Agent Observation</h4>
+                        <h4>Physical On-Site Observation</h4>
                         <p>Every profile is logged by a vetted local youth agent on-site with hardware-level GPS verification and timestamped premises photo capture.</p>
                     </div>
                     <div class="method-step">
                         <span class="method-step-badge">Pillar 02</span>
-                        <h4>Wholesale Invoice Snaps</h4>
-                        <p>Trader self-reported revenue claims are cross-checked against physical purchase receipts from Metro, Boxer, and local distribution depots.</p>
+                        <h4>Wholesale Invoice Cross-Check</h4>
+                        <p>Trader self-reported turnover claims are cross-checked against physical purchase receipts from Metro, Boxer, and local distribution depots.</p>
                     </div>
                     <div class="method-step">
                         <span class="method-step-badge">Pillar 03</span>
-                        <h4>Automated DQS Engine</h4>
+                        <h4>Automated DQS Audit Engine</h4>
                         <p>Algorithmic Data Quality Scoring (0–100) tests spatial anomalies, repeat foot-traffic consistency, and variance before data hits client feeds.</p>
                     </div>
                 </div>
@@ -705,8 +673,8 @@
     <section class="section" id="network">
         <div class="container">
             <div class="cta-banner">
-                <h3>Empowering Township Youth as Data Researchers</h3>
-                <p>Pulse SA turns mobile phones into income-generating economic tools. Over 240+ active agents earn recurring rewards while providing high-value market telemetry.</p>
+                <h3>Empowering Township Youth as Field Data Researchers</h3>
+                <p>Pulse SA turns mobile phones into income-generating economic tools. Township youth earn recurring rewards while building the first verifiable financial inclusion map of South Africa.</p>
                 <div style="display:flex;justify-content:center;gap:14px;flex-wrap:wrap;">
                     <a href="agent.html" class="btn-primary-lg"><i class="fa-solid fa-bolt"></i> Start Earning as an Agent</a>
                     <a href="Pulse_SA_Agent_Terms_and_POPIA_Policy.pdf" download class="btn-secondary-lg"><i class="fa-solid fa-file-pdf"></i> Read POPIA &amp; Agent Policy</a>
@@ -725,13 +693,13 @@
                         <h1>Pulse <span>SA</span></h1>
                     </div>
                     <p style="font-size:0.8rem;color:var(--text-muted);line-height:1.6;max-width:320px;">
-                        South Africa's premier ground-truth informal economic intelligence platform. Bridging the data gap between township businesses and institutional capital.
+                        South Africa's premier ground-truth alternative credit and informal economy intelligence platform. Bridging the data gap between township businesses and institutional capital.
                     </p>
                 </div>
                 <div class="footer-col">
                     <h5>Platform</h5>
                     <ul>
-                        <li><a href="index.html">Analytics Hub</a></li>
+                        <li><a href="index.html">Credit Intelligence Hub</a></li>
                         <li><a href="agent.html">Field Agent App</a></li>
                         <li><a href="exec_sum.html">Executive Summary</a></li>
                     </ul>
@@ -739,9 +707,9 @@
                 <div class="footer-col">
                     <h5>Solutions</h5>
                     <ul>
-                        <li><a href="index.html#content-profile">Credit Scoring</a></li>
-                        <li><a href="index.html#content-groundtruth">FMCG Telemetry</a></li>
-                        <li><a href="index.html#content-wardmap">Ward Boundary Map</a></li>
+                        <li><a href="index.html#content-profile">SME Credit Scoring</a></li>
+                        <li><a href="index.html#content-profile">Micro-Insurance Dossiers</a></li>
+                        <li><a href="index.html#content-wardmap">2026 Ward Boundary Map</a></li>
                     </ul>
                 </div>
                 <div class="footer-col">
