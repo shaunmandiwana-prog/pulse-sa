@@ -1,15 +1,15 @@
 /**
- * PULSE SA — Data Quality Score (DQS) Engine + Audit Controls
+ * PULSE SA - Data Quality Score (DQS) Engine + Audit Controls
  * ════════════════════════════════════════════════════════════
  * Calculates a Data Quality Score (0-100) for every submission.
  * Implements ISA 500-aligned audit controls: Relevance & Reliability.
  *
  * DQS Components:
- *   40% — Mandatory field completeness
- *   20% — Optional field completeness
- *   15% — GPS verification
- *   15% — Price/value plausibility
- *   10% — Internal consistency
+ *   40% - Mandatory field completeness
+ *   20% - Optional field completeness
+ *   15% - GPS verification
+ *   15% - Price/value plausibility
+ *   10% - Internal consistency
  *
  * Bonus Tiers:
  *   95%+ → Gold   (30% bonus)
@@ -18,7 +18,7 @@
  *   <80% → None   (0% bonus)
  */
 
-// ── Sector Configuration ──
+// -- Sector Configuration --
 const SECTOR_CONFIG = {
     kota_profile: {
         label: 'Kota / Fast-Food',
@@ -128,7 +128,7 @@ const SECTOR_CONFIG = {
 function calculateDQS(gigType, rawData, options = {}) {
     const config = SECTOR_CONFIG[gigType];
     if (!config) {
-        return { score: 50, tier: 'None', tierEmoji: '', bonus: 0, breakdown: {}, flags: ['Unknown gig type — default score applied'] };
+        return { score: 50, tier: 'None', tierEmoji: '', bonus: 0, breakdown: {}, flags: ['Unknown gig type - default score applied'] };
     }
 
     const flags = [];
@@ -138,7 +138,7 @@ function calculateDQS(gigType, rawData, options = {}) {
     let priceScore = 0;
     let consistencyScore = 0;
 
-    // ── 1. Mandatory field completeness (40%) ──
+    // -- 1. Mandatory field completeness (40%) --
     const mandatoryTotal = config.mandatoryFields.length;
     if (mandatoryTotal > 0) {
         const filled = config.mandatoryFields.filter(f => {
@@ -153,7 +153,7 @@ function calculateDQS(gigType, rawData, options = {}) {
         mandatoryScore = 100;
     }
 
-    // ── 2. Optional field completeness (20%) ──
+    // -- 2. Optional field completeness (20%) --
     const optionalTotal = config.optionalFields.length;
     if (optionalTotal > 0) {
         const filled = config.optionalFields.filter(f => {
@@ -165,15 +165,15 @@ function calculateDQS(gigType, rawData, options = {}) {
         optionalScore = 100;
     }
 
-    // ── 3. GPS verification (15%) ──
+    // -- 3. GPS verification (15%) --
     if (options.hasGPS) {
         gpsScore = 100;
     } else {
         gpsScore = 0;
-        flags.push('No GPS verification — agent location not confirmed');
+        flags.push('No GPS verification - agent location not confirmed');
     }
 
-    // ── 4. Price/value plausibility (15%) ──
+    // -- 4. Price/value plausibility (15%) --
     const priceChecks = Object.keys(config.priceRanges);
     if (priceChecks.length > 0) {
         let plausibleCount = 0;
@@ -186,7 +186,7 @@ function calculateDQS(gigType, rawData, options = {}) {
             if (val >= range.min && val <= range.max) {
                 plausibleCount++;
             } else {
-                flags.push(`${range.label}: R${val} outside expected range (R${range.min}–R${range.max})`);
+                flags.push(`${range.label}: R${val} outside expected range (R${range.min}-R${range.max})`);
             }
         }
         // Also check revenue ranges
@@ -221,7 +221,7 @@ function calculateDQS(gigType, rawData, options = {}) {
         priceScore = 100;
     }
 
-    // ── 5. Internal consistency (10%) ──
+    // -- 5. Internal consistency (10%) --
     if (config.consistencyChecks.length > 0) {
         let passed = 0;
         for (const check of config.consistencyChecks) {
@@ -240,7 +240,7 @@ function calculateDQS(gigType, rawData, options = {}) {
         consistencyScore = 100;
     }
 
-    // ── Calculate weighted total ──
+    // -- Calculate weighted total --
     const weightedScore = Math.round(
         (mandatoryScore * 0.40) +
         (optionalScore  * 0.20) +
@@ -251,7 +251,7 @@ function calculateDQS(gigType, rawData, options = {}) {
 
     const score = Math.min(100, Math.max(0, weightedScore));
 
-    // ── Determine tier and bonus ──
+    // -- Determine tier and bonus --
     let tier, tierEmoji, bonusPct;
     if (score >= 95) {
         tier = 'Gold'; tierEmoji = '🥇'; bonusPct = 0.30;
@@ -279,7 +279,7 @@ function calculateDQS(gigType, rawData, options = {}) {
     };
 }
 
-// ── Audit Controls ──
+// -- Audit Controls --
 
 /**
  * Check if a submission should be HARD BLOCKED.
@@ -388,14 +388,14 @@ function checkHardBlocks(gigType, rawData, options = {}) {
 }
 
 /**
- * Check submission speed — soft flag if agent is submitting too fast.
+ * Check submission speed - soft flag if agent is submitting too fast.
  */
 function checkSubmissionSpeed() {
     const subs = JSON.parse(localStorage.getItem('pulse_submissions') || '[]');
     const today = new Date().toISOString().split('T')[0];
     const todayCount = subs.filter(s => s.date && s.date.startsWith(today)).length;
     if (todayCount >= 20) {
-        return { flagged: true, msg: `Agent has submitted ${todayCount} gigs today — review for quality` };
+        return { flagged: true, msg: `Agent has submitted ${todayCount} gigs today - review for quality` };
     }
     return { flagged: false, msg: '' };
 }
@@ -432,7 +432,7 @@ function showDQSResult(dqsResult, basePoints) {
     if (dqsResult.flags.length > 0) {
         breakdownHTML = '<div style="margin-top:8px;font-size:0.75rem;color:#f59e0b;text-align:left;">';
         breakdownHTML += '<strong>Audit Notes:</strong><br>';
-        dqsResult.flags.forEach(f => { breakdownHTML += `• ${f}<br>`; });
+        dqsResult.flags.forEach(f => { breakdownHTML += `* ${f}<br>`; });
         breakdownHTML += '</div>';
     }
 
@@ -469,4 +469,4 @@ function showDQSResult(dqsResult, basePoints) {
     return { bonusPoints, totalPoints };
 }
 
-console.log('[Pulse DQS] Engine loaded — v1.0');
+console.log('[Pulse DQS] Engine loaded - v1.0');

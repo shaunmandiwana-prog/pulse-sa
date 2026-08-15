@@ -1,24 +1,24 @@
 /**
- * PULSE SA — AI Question Suggestion Engine
+ * PULSE SA - AI Question Suggestion Engine
  * ═════════════════════════════════════════
  * Smart question bank with contextual suggestions per business type.
  * Works offline (curated bank) with optional Gemini API upgrade.
  *
  * Architecture:
- *   1. QUESTION_BANK — Pre-curated high-value questions per sector
- *   2. suggestQuestions() — Picks relevant questions based on context
- *   3. renderSuggestions() — Displays toggleable question cards in-form
- *   4. collectAIAnswers() — Gathers answers from AI-suggested fields
+ *   1. QUESTION_BANK - Pre-curated high-value questions per sector
+ *   2. suggestQuestions() - Picks relevant questions based on context
+ *   3. renderSuggestions() - Displays toggleable question cards in-form
+ *   4. collectAIAnswers() - Gathers answers from AI-suggested fields
  *
  * To enable Gemini API: Set GEMINI_API_KEY below and set USE_GEMINI = true
  */
 
-// ── Gemini API Configuration (set when ready) ──
+// -- Gemini API Configuration (set when ready) --
 const GEMINI_API_KEY = '';  // Paste your key here
 const USE_GEMINI = false;   // Set true to enable live AI
 const GEMINI_MODEL = 'gemini-2.0-flash';
 
-// ── Pre-Curated Question Bank ──
+// -- Pre-Curated Question Bank --
 // Each question has: id, text, type (text/number/select), options (for select),
 // placeholder, category, dataValue (who buys this data), priority (1-5)
 const QUESTION_BANK = {
@@ -32,7 +32,7 @@ const QUESTION_BANK = {
           placeholder: 'e.g. Cheese russian kota with extra atchar', category: 'Menu',
           dataValue: 'Product innovation trends for food brands', priority: 3 },
         { id: 'ai-kt-delivery', text: 'Do you offer delivery?', type: 'select',
-          options: ['No', 'Yes — self-delivery', 'Yes — via WhatsApp/phone orders', 'Yes — via app (Mr D, Uber Eats)'],
+          options: ['No', 'Yes - self-delivery', 'Yes - via WhatsApp/phone orders', 'Yes - via app (Mr D, Uber Eats)'],
           category: 'Operations', dataValue: 'Digital adoption for fintech/delivery platforms', priority: 4 },
         { id: 'ai-kt-social', text: 'Do you use social media for marketing?', type: 'select',
           options: ['No', 'WhatsApp Status', 'Facebook', 'Instagram', 'TikTok'],
@@ -53,7 +53,7 @@ const QUESTION_BANK = {
           options: ['More capital/stock', 'Better location', 'Equipment (fridge/stove)', 'Marketing/signage', 'Staff'],
           category: 'Needs', dataValue: 'Product development for banks/insurers', priority: 5 },
         { id: 'ai-kt-loan-interest', text: 'Would you apply for a small business loan if available?', type: 'select',
-          options: ['Yes — definitely', 'Maybe — depends on terms', 'No — too risky', 'Already have one'],
+          options: ['Yes - definitely', 'Maybe - depends on terms', 'No - too risky', 'Already have one'],
           category: 'Finance', dataValue: 'Lead generation for micro-lenders', priority: 5 }
     ],
 
@@ -71,7 +71,7 @@ const QUESTION_BANK = {
           options: ['None', 'Theft', 'Fight/assault', 'Break-in', 'Multiple'],
           category: 'Risk', dataValue: 'Risk scoring for insurers', priority: 4 },
         { id: 'ai-tv-credit', text: 'Do you give customers credit/tabs?', type: 'select',
-          options: ['No — cash only', 'Yes — to regulars', 'Yes — most customers', 'Yes — and often not repaid'],
+          options: ['No - cash only', 'Yes - to regulars', 'Yes - most customers', 'Yes - and often not repaid'],
           category: 'Finance', dataValue: 'Credit behavior data for banks', priority: 4 },
         { id: 'ai-tv-monthend', text: 'Revenue increase on month-end weekends (%)?', type: 'select',
           options: ['No change', '25-50% more', '50-100% more', 'More than double'],
@@ -83,7 +83,7 @@ const QUESTION_BANK = {
           options: ['Phone/Bluetooth speaker', 'Hi-fi system', 'DJ setup', 'Jukebox', 'No music'],
           category: 'Social', dataValue: 'Equipment market sizing for electronics brands', priority: 2 },
         { id: 'ai-tv-food-revenue', text: 'What % of revenue comes from food?', type: 'select',
-          options: ['0% — no food', 'Under 10%', '10-25%', '25-50%', 'Over 50%'],
+          options: ['0% - no food', 'Under 10%', '10-25%', '25-50%', 'Over 50%'],
           category: 'Revenue', dataValue: 'Food-alcohol bundling intel for FMCGs', priority: 4 },
         { id: 'ai-tv-competitors', text: 'How many other taverns/shebeens within 500m?', type: 'select',
           options: ['None', '1-2', '3-5', '6+'], category: 'Competition',
@@ -92,19 +92,19 @@ const QUESTION_BANK = {
 
     trader_profile: [
         { id: 'ai-tp-digital-payment', text: 'Would you accept digital payments if a free device was offered?', type: 'select',
-          options: ['Yes — definitely', 'Maybe', 'No — customers prefer cash', 'Already have one'],
+          options: ['Yes - definitely', 'Maybe', 'No - customers prefer cash', 'Already have one'],
           category: 'Digital', dataValue: 'Lead gen for payment providers (Yoco, iKhokha)', priority: 5 },
         { id: 'ai-tp-insurance-interest', text: 'Would you buy business insurance for R50/month?', type: 'select',
-          options: ['Yes', 'Maybe — need more info', 'No — too expensive', 'No — don\'t trust insurance'],
+          options: ['Yes', 'Maybe - need more info', 'No - too expensive', 'No - don\'t trust insurance'],
           category: 'Insurance', dataValue: 'Product design for micro-insurers', priority: 5 },
         { id: 'ai-tp-competitor-count', text: 'How many competitors within 200m?', type: 'select',
           options: ['None', '1-2', '3-5', '6+'], category: 'Competition',
           dataValue: 'Market density intelligence', priority: 4 },
         { id: 'ai-tp-smartphone', text: 'Does the trader have a smartphone?', type: 'select',
-          options: ['Yes — Android', 'Yes — iPhone', 'Feature phone only', 'No phone'],
+          options: ['Yes - Android', 'Yes - iPhone', 'Feature phone only', 'No phone'],
           category: 'Digital', dataValue: 'Digital readiness for fintech/apps', priority: 4 },
         { id: 'ai-tp-training', text: 'Has the trader received any business training?', type: 'select',
-          options: ['No', 'Yes — government program', 'Yes — NGO', 'Yes — self-taught (YouTube etc)', 'Yes — mentorship'],
+          options: ['No', 'Yes - government program', 'Yes - NGO', 'Yes - self-taught (YouTube etc)', 'Yes - mentorship'],
           category: 'Development', dataValue: 'Training program impact for DFIs', priority: 3 },
         { id: 'ai-tp-rent', text: 'Monthly rent/site fee (R)', type: 'number',
           placeholder: 'e.g. 1500 (0 if own premises)', category: 'Finance',
@@ -113,7 +113,7 @@ const QUESTION_BANK = {
           options: ['1 (just me)', '2-3', '4-6', '7+'], category: 'Social Impact',
           dataValue: 'Impact reporting for DFIs/CSR', priority: 3 },
         { id: 'ai-tp-savings', text: 'Does the trader save regularly?', type: 'select',
-          options: ['No', 'Yes — stokvel', 'Yes — bank account', 'Yes — cash at home', 'Yes — mobile money'],
+          options: ['No', 'Yes - stokvel', 'Yes - bank account', 'Yes - cash at home', 'Yes - mobile money'],
           category: 'Finance', dataValue: 'Financial behavior for banks', priority: 4 }
     ],
 
@@ -128,7 +128,7 @@ const QUESTION_BANK = {
           placeholder: 'e.g. Switched from Sunfoil to D\'lite', category: 'Brands',
           dataValue: 'Brand loyalty/switching data for FMCGs', priority: 4 },
         { id: 'ai-pb-bulk-price', text: 'Does trader get bulk/wholesale pricing?', type: 'select',
-          options: ['No — buys retail', 'Yes — cash & carry', 'Yes — wholesaler account', 'Yes — group buying'],
+          options: ['No - buys retail', 'Yes - cash & carry', 'Yes - wholesaler account', 'Yes - group buying'],
           category: 'Sourcing', dataValue: 'Procurement behavior for supply chain partners', priority: 4 }
     ],
 
@@ -158,7 +158,7 @@ const QUESTION_BANK = {
           options: ['None', '1-3', '4-10', 'More than 10', 'Entire area'],
           category: 'Impact', dataValue: 'Economic impact data for municipalities/DFIs', priority: 5 },
         { id: 'ai-ir-reported', text: 'Has this been reported to the municipality?', type: 'select',
-          options: ['No', 'Yes — no response', 'Yes — acknowledged', 'Yes — being fixed'],
+          options: ['No', 'Yes - no response', 'Yes - acknowledged', 'Yes - being fixed'],
           category: 'Governance', dataValue: 'Service delivery tracking for municipalities', priority: 4 }
     ],
 
@@ -167,7 +167,7 @@ const QUESTION_BANK = {
           options: ['No queue', 'Short queue (1-3)', 'Medium queue (4-8)', 'Long queue (9+)'],
           category: 'Activity', dataValue: 'Demand intensity verification', priority: 4 },
         { id: 'ai-ft-delivery', text: 'Any delivery vehicles present?', type: 'select',
-          options: ['No', 'Yes — wholesaler truck', 'Yes — bakkie/car with stock', 'Yes — motorcycle'],
+          options: ['No', 'Yes - wholesaler truck', 'Yes - bakkie/car with stock', 'Yes - motorcycle'],
           category: 'Supply', dataValue: 'Supply chain activity verification', priority: 3 }
     ]
 };
@@ -283,7 +283,7 @@ function renderSuggestions(containerId, questions) {
     container.innerHTML = `
         <div style="margin-bottom:8px;display:flex;align-items:center;gap:8px;">
             <span style="font-size:0.8rem;color:var(--teal);font-weight:700;">💡 AI-Suggested Questions</span>
-            <span style="font-size:0.65rem;color:var(--text-muted);">(optional — earn bonus points)</span>
+            <span style="font-size:0.65rem;color:var(--text-muted);">(optional - earn bonus points)</span>
         </div>
     `;
 
@@ -295,7 +295,7 @@ function renderSuggestions(containerId, questions) {
         let inputHTML = '';
         if (q.type === 'select' && q.options) {
             inputHTML = `<select id="${q.id}" style="width:100%;padding:8px;border-radius:6px;background:var(--bg-card);color:var(--text);border:1px solid var(--border);font-size:0.85rem;">
-                <option value="">— Select —</option>
+                <option value="">- Select -</option>
                 ${q.options.map(o => `<option value="${o}">${o}</option>`).join('')}
             </select>`;
         } else if (q.type === 'number') {
@@ -339,6 +339,6 @@ function collectAIAnswers(questions) {
     return answers;
 }
 
-console.log('[Pulse AI] Question suggestion engine loaded — v1.0');
+console.log('[Pulse AI] Question suggestion engine loaded - v1.0');
 console.log(`[Pulse AI] Mode: ${USE_GEMINI ? 'Gemini API' : 'Local question bank'}`);
 console.log(`[Pulse AI] Question bank: ${Object.keys(QUESTION_BANK).length} sectors, ${Object.values(QUESTION_BANK).flat().length} total questions`);

@@ -1,11 +1,11 @@
 /**
- * PULSE SA — Supabase Connection Layer
- * ─────────────────────────────────────
+ * PULSE SA - Supabase Connection Layer
+ * ------------------------------------─
  * HOW TO CONFIGURE:
  * 1. Go to https://supabase.com → your project → Settings → API
  * 2. Copy "Project URL"  → paste below as SUPABASE_URL
  * 3. Copy "anon public"  → paste below as SUPABASE_ANON_KEY
- * ─────────────────────────────────────
+ * ------------------------------------─
  */
 
 const SUPABASE_URL      = 'https://oqsclkzjmhlyoaugzwyn.supabase.co';
@@ -46,7 +46,7 @@ function hasRealAgentId() {
  */
 async function getOrCreateAgent(name, phone, address, extras = {}) {
     if (!isDBReady()) {
-        console.warn('[Pulse DB] DB not ready — saving locally only');
+        console.warn('[Pulse DB] DB not ready - saving locally only');
         return null;
     }
     const db = getDB();
@@ -102,7 +102,7 @@ async function getOrCreateAgent(name, phone, address, extras = {}) {
                 agent_id:         created.id,
                 points:           2500,
                 transaction_type: 'welcome',
-                reason:           'Welcome bonus — account created'
+                reason:           'Welcome bonus - account created'
             });
         } catch(e) { console.warn('[Pulse DB] Welcome points ledger failed:', e); }
         return created;
@@ -114,7 +114,7 @@ async function getOrCreateAgent(name, phone, address, extras = {}) {
 
 /**
  * Try to sync a locally-saved profile to the database.
- * Called when the profile screen opens — helps users whose
+ * Called when the profile screen opens - helps users whose
  * onboarding ran offline or while RLS was blocking.
  */
 async function syncAgentToDatabase() {
@@ -148,7 +148,7 @@ async function saveGigToDatabase({ gigType, pointsEarned, bonusPoints = 0, summa
     if (!agentId) { console.warn('[Pulse DB] No agent_id'); return null; }
 
     if (agentId.startsWith('local_')) {
-        console.warn('[Pulse DB] Agent not in DB yet — submission saved locally only');
+        console.warn('[Pulse DB] Agent not in DB yet - submission saved locally only');
         try { syncAgentToDatabase(); } catch(e) {}
         return null;
     }

@@ -24,7 +24,7 @@ const ontologyData = {
             // Financial Behaviour
             'Bank Account': 'Capitec Savings',
             'Mobile Money': 'None',
-            'Stokvel': 'Yes — R800/month',
+            'Stokvel': 'Yes - R800/month',
             'Existing Loans': 'None',
             'Savings Method': 'Cash at home + stokvel',
             'Payment Methods': 'Cash only',
@@ -37,7 +37,7 @@ const ontologyData = {
             // Transaction Patterns
             'Turnover (Good Day)': 'R3,800',
             'Turnover (Bad Day)': 'R1,200',
-            'Busiest Hours': '11am–2pm & 5–8pm',
+            'Busiest Hours': '11am-2pm & 5-8pm',
             'Wholesaler Terms': 'Cash on delivery',
             'Monthly Turnover (Reconciled)': 'R58,000 ±15%',
             'Customers Per Day': '~60',
@@ -47,7 +47,7 @@ const ontologyData = {
             'Water Supply': 'Municipal water (operational)',
             'Electricity': 'Prepaid Eskom',
             'Distance to Wholesaler': '12km',
-            'Restock Transport': 'Minibus taxi — R30 return',
+            'Restock Transport': 'Minibus taxi - R30 return',
             // Risk & Loss History
             'Previous Losses': 'Fire damage 2023 (~R5,000 stock lost)',
             'Insurance Status': 'None',
@@ -69,7 +69,7 @@ const ontologyData = {
             // Financial Behaviour
             'Bank Account': 'Capitec Savings + Standard Bank',
             'Mobile Money': 'MoMo (supplier payments)',
-            'Stokvel': 'Yes — R500/month',
+            'Stokvel': 'Yes - R500/month',
             'Existing Loans': 'None',
             'Savings Method': 'Capitec account',
             'Payment Methods': 'Cash + Capitec Pay',
@@ -82,7 +82,7 @@ const ontologyData = {
             // Transaction Patterns
             'Turnover (Good Day)': 'R6,200',
             'Turnover (Bad Day)': 'R1,800',
-            'Busiest Hours': '6–8am & 4–7pm',
+            'Busiest Hours': '6-8am & 4-7pm',
             'Wholesaler Terms': 'Cash on delivery',
             'Monthly Turnover (Reconciled)': 'R92,000 ±12%',
             'Customers Per Day': '~80',
@@ -114,7 +114,7 @@ const ontologyData = {
             // Financial Behaviour
             'Bank Account': 'FNB Easy Account',
             'Mobile Money': 'None',
-            'Stokvel': 'Yes — R400/month',
+            'Stokvel': 'Yes - R400/month',
             'Existing Loans': 'None',
             'Savings Method': 'FNB + stokvel',
             'Payment Methods': 'Cash + Yoco card',
@@ -127,7 +127,7 @@ const ontologyData = {
             // Transaction Patterns
             'Turnover (Good Day)': 'R1,800',
             'Turnover (Bad Day)': 'R400',
-            'Busiest Hours': 'Fri–Sat all day',
+            'Busiest Hours': 'Fri-Sat all day',
             'Wholesaler Terms': '30-day account with supplier',
             'Monthly Turnover (Reconciled)': 'R24,000 ±20%',
             'Customers Per Day': '~12',
@@ -137,7 +137,7 @@ const ontologyData = {
             'Water Supply': 'Municipal water',
             'Electricity': 'Prepaid Eskom',
             'Distance to Wholesaler': '22km to supplier',
-            'Restock Transport': 'Minibus taxi — R55 return',
+            'Restock Transport': 'Minibus taxi - R55 return',
             // Risk & Loss History
             'Previous Losses': 'None',
             'Insurance Status': 'None',
@@ -159,7 +159,7 @@ const ontologyData = {
             // Financial Behaviour
             'Bank Account': 'None (unbanked)',
             'Mobile Money': 'None',
-            'Stokvel': 'Burial society — R150/month',
+            'Stokvel': 'Burial society - R150/month',
             'Existing Loans': 'Mashonisa loan R1,500 at 30%/month',
             'Savings Method': 'Cash under mattress',
             'Payment Methods': 'Cash only',
@@ -172,7 +172,7 @@ const ontologyData = {
             // Transaction Patterns
             'Turnover (Good Day)': 'R1,200',
             'Turnover (Bad Day)': 'R300',
-            'Busiest Hours': '6–9am commuter rush',
+            'Busiest Hours': '6-9am commuter rush',
             'Wholesaler Terms': 'Cash on delivery',
             'Monthly Turnover (Reconciled)': 'R18,000 ±25%',
             'Customers Per Day': '~50',
@@ -182,7 +182,7 @@ const ontologyData = {
             'Water Supply': 'Communal tap (200m away)',
             'Electricity': 'None (no electricity)',
             'Distance to Wholesaler': '15km to market',
-            'Restock Transport': 'Minibus taxi — R52 return',
+            'Restock Transport': 'Minibus taxi - R52 return',
             // Risk & Loss History
             'Previous Losses': 'Stock spoilage due to heat (~R200/week in summer)',
             'Insurance Status': 'None',
@@ -271,7 +271,7 @@ const sectorData = [
         jobMultiplier: 2.8,
         zone: 'opportunity',
         color: 'rgba(168, 85, 247, 0.9)',
-        namedProducts: 'Almost none — no dedicated fintech or analytics product',
+        namedProducts: 'Almost none - no dedicated fintech or analytics product',
         narrative: 'Fastest-growing non-trade sector. Includes childcare, tutoring, elder care, community health workers, security. Massive unmet demand for scheduling, payments, and micro-insurance products.'
     },
     {
@@ -332,7 +332,7 @@ const sectorData = [
         zone: 'neutral',
         color: 'rgba(0, 242, 254, 0.6)',
         namedProducts: 'Fleetio, WhereIsMyTransport, some ride-hail (Bolt)',
-        narrative: 'Moderate coverage from ride-hail and fleet analytics. But minibus taxi associations operate almost entirely outside digital systems — massive cash pools moving through opaque cooperatives.'
+        narrative: 'Moderate coverage from ride-hail and fleet analytics. But minibus taxi associations operate almost entirely outside digital systems - massive cash pools moving through opaque cooperatives.'
     },
     {
         name: 'Agriculture',
@@ -703,7 +703,7 @@ function initCharts() {
         }
     });
 
-        // ── Kota: Polony Brand Share Chart ──
+        // -- Kota: Polony Brand Share Chart --
         const polonyCtx = document.getElementById('chart-polony-brand');
         if (polonyCtx) {
             new Chart(polonyCtx, {
@@ -726,7 +726,7 @@ function initCharts() {
             });
         }
 
-        // ── Kota: Supplier Bars ──
+        // -- Kota: Supplier Bars --
         const kotaSupplierEl = document.getElementById('kota-supplier-bars');
         if (kotaSupplierEl) {
             const suppliers = [
@@ -746,7 +746,7 @@ function initCharts() {
             `).join('');
         }
 
-        // ── Tavern: Beer Brand Share Chart ──
+        // -- Tavern: Beer Brand Share Chart --
         const beerCtx = document.getElementById('chart-beer-brands');
         if (beerCtx) {
             new Chart(beerCtx, {
@@ -769,7 +769,7 @@ function initCharts() {
             });
         }
 
-        // ── Tavern: Safety Incident Bars ──
+        // -- Tavern: Safety Incident Bars --
         const safetyEl = document.getElementById('tavern-safety-bars');
         if (safetyEl) {
             const incidents = [
@@ -790,7 +790,7 @@ function initCharts() {
             `).join('');
         }
 
-        // ── Financial Inclusion: Banking Status Chart ──
+        // -- Financial Inclusion: Banking Status Chart --
         const bankingCtx = document.getElementById('chart-banking-status');
         if (bankingCtx) {
             new Chart(bankingCtx, {
@@ -814,7 +814,7 @@ function initCharts() {
             });
         }
 
-        // ── Financial Inclusion: Insurance Status Chart ──
+        // -- Financial Inclusion: Insurance Status Chart --
         const insuranceCtx = document.getElementById('chart-insurance-status');
         if (insuranceCtx) {
             new Chart(insuranceCtx, {
@@ -1872,7 +1872,7 @@ function initDataGapBubbleChart() {
                 x: {
                     title: {
                         display: true,
-                        text: 'Fintech / Analytics Coverage Score (0–10) • Pulse Estimated',
+                        text: 'Fintech / Analytics Coverage Score (0-10) * Pulse Estimated',
                         color: '#6b7280',
                         font: { family: 'Plus Jakarta Sans', size: 10, weight: '600' }
                     },
@@ -1884,7 +1884,7 @@ function initDataGapBubbleChart() {
                 y: {
                     title: {
                         display: true,
-                        text: 'Growth (pp change 2017–2023) • StatsSA SESE',
+                        text: 'Growth (pp change 2017-2023) * StatsSA SESE',
                         color: '#6b7280',
                         font: { family: 'Plus Jakarta Sans', size: 10, weight: '600' }
                     },
@@ -2224,7 +2224,7 @@ function submitTraderProfile(event) {
     histList.prepend(newEntry);
     
     // Show SMS notification
-    showSmsNotification(`✅ Profile submitted! ${name} (${type}, ${township}) — 37 data points collected. +R25.00 earned.`);
+    showSmsNotification(`✅ Profile submitted! ${name} (${type}, ${township}) - 37 data points collected. +R25.00 earned.`);
     
     // Reset form and go back to step 1
     nextProfileStep(1);
@@ -2363,7 +2363,7 @@ function renderProfileOutput() {
             + '</div></div>';
     }
 
-    /* ── BANK LENS ── */
+    /* -- BANK LENS -- */
     if (activeLens === 'bank') {
         card.innerHTML =
         '<div style="background:linear-gradient(135deg,rgba(0,242,254,0.06),rgba(168,85,247,0.06));border:1px solid rgba(0,242,254,0.12);border-radius:16px;padding:18px 20px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">'
@@ -2423,7 +2423,7 @@ function renderProfileOutput() {
             + '<div style="font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-secondary);margin-bottom:10px;"><i class="fa-solid fa-code" style="color:var(--accent-teal);margin-right:6px;"></i>API Payload \u2014 What Your Credit Engine Receives</div>'
             + '<pre style="font-size:0.6rem;color:#00f2fe;line-height:1.6;overflow-x:auto;margin:0;white-space:pre-wrap;">{"pulse_ref":"' + refId + '","trader":"' + (p['Name']||trader.label) + '","decision":"' + v.decision + '","risk_tier":"' + v.riskTier + '","pulse_score":' + v.overall + ',"loan_range":{"min":"' + v.loanMin + '","max":"' + v.loanMax + '"},"monthly_turnover_verified":"' + p['Monthly Turnover (Reconciled)'] + '","wholesaler_match":' + v.wholesale + ',"verification":"3-factor_reconciliation","generated":"' + today + '"}</pre></div>';
 
-    /* ── FMCG LENS ── */
+    /* -- FMCG LENS -- */
     } else if (activeLens === 'fmcg') {
         const oppColor = v.distOpp==='HIGH' ? '#10b981' : v.distOpp==='MEDIUM' ? '#f59e0b' : '#ef4444';
         card.innerHTML =
@@ -2471,7 +2471,7 @@ function renderProfileOutput() {
             + '<div style="font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:#10b981;margin-bottom:8px;"><i class="fa-solid fa-lightbulb" style="margin-right:6px;"></i>Shelf Intelligence Recommendation</div>'
             + '<p style="font-size:0.75rem;line-height:1.65;color:var(--text-primary);">High-traffic outlet serving <strong>' + p['Customers Per Day'] + '</strong> in <strong>' + p['Township'] + '</strong>. Peak window <strong>' + p['Busiest Hours'] + '</strong>. Currently sourcing via <strong>' + p['Primary Supplier'] + '</strong>. Direct delivery or pre-order platform could displace competitor SKUs and grow your brand footprint in Ward ' + p['Ward'] + '. Priority: <strong style="color:' + oppColor + ';">' + v.distOpp + '</strong>.</p></div>';
 
-    /* ── INSURER LENS ── */
+    /* -- INSURER LENS -- */
     } else if (activeLens === 'insurer') {
         const riskScore = Math.round((v.wholesale*0.3)+(v.consistency*0.4)+(v.footTraffic*0.3));
         const hasLoss = p['Previous Losses'] && p['Previous Losses'] !== 'None' && p['Previous Losses'] !== 'No previous losses';
@@ -2533,7 +2533,7 @@ function renderProfileOutput() {
 }
 
 // ============================================
-// PRICE BASKET MONITOR — Submit Handler
+// PRICE BASKET MONITOR - Submit Handler
 // ============================================
 function submitBasketSurvey(event) {
     event.preventDefault();
@@ -2552,7 +2552,7 @@ function submitBasketSurvey(event) {
     const histList = document.getElementById('earning-history');
     const newEntry = document.createElement('div');
     newEntry.className = 'history-item';
-    newEntry.innerHTML = `<div class="item-desc">Price Basket: ${name} (${township}) — ${logged} items logged</div><div class="item-amt positive">+R8.00</div>`;
+    newEntry.innerHTML = `<div class="item-desc">Price Basket: ${name} (${township}) - ${logged} items logged</div><div class="item-amt positive">+R8.00</div>`;
     histList.prepend(newEntry);
 
     showSmsNotification(`🧺 Price basket submitted! ${logged} prices logged at ${name}, ${township}. +R8.00 earned.`);
@@ -2561,7 +2561,7 @@ function submitBasketSurvey(event) {
 }
 
 // ============================================
-// FOOT-TRAFFIC VERIFICATION — Submit Handler
+// FOOT-TRAFFIC VERIFICATION - Submit Handler
 // ============================================
 function submitFootTrafficSurvey(event) {
     event.preventDefault();
@@ -2586,7 +2586,7 @@ function submitFootTrafficSurvey(event) {
     const newEntry = document.createElement('div');
     newEntry.className = 'history-item';
     const statusIcon = statusEl.value === 'Open' ? '✅' : statusEl.value === 'Closed' ? '❌' : '⚠️';
-    newEntry.innerHTML = `<div class="item-desc">${statusIcon} Verified: ${traderName} — ${statusEl.value} (~${customers} customers)</div><div class="item-amt positive">+R3.00</div>`;
+    newEntry.innerHTML = `<div class="item-desc">${statusIcon} Verified: ${traderName} - ${statusEl.value} (~${customers} customers)</div><div class="item-amt positive">+R3.00</div>`;
     histList.prepend(newEntry);
 
     const noteText = note ? ` Note: ${note}` : '';
@@ -2678,7 +2678,7 @@ async function syncDashboardLiveSupabase() {
             let optGroup = traderSelect.querySelector('optgroup[label*="Live Field Submissions"]');
             if (!optGroup) {
                 optGroup = document.createElement('optgroup');
-                optGroup.label = '── Live Field Submissions (Supabase) ──';
+                optGroup.label = '-- Live Field Submissions (Supabase) --';
                 traderSelect.appendChild(optGroup);
             }
             optGroup.innerHTML = '';
