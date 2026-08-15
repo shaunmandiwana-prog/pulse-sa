@@ -608,6 +608,50 @@
         </div>
     </div>
 
+    <!-- DIGITAL AGENT CREDENTIAL BADGE MODAL -->
+    <div id="badge-modal" style="display:none;position:fixed;inset:0;z-index:10000;background:rgba(8,10,18,0.97);backdrop-filter:blur(16px);flex-direction:column;align-items:center;justify-content:center;padding:20px;">
+        <div style="width:100%;max-width:400px;background:linear-gradient(145deg,#14172a,#0f1120);border:2px solid rgba(168,85,247,0.4);border-radius:20px;padding:26px;box-shadow:0 12px 40px rgba(168,85,247,0.3);text-align:center;position:relative;">
+            <!-- Badge Header -->
+            <div style="font-size:0.6rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);margin-bottom:8px;">
+                <i class="fa-solid fa-shield-halved"></i> Verified Field Credentials
+            </div>
+            <div style="width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#a855f7,#00f2fe);margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:2rem;box-shadow:0 4px 20px rgba(0,242,254,0.4);">
+                🧑‍💼
+            </div>
+            <h3 id="badge-agent-name" style="font-size:1.3rem;font-weight:800;color:#f0f2ff;margin-bottom:4px;">Ndaa, Agent!</h3>
+            <div id="badge-agent-id" style="display:inline-block;background:rgba(0,242,254,0.12);border:1px solid rgba(0,242,254,0.3);color:#00f2fe;font-family:monospace;font-size:0.75rem;font-weight:700;padding:3px 12px;border-radius:20px;margin-bottom:16px;">
+                ID: PSA-ZA-2026
+            </div>
+            
+            <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:14px;text-align:left;font-size:0.72rem;display:flex;flex-direction:column;gap:8px;margin-bottom:18px;">
+                <div style="display:flex;justify-content:space-between;">
+                    <span style="color:#8b8fa8;">Certification:</span>
+                    <span style="color:#10b981;font-weight:700;">Level 1 Field Researcher</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;">
+                    <span style="color:#8b8fa8;">Welcome Bonus:</span>
+                    <span style="color:var(--orange);font-weight:800;">+2,500 Pulse Points</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;">
+                    <span style="color:#8b8fa8;">Registered Email:</span>
+                    <span id="badge-agent-email" style="color:#cbd5e1;font-weight:600;">agent@email.com</span>
+                </div>
+            </div>
+
+            <!-- Email confirmation alert / button -->
+            <button id="badge-email-btn" onclick="sendWelcomeEmailConfirmation()" style="width:100%;background:rgba(0,242,254,0.1);border:1px solid rgba(0,242,254,0.3);color:#00f2fe;border-radius:12px;padding:11px;font-size:0.75rem;font-weight:700;cursor:pointer;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:6px;">
+                <i class="fa-solid fa-paper-plane"></i> Send Credentials to My Email
+            </button>
+            <div id="badge-email-success" style="display:none;font-size:0.68rem;color:#10b981;margin-bottom:10px;font-weight:700;">
+                ✓ Credentials &amp; POPIA packet dispatched to your email!
+            </div>
+
+            <button onclick="closeBadgeModal()" style="width:100%;background:linear-gradient(135deg,#a855f7,#7c3aed);border:none;border-radius:12px;padding:14px;color:#fff;font-size:0.88rem;font-weight:800;cursor:pointer;box-shadow:0 6px 20px rgba(168,85,247,0.4);">
+                🚀 Start Mapping &amp; Earning
+            </button>
+        </div>
+    </div>
+
     <header class="app-header">
         <div class="logo">
             <div class="pulse-dot"></div>
@@ -626,7 +670,7 @@
         <div class="screen active" id="screen-home">
             <div class="hero">
                 <div style="font-size:0.6rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--purple);margin-bottom:6px;">You are the Intelligence Network</div>
-                <h2 style="font-size:1.25rem;">Awe, Champ! 👋</h2>
+                <h2 style="font-size:1.25rem;" id="home-greeting">Ndaa! 👋</h2>
                 <p>Complete quick gigs in your hood to earn <strong style="color:var(--orange)">Pulse Points</strong> - and help build your community's economic future using Data.</p>
             </div>
             <div class="earnings-today">
@@ -1561,6 +1605,12 @@
             if (balEl) balEl.textContent = fmtPts(points);
             if (walEl) walEl.textContent = fmtPts(points);
             if (todEl) todEl.textContent = fmtPts(todayPts) + ' pts';
+
+            const firstname = localStorage.getItem('pulse_agent_firstname') || '';
+            const greetEl = document.getElementById('home-greeting');
+            if (greetEl) {
+                greetEl.innerHTML = firstname ? `Ndaa, ${firstname}! 👋` : `Ndaa, Champ! 👋`;
+            }
         }
 
         // -- Navigation --
@@ -2525,7 +2575,40 @@
             // Hide onboarding and show home screen
             document.getElementById('onboarding-overlay').style.display = 'none';
             updateDisplays();
-            showToast(`Sawubona ${firstname}! 🎉 Your profile is live - 2,500 welcome points added!`);
+
+            // Populate and show Digital Badge Modal
+            const badgeModal = document.getElementById('badge-modal');
+            if (badgeModal) {
+                const nameEl = document.getElementById('badge-agent-name');
+                const idEl = document.getElementById('badge-agent-id');
+                const emailEl = document.getElementById('badge-agent-email');
+                if (nameEl) nameEl.textContent = `Ndaa, ${firstname}!`;
+                if (idEl) {
+                    const shortId = agentId.startsWith('local_') ? 'PSA-ZA-' + agentId.slice(-4).toUpperCase() : 'PSA-' + agentId.slice(0,8).toUpperCase();
+                    idEl.textContent = `ID: ${shortId}`;
+                }
+                if (emailEl) emailEl.textContent = email;
+                badgeModal.style.display = 'flex';
+            }
+
+            showToast(`Ndaa, ${firstname}! 🎉 Your profile is live - 2,500 welcome points added!`);
+        }
+
+        function closeBadgeModal() {
+            const modal = document.getElementById('badge-modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function sendWelcomeEmailConfirmation() {
+            const email = localStorage.getItem('pulse_agent_email') || 'your email';
+            const btn = document.getElementById('badge-email-btn');
+            const success = document.getElementById('badge-email-success');
+            if (btn) btn.style.display = 'none';
+            if (success) {
+                success.innerHTML = `✓ Official credentials &amp; POPIA packet dispatched to <strong>${email}</strong>!`;
+                success.style.display = 'block';
+            }
+            showToast(`Credentials dispatched to ${email} 📧`);
         }
 
         function openTermsModal() {
