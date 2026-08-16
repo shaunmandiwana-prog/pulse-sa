@@ -1,7 +1,7 @@
 // Pulse SA - Service Worker
 // Caches everything on first load. Works fully offline after that.
 
-const CACHE_NAME = 'pulse-sa-v29';
+const CACHE_NAME = 'pulse-sa-v30';
 
 // Everything we need to cache for full offline use
 const STATIC_ASSETS = [
@@ -10,6 +10,8 @@ const STATIC_ASSETS = [
     './index.html',
     './agent.html',
     './exec_sum.html',
+    './Pulse_SA_Executive_Summary.pdf',
+    './Pulse_SA_Agent_Terms_and_POPIA_Policy.pdf',
     './supabase.js',
     './dqs-engine.js',
     './ai-questions.js',
