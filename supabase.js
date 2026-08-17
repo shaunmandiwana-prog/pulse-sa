@@ -659,8 +659,7 @@ async function dispatchAgentWelcomeEmail(agentData) {
         subject: `🎉 Welcome to Pulse SA! Your Field Credentials [${agentData.agentId || 'PSA-ZA-2026'}] & POPIA Policy`,
         welcome_bonus_pts: 2500,
         app_url: 'https://pulseintel.co.za/agent.html',
-        policy_pdf_url: 'https://pulseintel.co.za/Pulse_SA_Agent_Terms_and_POPIA_Policy.pdf',
-        exec_sum_url: 'https://pulseintel.co.za/Pulse_SA_Executive_Summary.pdf'
+        policy_pdf_url: 'https://pulseintel.co.za/Pulse_SA_Agent_Terms_and_POPIA_Policy.pdf'
     };
 
     try {
