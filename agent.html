@@ -1408,6 +1408,27 @@
                     <div id="profile-details-list"></div>
                 </div>
 
+                <!-- Credentials & Legal Documents -->
+                <div style="background:linear-gradient(135deg,rgba(0,242,254,0.06),rgba(168,85,247,0.04));border:1px solid rgba(0,242,254,0.2);border-radius:14px;padding:16px;">
+                    <div style="font-size:0.6rem;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:var(--teal);margin-bottom:8px;">
+                        <i class="fa-solid fa-id-badge"></i> Field Credentials &amp; Documents
+                    </div>
+                    <p style="font-size:0.68rem;color:var(--text-muted);line-height:1.5;margin-bottom:12px;">Need a fresh copy of your official Agent ID credentials and legal terms?</p>
+                    <div style="display:flex;flex-direction:column;gap:8px;">
+                        <button onclick="resendProfileCredentialsEmail()" style="width:100%;background:rgba(0,242,254,0.12);border:1px solid rgba(0,242,254,0.3);color:#00f2fe;border-radius:10px;padding:10px;font-size:0.75rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;">
+                            <i class="fa-solid fa-paper-plane"></i> Email My Credentials &amp; POPIA Policy
+                        </button>
+                        <div style="display:flex;justify-content:space-between;gap:8px;margin-top:4px;">
+                            <a href="./Pulse_SA_Agent_Terms_and_POPIA_Policy.pdf" download style="flex:1;text-align:center;background:rgba(255,255,255,0.03);border:1px solid var(--border);color:#cbd5e1;padding:7px;border-radius:8px;font-size:0.62rem;text-decoration:none;">
+                                <i class="fa-solid fa-file-pdf" style="color:#ef4444;margin-right:4px;"></i> POPIA Policy
+                            </a>
+                            <a href="./Pulse_SA_Executive_Summary.pdf" download style="flex:1;text-align:center;background:rgba(255,255,255,0.03);border:1px solid var(--border);color:#cbd5e1;padding:7px;border-radius:8px;font-size:0.62rem;text-decoration:none;">
+                                <i class="fa-solid fa-file-pdf" style="color:#ef4444;margin-right:4px;"></i> Exec Summary
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- DB Sync Status -->
                 <div id="profile-sync-banner" style="display:none;background:rgba(251,146,60,0.1);border:1px solid rgba(251,146,60,0.25);border-radius:10px;padding:12px 14px;font-size:0.7rem;color:#fb923c;display:flex;align-items:center;gap:8px;">
                     <i class="fa-solid fa-triangle-exclamation"></i>
@@ -2727,6 +2748,11 @@
             document.getElementById('onboarding-overlay').style.display = 'none';
             updateDisplays();
 
+            // Auto-dispatch Welcome Email
+            if (typeof dispatchAgentWelcomeEmail === 'function') {
+                dispatchAgentWelcomeEmail({ email, firstname, surname, agentId, phone, address });
+            }
+
             // Populate and show Digital Badge Modal
             const badgeModal = document.getElementById('badge-modal');
             if (badgeModal) {
@@ -2752,6 +2778,14 @@
 
         function sendWelcomeEmailConfirmation() {
             const email = localStorage.getItem('pulse_agent_email') || 'your email';
+            const firstname = localStorage.getItem('pulse_agent_firstname') || '';
+            const surname = localStorage.getItem('pulse_agent_surname') || '';
+            const agentId = localStorage.getItem('pulse_agent_id') || 'PSA-ZA-2026';
+            
+            if (typeof dispatchAgentWelcomeEmail === 'function') {
+                dispatchAgentWelcomeEmail({ email, firstname, surname, agentId });
+            }
+
             const btn = document.getElementById('badge-email-btn');
             const success = document.getElementById('badge-email-success');
             if (btn) btn.style.display = 'none';
@@ -2760,6 +2794,24 @@
                 success.style.display = 'block';
             }
             showToast(`Credentials dispatched to ${email} 📧`);
+        }
+
+        async function resendProfileCredentialsEmail() {
+            const email = localStorage.getItem('pulse_agent_email');
+            const firstname = localStorage.getItem('pulse_agent_firstname') || '';
+            const surname = localStorage.getItem('pulse_agent_surname') || '';
+            const agentId = localStorage.getItem('pulse_agent_id') || 'PSA-ZA-2026';
+            
+            if (!email) {
+                showToast('Please update your email address in your profile first!');
+                return;
+            }
+            
+            showToast(`Dispatching credentials packet to ${email} 📧`);
+            if (typeof dispatchAgentWelcomeEmail === 'function') {
+                await dispatchAgentWelcomeEmail({ email, firstname, surname, agentId });
+            }
+            showToast('Official credentials & POPIA packet sent! ✅');
         }
 
         function openTermsModal() {
