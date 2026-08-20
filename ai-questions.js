@@ -184,8 +184,56 @@ function suggestQuestions(gigType, existingData = {}, maxQuestions = 5) {
     const bank = QUESTION_BANK[gigType];
     if (!bank || bank.length === 0) return [];
 
-    // Sort by priority (highest first), then return top N
-    const sorted = [...bank].sort((a, b) => b.priority - a.priority);
+    // Load business profile for intelligent filtering
+    let profile = {};
+    try {
+        const stored = localStorage.getItem('pulse_business_profile');
+        if (stored) profile = JSON.parse(stored);
+    } catch(e) { /* no profile yet */ }
+
+    // Map business categories to relevant gig question types
+    const categoryRelevance = {
+        'Kota / Fast Food': ['kota_profile', 'price_basket', 'receipt_snap'],
+        'Braai Stand': ['kota_profile', 'price_basket', 'receipt_snap'],
+        'Bakery': ['kota_profile', 'price_basket', 'receipt_snap'],
+        'Tavern / Shebeen': ['tavern_profile', 'price_basket', 'receipt_snap'],
+        'Spaza Shop': ['trader_profile', 'price_basket', 'receipt_snap'],
+        'Tuck Shop': ['trader_profile', 'price_basket', 'receipt_snap'],
+        'Hair Salon / Barber': ['trader_profile'],
+        'Mechanic / Panel Beater': ['trader_profile'],
+        'Fruit & Veg Vendor': ['trader_profile', 'price_basket'],
+        'Street Food Vendor': ['kota_profile', 'price_basket'],
+        'Hawker': ['trader_profile', 'price_basket']
+    };
+
+    // Score and filter questions based on profile gaps
+    const scored = bank.map(q => {
+        let score = q.priority || 3;
+
+        // Boost insurance questions if business has no insurance
+        if (q.category === 'Insurance' && profile.insurance_status === 'None') score += 2;
+        
+        // Boost digital payment questions if business is unbanked or cash-only
+        if (q.category === 'Digital' && (profile.bank_account === 'None (Unbanked)' || profile.cash_card_split === 'Mostly Cash (80%+)')) score += 2;
+        
+        // Boost finance questions if business has no formal registration
+        if (q.category === 'Finance' && (!profile.cipc_registered || profile.cipc_registered === 'No')) score += 1;
+        
+        // Boost compliance questions for taverns without licenses
+        if (q.category === 'Compliance' && profile.business_category === 'Tavern / Shebeen') score += 1;
+        
+        // Boost competition questions if area data is sparse
+        if (q.category === 'Competition') score += 1;
+        
+        // Penalise questions already answered in existing gig data
+        const answeredKeys = Object.keys(existingData).map(k => k.toLowerCase());
+        if (answeredKeys.some(k => q.id.includes(k) || (q.text && q.text.toLowerCase().includes(k)))) score -= 3;
+
+        return { ...q, score };
+    });
+
+    // Sort by adjusted score (highest first)
+    const sorted = scored.sort((a, b) => b.score - a.score);
     return sorted.slice(0, maxQuestions);
 }
 

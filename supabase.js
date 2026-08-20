@@ -685,3 +685,58 @@ async function dispatchAgentWelcomeEmail(agentData) {
     }
 }
 
+/**
+ * Dispatches admin notification to shaun@pulseintel.co.za when a new agent registers.
+ * Ensures the founder is aware of every new sign-up in real-time.
+ */
+async function dispatchAdminNewAgentAlert(agentData) {
+    if (!agentData) return false;
+    
+    console.log('[Pulse Admin] Dispatching new agent alert for:', agentData.firstname || 'Unknown');
+    
+    const agentName = agentData.firstname ? `${agentData.firstname} ${agentData.surname || ''}`.trim() : 'Unknown Agent';
+    const agentId = agentData.agentId || agentData.id || 'Pending';
+    
+    const payload = {
+        recipient_email: 'shaun@pulseintel.co.za',
+        subject: `\ud83d\udea8 New Agent Registered: ${agentName} - ${agentId}`,
+        agent_name: agentName,
+        agent_id: agentId,
+        agent_phone: agentData.phone || 'Not provided',
+        agent_email: agentData.email || 'Not provided',
+        agent_address: agentData.address || 'Not provided',
+        registered_at: new Date().toISOString(),
+        message_body: `NEW AGENT REGISTRATION ALERT\n\n` +
+            `Agent Name: ${agentName}\n` +
+            `Agent ID: ${agentId}\n` +
+            `Phone: ${agentData.phone || 'Not provided'}\n` +
+            `Email: ${agentData.email || 'Not provided'}\n` +
+            `Address: ${agentData.address || 'Not provided'}\n` +
+            `Registered: ${new Date().toLocaleString('en-ZA', { timeZone: 'Africa/Johannesburg' })}\n\n` +
+            `This agent has been awarded 2,500 welcome points and sent their credential packet.\n` +
+            `View all agents in your Supabase Dashboard: https://supabase.com/dashboard`
+    };
+
+    try {
+        if (isDBReady()) {
+            const db = getDB();
+            try {
+                await db.from('email_notifications').insert([{
+                    recipient: 'shaun@pulseintel.co.za',
+                    template: 'admin_new_agent_alert',
+                    payload: payload,
+                    status: 'dispatched',
+                    created_at: new Date().toISOString()
+                }]);
+                console.log('[Pulse Admin] Admin alert logged successfully');
+            } catch(e) {
+                console.warn('[Pulse Admin] email_notifications insert failed:', e.message);
+            }
+        }
+        return true;
+    } catch(err) {
+        console.warn('[Pulse Admin] Admin alert dispatch failed:', err);
+        return false;
+    }
+}
+

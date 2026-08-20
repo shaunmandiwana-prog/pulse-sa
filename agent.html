@@ -812,31 +812,50 @@
             <form onsubmit="return false;">
                 <div class="form-body">
                     <!-- Step 1 -->
+                    <!-- Step 1: Business Identity & Registration KYC -->
                     <div class="profile-step active" id="ps1">
-                        <div class="field"><label>Trader Name</label><input type="text" id="a-name" placeholder="e.g. Thandi Mokoena"></div>
-                        <div class="field"><label>Business Type</label>
-                            <select id="a-type">
-                                <optgroup label="Fixed Location">
-                                    <option>Spaza Shop</option><option>Hair Salon / Barber</option>
-                                    <option>Tavern / Shebeen</option><option>Mechanic / Panel Beater</option>
-                                    <option>Tuck Shop (home-based)</option>
+                        <div style="background:linear-gradient(135deg,rgba(0,242,254,0.06),rgba(168,85,247,0.04));border:1px solid rgba(0,242,254,0.15);border-radius:12px;padding:12px 14px;margin-bottom:14px;">
+                            <div style="font-size:0.58rem;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:#00f2fe;margin-bottom:4px;"><i class="fa-solid fa-building-columns" style="margin-right:6px;"></i>Business Identity & Registration (Done Once)</div>
+                            <p style="font-size:0.64rem;color:#8b8fa8;line-height:1.4;margin:0;">This one-time KYC creates the full financial profile that banks and insurers need. <strong style="color:#00f2fe;">Only 5% of SMMEs get credit</strong> — your data makes the other 95% visible.</p>
+                        </div>
+
+                        <div class="field"><label>Business Name (Trading As)</label><input type="text" id="a-name" placeholder="e.g. Thandi's Spaza or Ma Dlamini Kota Corner"></div>
+                        <div class="field"><label>Owner / Operator Full Name</label><input type="text" id="a-owner-name" placeholder="e.g. Thandi Mokoena"></div>
+                        <div class="field"><label>SA ID Number (Optional - Consent Based)</label>
+                            <input type="text" id="a-sa-id" placeholder="e.g. 9201015012086" maxlength="13" style="letter-spacing:1px;">
+                            <span style="font-size:0.56rem;color:#8b8fa8;margin-top:3px;display:block;"><i class="fa-solid fa-lock" style="margin-right:4px;color:#a855f7;"></i>Protected under POPIA. Only used for credit verification with trader consent.</span>
+                        </div>
+                        <div class="field"><label>Business Category</label>
+                            <select id="a-type" onchange="updateSubCategories();checkRegistrationGuidance();">
+                                <optgroup label="Food & Beverage">
+                                    <option value="Spaza Shop">Spaza Shop</option>
+                                    <option value="Kota / Fast Food">Kota / Fast Food Stand</option>
+                                    <option value="Braai Stand">Braai Stand</option>
+                                    <option value="Bakery">Bakery / Vetkoek</option>
+                                    <option value="Fruit & Veg Vendor">Fruit & Veg Vendor</option>
+                                    <option value="Street Food Vendor">Street Food (inhloko, tripe, umqombothi)</option>
                                 </optgroup>
-                                <optgroup label="Street &amp; Mobile Traders">
-                                    <option>Hawker / General Street Seller</option>
-                                    <option>Prepared Food Vendor (achar, vetkoek, braai)</option>
-                                    <option>Street Food (inhloko, tripe, umqombothi)</option>
-                                    <option>Fruit &amp; Veg Vendor</option>
-                                    <option>Clothing &amp; Textile Hawker</option>
+                                <optgroup label="Liquor">
+                                    <option value="Tavern / Shebeen">Tavern / Shebeen</option>
+                                </optgroup>
+                                <optgroup label="Retail">
+                                    <option value="Tuck Shop">Tuck Shop (home-based)</option>
+                                    <option value="Hawker">Hawker / General Street Seller</option>
+                                    <option value="Clothing Hawker">Clothing &amp; Textile Hawker</option>
                                 </optgroup>
                                 <optgroup label="Services">
-                                    <option>Roadside Service (phone charging, shoe repair, key cutting)</option>
-                                    <option>Childcare / Crèche</option><option>Tutoring / Skills Training</option>
-                                    <option>Domestic / Cleaning Services</option>
+                                    <option value="Hair Salon / Barber">Hair Salon / Barber</option>
+                                    <option value="Mechanic / Panel Beater">Mechanic / Panel Beater</option>
+                                    <option value="Roadside Service">Roadside Service (phone charging, shoe repair)</option>
+                                    <option value="Childcare / Creche">Childcare / Creche</option>
+                                    <option value="Tutoring">Tutoring / Skills Training</option>
+                                    <option value="Cleaning Services">Domestic / Cleaning Services</option>
                                 </optgroup>
                                 <optgroup label="Informal Finance">
-                                    <option>Stokvel Organiser</option><option>Informal Lender (Mashonisa)</option>
+                                    <option value="Stokvel Organiser">Stokvel Organiser</option>
+                                    <option value="Mashonisa">Informal Lender (Mashonisa)</option>
                                 </optgroup>
-                                <option>Other</option>
+                                <option value="Other">Other</option>
                             </select>
                         </div>
                         <div class="field"><label>Township / Area</label>
@@ -844,18 +863,129 @@
                         </div>
                         <div class="field"><label>Years in Business</label><input type="number" id="a-years" min="0" max="50" value="3"></div>
                         <div class="field"><label>Premises Type</label>
-                            <select id="a-premises"><option>Open-air stall / Table</option><option>Shipping container (rented)</option><option>Shipping container (owned)</option><option>House extension</option><option>Brick structure</option><option>Shack / Informal structure</option></select>
+                            <select id="a-premises"><option>Open-air stall / Table</option><option>Shipping container (rented)</option><option>Shipping container (owned)</option><option>House extension</option><option>Brick structure</option><option>Shack / Informal structure</option><option>Mobile cart / Trolley</option></select>
                         </div>
-                        <div class="field"><label>Number of Employees (incl. self)</label><input type="number" id="a-employees" min="1" max="20" value="1"></div>
+                        <div class="field"><label>Owns or Rents Premises?</label>
+                            <select id="a-ownership"><option>Owns</option><option>Rents</option><option>Free / Community space</option></select>
+                        </div>
+                        <div class="field"><label>Number of Employees (incl. self)</label><input type="number" id="a-employees" min="1" max="50" value="1"></div>
                         <div class="field"><label>ID Verified by You?</label>
                             <select id="a-id-verified"><option>Yes - SA ID confirmed</option><option>No - not available</option></select>
                         </div>
-                        <button class="btn btn-primary" onclick="profileStep(2)">Next → Financial Info</button>
+
+                        <!-- CIPC Registration -->
+                        <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.06);">
+                            <div style="font-size:0.58rem;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:#a855f7;margin-bottom:10px;"><i class="fa-solid fa-gavel" style="margin-right:6px;"></i>Formal Registration Status</div>
+                        </div>
+                        <div class="field"><label>Registered with CIPC?</label>
+                            <select id="a-cipc" onchange="toggleCIPCGuidance()">
+                                <option value="Yes">Yes - Registered</option>
+                                <option value="No" selected>No - Not registered</option>
+                                <option value="Dont Know">Don't know</option>
+                            </select>
+                        </div>
+                        <div class="field" id="cipc-number-field" style="display:none;"><label>CIPC Registration Number</label><input type="text" id="a-cipc-number" placeholder="e.g. 2024/123456/07"></div>
+                        <!-- CIPC AI Guidance Card -->
+                        <div id="cipc-guidance" style="background:linear-gradient(135deg,rgba(34,197,94,0.08),rgba(0,242,254,0.06));border:1px solid rgba(34,197,94,0.2);border-radius:12px;padding:14px;margin-bottom:10px;">
+                            <div style="font-size:0.62rem;font-weight:800;color:#22c55e;margin-bottom:6px;display:flex;align-items:center;gap:6px;"><i class="fa-solid fa-lightbulb"></i> Why Register with CIPC?</div>
+                            <p style="font-size:0.64rem;color:#cbd5e1;line-height:1.5;margin-bottom:8px;">Registering costs only <strong style="color:#22c55e;">R125</strong> and unlocks:</p>
+                            <ul style="font-size:0.62rem;color:#cbd5e1;line-height:1.6;padding-left:16px;margin:0 0 8px;">
+                                <li>Legal recognition as a formal business</li>
+                                <li>Ability to open a business bank account</li>
+                                <li>Eligibility for government tenders &amp; grants (SEFA, NEF, SEDA)</li>
+                                <li>Protection of your business name</li>
+                            </ul>
+                            <a href="https://eservices.cipc.co.za/" target="_blank" style="display:inline-flex;align-items:center;gap:6px;font-size:0.65rem;font-weight:700;color:#22c55e;text-decoration:none;background:rgba(34,197,94,0.1);padding:8px 14px;border-radius:8px;border:1px solid rgba(34,197,94,0.25);"><i class="fa-solid fa-arrow-up-right-from-square"></i> Register Now on CIPC eServices</a>
+                        </div>
+
+                        <!-- SARS Registration -->
+                        <div class="field"><label>Registered with SARS?</label>
+                            <select id="a-sars" onchange="toggleSARSGuidance()">
+                                <option value="Yes">Yes - Registered</option>
+                                <option value="No" selected>No - Not registered</option>
+                                <option value="Dont Know">Don't know</option>
+                            </select>
+                        </div>
+                        <div class="field" id="sars-number-field" style="display:none;"><label>SARS Tax Reference Number</label><input type="text" id="a-sars-number" placeholder="e.g. 0123456789"></div>
+                        <!-- SARS AI Guidance Card -->
+                        <div id="sars-guidance" style="background:linear-gradient(135deg,rgba(59,130,246,0.08),rgba(0,242,254,0.06));border:1px solid rgba(59,130,246,0.2);border-radius:12px;padding:14px;margin-bottom:10px;">
+                            <div style="font-size:0.62rem;font-weight:800;color:#3b82f6;margin-bottom:6px;display:flex;align-items:center;gap:6px;"><i class="fa-solid fa-landmark"></i> Why Register with SARS?</div>
+                            <ul style="font-size:0.62rem;color:#cbd5e1;line-height:1.6;padding-left:16px;margin:0 0 8px;">
+                                <li>Access to <strong style="color:#3b82f6;">Turnover Tax</strong> (simplified tax for businesses under R1M)</li>
+                                <li>Tax clearance certificate (required for tenders &amp; some suppliers)</li>
+                                <li>Legal compliance and SARS good standing</li>
+                            </ul>
+                            <a href="https://www.sarsefiling.co.za/" target="_blank" style="display:inline-flex;align-items:center;gap:6px;font-size:0.65rem;font-weight:700;color:#3b82f6;text-decoration:none;background:rgba(59,130,246,0.1);padding:8px 14px;border-radius:8px;border:1px solid rgba(59,130,246,0.25);"><i class="fa-solid fa-arrow-up-right-from-square"></i> Register on SARS eFiling</a>
+                        </div>
+
+                        <!-- VAT Registration -->
+                        <div class="field"><label>VAT Registered?</label>
+                            <select id="a-vat" onchange="toggleVATInfo()">
+                                <option value="Yes">Yes - VAT registered</option>
+                                <option value="No" selected>No</option>
+                                <option value="Not Required">Not required (below R1M)</option>
+                            </select>
+                        </div>
+                        <div class="field" id="vat-number-field" style="display:none;"><label>VAT Number</label><input type="text" id="a-vat-number" placeholder="e.g. 4123456789"></div>
+                        <div id="vat-info" style="background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.15);border-radius:10px;padding:10px 12px;margin-bottom:10px;font-size:0.62rem;color:#fbbf24;line-height:1.5;">
+                            <i class="fa-solid fa-circle-info" style="margin-right:4px;"></i> <strong>VAT registration is mandatory if annual turnover exceeds R1 million</strong> (effective 1 April 2026). Below R1M, registration is voluntary but may benefit businesses with significant input costs.
+                        </div>
+
+                        <!-- Turnover Tax Awareness -->
+                        <div class="field"><label>Aware of Turnover Tax for Small Businesses?</label>
+                            <select id="a-turnover-tax" onchange="toggleTurnoverTaxGuidance()">
+                                <option value="Yes">Yes - I know about it</option>
+                                <option value="No" selected>No - What is it?</option>
+                                <option value="Already On It">Already registered for Turnover Tax</option>
+                            </select>
+                        </div>
+                        <!-- Turnover Tax AI Guidance Card -->
+                        <div id="turnover-tax-guidance" style="background:linear-gradient(135deg,rgba(168,85,247,0.08),rgba(245,158,11,0.06));border:1px solid rgba(168,85,247,0.2);border-radius:12px;padding:14px;margin-bottom:10px;">
+                            <div style="font-size:0.62rem;font-weight:800;color:#a855f7;margin-bottom:6px;display:flex;align-items:center;gap:6px;"><i class="fa-solid fa-calculator"></i> Turnover Tax Explained</div>
+                            <p style="font-size:0.64rem;color:#cbd5e1;line-height:1.5;margin-bottom:8px;">Turnover Tax is a <strong style="color:#a855f7;">simplified tax</strong> for businesses with annual turnover up to R1 million. Instead of complex income tax, you pay a single low rate on total revenue:</p>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:0.6rem;margin-bottom:8px;">
+                                <div style="background:rgba(168,85,247,0.1);padding:6px 8px;border-radius:6px;color:#d8b4fe;">R0 - R335k</div><div style="background:rgba(34,197,94,0.1);padding:6px 8px;border-radius:6px;color:#86efac;text-align:right;font-weight:700;">0% Tax</div>
+                                <div style="background:rgba(168,85,247,0.1);padding:6px 8px;border-radius:6px;color:#d8b4fe;">R335k - R500k</div><div style="background:rgba(245,158,11,0.1);padding:6px 8px;border-radius:6px;color:#fcd34d;text-align:right;font-weight:700;">1% Tax</div>
+                                <div style="background:rgba(168,85,247,0.1);padding:6px 8px;border-radius:6px;color:#d8b4fe;">R500k - R750k</div><div style="background:rgba(245,158,11,0.1);padding:6px 8px;border-radius:6px;color:#fcd34d;text-align:right;font-weight:700;">2% Tax</div>
+                                <div style="background:rgba(168,85,247,0.1);padding:6px 8px;border-radius:6px;color:#d8b4fe;">R750k - R1M</div><div style="background:rgba(239,68,68,0.1);padding:6px 8px;border-radius:6px;color:#fca5a5;text-align:right;font-weight:700;">3% Tax</div>
+                            </div>
+                            <div id="turnover-tax-recommendation" style="display:none;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);border-radius:8px;padding:8px 10px;font-size:0.62rem;color:#86efac;margin-bottom:6px;"></div>
+                        </div>
+
+                        <button class="btn btn-primary" onclick="profileStep(2)">Next → Financial Infrastructure</button>
                     </div>
                     <!-- Step 2 -->
+                    <!-- Step 2: Financial Infrastructure -->
                     <div class="profile-step" id="ps2">
-                        <div class="field"><label>Bank Account</label>
-                            <select id="a-bank"><option>Capitec Savings</option><option>FNB Easy Account</option><option>Standard Bank</option><option>TymeBank</option><option>Nedbank</option><option>None (Unbanked)</option></select>
+                        <div style="font-size:0.58rem;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:#a855f7;margin-bottom:12px;"><i class="fa-solid fa-wallet" style="margin-right:6px;"></i>Financial Infrastructure</div>
+                        <div class="field"><label>Primary Bank Account</label>
+                            <select id="a-bank"><option>Capitec Savings</option><option>FNB Easy Account</option><option>Standard Bank</option><option>TymeBank</option><option>Nedbank</option><option>African Bank</option><option>None (Unbanked)</option></select>
+                        </div>
+                        <div class="field"><label>Business vs Personal Account?</label>
+                            <select id="a-account-type"><option>Same account (mixed)</option><option>Separate business account</option><option>No bank account</option></select>
+                        </div>
+                        <div class="field"><label>Accepts Card Payments?</label>
+                            <select id="a-accepts-card" onchange="toggleCardMachineFields()"><option value="Yes">Yes</option><option value="No" selected>No - Cash only</option></select>
+                        </div>
+                        <div id="card-machine-fields" style="display:none;">
+                            <div class="field"><label>Card Machine Provider</label>
+                                <select id="a-card-machine"><option>Yoco</option><option>iKhokha</option><option>SnapScan</option><option>Square</option><option>SpeedPoint (Nedbank)</option><option>Other</option></select>
+                            </div>
+                            <div class="field"><label>Services Bundled with Machine (select all that apply)</label>
+                                <div style="display:flex;flex-direction:column;gap:6px;margin-top:4px;">
+                                    <label style="display:flex;align-items:center;gap:8px;font-size:0.72rem;color:#cbd5e1;cursor:pointer;"><input type="checkbox" id="a-bundle-reader" style="accent-color:#a855f7;" checked> Free card reader device</label>
+                                    <label style="display:flex;align-items:center;gap:8px;font-size:0.72rem;color:#cbd5e1;cursor:pointer;"><input type="checkbox" id="a-bundle-website" style="accent-color:#a855f7;"> Free website / online store</label>
+                                    <label style="display:flex;align-items:center;gap:8px;font-size:0.72rem;color:#cbd5e1;cursor:pointer;"><input type="checkbox" id="a-bundle-invoicing" style="accent-color:#a855f7;"> Invoicing tool</label>
+                                    <label style="display:flex;align-items:center;gap:8px;font-size:0.72rem;color:#cbd5e1;cursor:pointer;"><input type="checkbox" id="a-bundle-capital" style="accent-color:#a855f7;"> Capital advance / working capital loan</label>
+                                    <label style="display:flex;align-items:center;gap:8px;font-size:0.72rem;color:#cbd5e1;cursor:pointer;"><input type="checkbox" id="a-bundle-insurance" style="accent-color:#a855f7;"> Insurance</label>
+                                    <label style="display:flex;align-items:center;gap:8px;font-size:0.72rem;color:#cbd5e1;cursor:pointer;"><input type="checkbox" id="a-bundle-pos" style="accent-color:#a855f7;"> Point of Sale (POS) system</label>
+                                    <label style="display:flex;align-items:center;gap:8px;font-size:0.72rem;color:#cbd5e1;cursor:pointer;"><input type="checkbox" id="a-bundle-bookkeeping" style="accent-color:#a855f7;"> Bookkeeping / reporting</label>
+                                    <label style="display:flex;align-items:center;gap:8px;font-size:0.72rem;color:#cbd5e1;cursor:pointer;"><input type="checkbox" id="a-bundle-none" style="accent-color:#a855f7;"> None - just card acceptance</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field"><label>Cash vs Card Revenue Split</label>
+                            <select id="a-cash-card-split"><option>100% Cash</option><option>Mostly Cash (80%+ cash)</option><option>Mixed (roughly 50/50)</option><option>Mostly Card (80%+ card)</option></select>
                         </div>
                         <div class="field"><label>Mobile Money</label>
                             <select id="a-mobile-money"><option>None</option><option>MoMo (MTN)</option><option>Vodacom M-Pesa</option><option>Capitec Pay</option></select>
@@ -864,10 +994,7 @@
                             <select id="a-stokvel"><option>Yes</option><option>No</option></select>
                         </div>
                         <div class="field"><label>Existing Loans / Debt</label>
-                            <select id="a-loans"><option>None</option><option>Mashonisa (informal lender)</option><option>Bank personal loan</option><option>Retail account (Edgars etc)</option></select>
-                        </div>
-                        <div class="field"><label>Payments Accepted</label>
-                            <select id="a-payments"><option>Cash Only</option><option>Cash + Capitec Pay/CashSend</option><option>Cash + Card (Yoco/iKhokha)</option><option>Cash + Mobile Money</option></select>
+                            <select id="a-loans"><option>None</option><option>Mashonisa (informal lender)</option><option>Bank personal loan</option><option>Retail account (Edgars etc)</option><option>Card machine advance (Yoco/iKhokha)</option><option>Multiple sources</option></select>
                         </div>
                         <div class="btn-row">
                             <button class="btn btn-secondary" onclick="profileStep(1)"><-  Back</button>
@@ -2773,6 +2900,11 @@
                 dispatchAgentWelcomeEmail({ email, firstname, surname, agentId, phone, address });
             }
 
+            // Auto-dispatch Admin Notification (alerts shaun@pulseintel.co.za)
+            if (typeof dispatchAdminNewAgentAlert === 'function') {
+                dispatchAdminNewAgentAlert({ email, firstname, surname, agentId, phone, address });
+            }
+
             // Populate and show Digital Badge Modal
             const badgeModal = document.getElementById('badge-modal');
             if (badgeModal) {
@@ -2859,6 +2991,171 @@
         }
         setInterval(updateClock, 60000);
         updateDisplays();
+        // ═══════════════════════════════════════════════════
+        // BUSINESS PROFILE KYC - Conditional Field Toggles
+        // ═══════════════════════════════════════════════════
+
+        // CIPC Guidance Toggle
+        function toggleCIPCGuidance() {
+            const val = document.getElementById('a-cipc').value;
+            const guidance = document.getElementById('cipc-guidance');
+            const numField = document.getElementById('cipc-number-field');
+            if (val === 'Yes') {
+                guidance.style.display = 'none';
+                numField.style.display = 'block';
+            } else {
+                guidance.style.display = 'block';
+                numField.style.display = 'none';
+            }
+        }
+
+        // SARS Guidance Toggle
+        function toggleSARSGuidance() {
+            const val = document.getElementById('a-sars').value;
+            const guidance = document.getElementById('sars-guidance');
+            const numField = document.getElementById('sars-number-field');
+            if (val === 'Yes') {
+                guidance.style.display = 'none';
+                numField.style.display = 'block';
+            } else {
+                guidance.style.display = 'block';
+                numField.style.display = 'none';
+            }
+        }
+
+        // VAT Info Toggle
+        function toggleVATInfo() {
+            const val = document.getElementById('a-vat').value;
+            const info = document.getElementById('vat-info');
+            const numField = document.getElementById('vat-number-field');
+            if (val === 'Yes') {
+                info.style.display = 'none';
+                numField.style.display = 'block';
+            } else {
+                info.style.display = 'block';
+                numField.style.display = 'none';
+            }
+        }
+
+        // Turnover Tax Guidance Toggle + Auto-Assessment
+        function toggleTurnoverTaxGuidance() {
+            const val = document.getElementById('a-turnover-tax').value;
+            const guidance = document.getElementById('turnover-tax-guidance');
+            if (val === 'Yes' || val === 'Already On It') {
+                guidance.style.display = 'none';
+            } else {
+                guidance.style.display = 'block';
+            }
+        }
+
+        // Auto-calculate Turnover Tax recommendation from revenue fields
+        function assessTurnoverTax() {
+            const goodDay = parseFloat(document.getElementById('a-good-day')?.value) || 0;
+            const badDay = parseFloat(document.getElementById('a-bad-day')?.value) || 0;
+            const avgDaily = (goodDay + badDay) / 2;
+            const estMonthly = avgDaily * 26; // ~26 trading days
+            const estAnnual = estMonthly * 12;
+            const recBox = document.getElementById('turnover-tax-recommendation');
+            if (!recBox) return;
+
+            if (estAnnual <= 335000) {
+                recBox.innerHTML = '<i class="fa-solid fa-check-circle" style="color:#22c55e;margin-right:6px;"></i><strong>Estimated annual turnover: R' + Math.round(estAnnual).toLocaleString() + '</strong> — You qualify for Turnover Tax at <strong>0% tax rate</strong>. This is the best option.';
+                recBox.style.display = 'block';
+            } else if (estAnnual <= 500000) {
+                recBox.innerHTML = '<i class="fa-solid fa-check-circle" style="color:#fbbf24;margin-right:6px;"></i><strong>Estimated annual turnover: R' + Math.round(estAnnual).toLocaleString() + '</strong> — You qualify for Turnover Tax at <strong>1% rate</strong> (saves vs standard income tax).';
+                recBox.style.display = 'block';
+            } else if (estAnnual <= 750000) {
+                recBox.innerHTML = '<i class="fa-solid fa-circle-info" style="color:#fbbf24;margin-right:6px;"></i><strong>Estimated annual turnover: R' + Math.round(estAnnual).toLocaleString() + '</strong> — Turnover Tax at <strong>2%</strong>. Compare with standard SME tax to see which is better.';
+                recBox.style.display = 'block';
+            } else if (estAnnual <= 1000000) {
+                recBox.innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="color:#f87171;margin-right:6px;"></i><strong>Estimated annual turnover: R' + Math.round(estAnnual).toLocaleString() + '</strong> — Turnover Tax at <strong>3%</strong>. Standard SME income tax may be cheaper at this level.';
+                recBox.style.display = 'block';
+            } else {
+                recBox.innerHTML = '<i class="fa-solid fa-circle-exclamation" style="color:#f87171;margin-right:6px;"></i><strong>Estimated annual turnover: R' + Math.round(estAnnual).toLocaleString() + '</strong> — Exceeds R1M threshold. <strong>Standard SME income tax applies.</strong> VAT registration is also mandatory.';
+                recBox.style.display = 'block';
+            }
+        }
+
+        // Card Machine Fields Toggle
+        function toggleCardMachineFields() {
+            const val = document.getElementById('a-accepts-card').value;
+            const fields = document.getElementById('card-machine-fields');
+            fields.style.display = val === 'Yes' ? 'block' : 'none';
+        }
+
+        // Sub-category and registration guidance (placeholder)
+        function updateSubCategories() { /* Dynamic sub-categories based on main category */ }
+        function checkRegistrationGuidance() { /* Check if liquor license question needed for taverns */ }
+
+        // ═══════════════════════════════════════════════════
+        // BUSINESS PROFILE PERSISTENCE (Save to localStorage)
+        // ═══════════════════════════════════════════════════
+
+        // Save comprehensive business profile before submission
+        function saveBusinessProfileToStorage() {
+            const profile = {
+                business_name: document.getElementById('a-name')?.value || '',
+                owner_name: document.getElementById('a-owner-name')?.value || '',
+                sa_id: document.getElementById('a-sa-id')?.value || '',
+                business_category: document.getElementById('a-type')?.value || '',
+                township: document.getElementById('a-township')?.value || '',
+                years_in_business: document.getElementById('a-years')?.value || '',
+                premises_type: document.getElementById('a-premises')?.value || '',
+                ownership: document.getElementById('a-ownership')?.value || '',
+                employees: document.getElementById('a-employees')?.value || '',
+                id_verified: document.getElementById('a-id-verified')?.value || '',
+                cipc_registered: document.getElementById('a-cipc')?.value || '',
+                cipc_number: document.getElementById('a-cipc-number')?.value || '',
+                sars_registered: document.getElementById('a-sars')?.value || '',
+                sars_number: document.getElementById('a-sars-number')?.value || '',
+                vat_registered: document.getElementById('a-vat')?.value || '',
+                vat_number: document.getElementById('a-vat-number')?.value || '',
+                turnover_tax_aware: document.getElementById('a-turnover-tax')?.value || '',
+                bank_account: document.getElementById('a-bank')?.value || '',
+                account_type: document.getElementById('a-account-type')?.value || '',
+                accepts_card: document.getElementById('a-accepts-card')?.value || '',
+                card_machine: document.getElementById('a-card-machine')?.value || '',
+                cash_card_split: document.getElementById('a-cash-card-split')?.value || '',
+                mobile_money: document.getElementById('a-mobile-money')?.value || '',
+                stokvel: document.getElementById('a-stokvel')?.value || '',
+                loans: document.getElementById('a-loans')?.value || '',
+                insurance_status: document.getElementById('a-insurance')?.value || '',
+                good_day_revenue: document.getElementById('a-good-day')?.value || '',
+                bad_day_revenue: document.getElementById('a-bad-day')?.value || '',
+                profile_completed_at: new Date().toISOString()
+            };
+
+            // Collect bundled services checkboxes
+            const bundles = [];
+            ['reader','website','invoicing','capital','insurance','pos','bookkeeping','none'].forEach(b => {
+                const cb = document.getElementById('a-bundle-' + b);
+                if (cb && cb.checked) bundles.push(b);
+            });
+            profile.bundled_services = bundles;
+
+            localStorage.setItem('pulse_business_profile', JSON.stringify(profile));
+            console.log('[Pulse KYC] Business profile saved:', profile.business_name, '|', profile.business_category);
+            return profile;
+        }
+
+        // Hook into existing submitProfile to save business profile
+        const _origSubmitProfile = typeof submitProfile === 'function' ? submitProfile : null;
+        if (typeof window.submitProfile === 'function') {
+            const origFn = window.submitProfile;
+            window.submitProfile = function() {
+                saveBusinessProfileToStorage();
+                assessTurnoverTax();
+                return origFn.apply(this, arguments);
+            };
+        }
+
+        // Also run turnover tax assessment when revenue fields change
+        document.addEventListener('change', function(e) {
+            if (e.target && (e.target.id === 'a-good-day' || e.target.id === 'a-bad-day')) {
+                assessTurnoverTax();
+            }
+        });
+
     </script>
 </body>
 </html>
