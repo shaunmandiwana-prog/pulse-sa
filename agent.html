@@ -553,10 +553,10 @@
 
                 <!-- Coverage Area Section -->
                 <div style="margin-top:4px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.05);">
-                    <div style="font-size:0.6rem;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;color:#00f2fe;margin-bottom:10px;padding-bottom:6px;">
+                    <div style="font-size:0.6rem;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;color:#00f2fe;margin-bottom:6px;padding-bottom:2px;">
                         <i class="fa-solid fa-map-location-dot" style="margin-right:6px;"></i>Coverage Area Assignment
                     </div>
-                    <p style="font-size:0.62rem;color:#8b8fa8;line-height:1.45;margin-bottom:12px;">Select your province and municipality. Your ward will be <strong style="color:#00f2fe;">auto-detected from GPS</strong> — you'll collect data in this area and surrounding wards.</p>
+                    <p style="font-size:0.62rem;color:#8b8fa8;line-height:1.45;margin-bottom:12px;">Select your Province, Municipality, and specific Township / Area (e.g. <em>Kagiso Ext 8</em>). Your coverage ward is linked automatically.</p>
                 </div>
 
                 <!-- Province -->
@@ -580,49 +580,49 @@
                 <!-- Municipality -->
                 <div>
                     <label style="font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#8b8fa8;display:block;margin-bottom:6px;">Municipality <span style="color:#a855f7;">*</span></label>
-                    <select id="ob-municipality" onchange="detectWardFromGPS()"
+                    <select id="ob-municipality" onchange="loadTownshipAreas()"
                         style="width:100%;background:#0f1120;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 14px;color:#f0f2ff;font-family:inherit;font-size:0.85rem;outline:none;-webkit-appearance:none;">
                         <option value="">-- Select Province First --</option>
                     </select>
                 </div>
 
-                <!-- GPS Auto-Ward Detection Result -->
+                <!-- Specific Township / Suburb / Extension -->
+                <div id="ob-area-container" style="display:none;">
+                    <label style="font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#8b8fa8;display:block;margin-bottom:6px;">Township / Suburb / Extension <span style="color:#a855f7;">*</span></label>
+                    <select id="ob-area" onchange="onAreaSelected()"
+                        style="width:100%;background:#0f1120;border:1px solid rgba(0,242,254,0.3);border-radius:10px;padding:12px 14px;color:#f0f2ff;font-family:inherit;font-size:0.85rem;outline:none;-webkit-appearance:none;">
+                        <option value="">-- Select Area / Township --</option>
+                    </select>
+                </div>
+
+                <!-- Custom Area input (if Other is selected) -->
+                <div id="ob-custom-area-container" style="display:none;">
+                    <label style="font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#8b8fa8;display:block;margin-bottom:6px;">Enter Specific Suburb / Section Name</label>
+                    <input id="ob-custom-area" type="text" placeholder="e.g. Kagiso Ext 8, Section B" oninput="onCustomAreaEntered()"
+                        style="width:100%;background:#0f1120;border:1px solid rgba(255,255,255,0.15);border-radius:10px;padding:12px 14px;color:#f0f2ff;font-family:inherit;font-size:0.85rem;outline:none;-webkit-appearance:none;">
+                </div>
+
+                <!-- Assigned Ward Card -->
                 <div id="ob-ward-container" style="display:none;">
-                    <!-- Detecting State -->
-                    <div id="ob-ward-detecting" style="display:none;background:rgba(168,85,247,0.06);border:1px solid rgba(168,85,247,0.15);border-radius:12px;padding:14px;text-align:center;">
-                        <div style="font-size:1.2rem;margin-bottom:6px;">📍</div>
-                        <div style="font-size:0.72rem;font-weight:700;color:#a855f7;">Detecting your ward...</div>
-                        <div style="font-size:0.6rem;color:#8b8fa8;margin-top:4px;">Please allow location access when prompted</div>
-                    </div>
-                    <!-- Success State -->
-                    <div id="ob-ward-result" style="display:none;background:linear-gradient(135deg,rgba(34,197,94,0.08),rgba(0,242,254,0.06));border:1px solid rgba(34,197,94,0.25);border-radius:12px;padding:14px;">
+                    <div id="ob-ward-result" style="background:linear-gradient(135deg,rgba(34,197,94,0.08),rgba(0,242,254,0.06));border:1px solid rgba(34,197,94,0.25);border-radius:12px;padding:14px;">
                         <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
                             <div style="width:36px;height:36px;border-radius:10px;background:rgba(34,197,94,0.15);display:flex;align-items:center;justify-content:center;font-size:1rem;">📍</div>
-                            <div>
-                                <div style="font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:#22c55e;">Your Coverage Ward</div>
-                                <div id="ob-ward-label" style="font-size:0.92rem;font-weight:800;color:#f0f2ff;">Ward 45, Kagiso</div>
+                            <div style="flex:1;">
+                                <div style="font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:#22c55e;" id="ob-ward-badge">Assigned Coverage Ward</div>
+                                <div id="ob-ward-label" style="font-size:0.92rem;font-weight:800;color:#f0f2ff;">Ward 15, Mogale City</div>
                             </div>
                         </div>
-                        <div id="ob-ward-detail" style="font-size:0.62rem;color:#8b8fa8;line-height:1.5;margin-bottom:8px;">City of Johannesburg • West Rand District • Gauteng</div>
-                        <div style="font-size:0.58rem;color:#86efac;line-height:1.4;"><i class="fa-solid fa-circle-check" style="margin-right:4px;"></i>You'll cover this ward + adjacent wards. Data collected outside your zone will be flagged for review.</div>
+                        <div id="ob-ward-detail" style="font-size:0.62rem;color:#8b8fa8;line-height:1.5;margin-bottom:8px;">Kagiso Ext 8 • West Rand District • Gauteng</div>
+                        <div id="ob-ward-gps-status" style="font-size:0.58rem;color:#86efac;line-height:1.4;margin-bottom:8px;">
+                            <i class="fa-solid fa-circle-check" style="margin-right:4px;"></i>You'll collect data in this ward + adjacent wards (8.5km radius).
+                        </div>
+                        <button type="button" id="btn-refine-gps" onclick="refineWardGPS()" style="background:rgba(0,242,254,0.1);border:1px solid rgba(0,242,254,0.25);border-radius:8px;padding:8px 12px;color:#00f2fe;font-size:0.68rem;font-weight:700;cursor:pointer;width:100%;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;">
+                            <i class="fa-solid fa-satellite-dish"></i><span id="btn-refine-gps-text">Refine with Live GPS (Optional)</span>
+                        </button>
                         <input type="hidden" id="ob-ward-no" value="">
                         <input type="hidden" id="ob-ward-id" value="">
                         <input type="hidden" id="ob-gps-lat" value="">
                         <input type="hidden" id="ob-gps-lng" value="">
-                    </div>
-                    <!-- Boundary Conflict State (agent is between 2 wards) -->
-                    <div id="ob-ward-boundary" style="display:none;background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.2);border-radius:12px;padding:14px;">
-                        <div style="font-size:0.62rem;font-weight:800;color:#fbbf24;margin-bottom:8px;"><i class="fa-solid fa-location-dot" style="margin-right:4px;"></i>You're near a ward boundary</div>
-                        <p style="font-size:0.64rem;color:#cbd5e1;line-height:1.4;margin-bottom:10px;">We detected you're close to the edge of two wards. Which is closer to your home?</p>
-                        <div id="ob-ward-choices" style="display:flex;flex-direction:column;gap:6px;"></div>
-                    </div>
-                    <!-- GPS Failed State -->
-                    <div id="ob-ward-failed" style="display:none;background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);border-radius:12px;padding:14px;">
-                        <div style="font-size:0.62rem;font-weight:800;color:#f87171;margin-bottom:6px;"><i class="fa-solid fa-location-crosshairs" style="margin-right:4px;"></i>Location not detected</div>
-                        <p style="font-size:0.64rem;color:#cbd5e1;line-height:1.4;margin-bottom:10px;">We couldn't detect your GPS location. Please step outside or near a window, then tap Retry.</p>
-                        <button onclick="detectWardFromGPS()" style="width:100%;background:rgba(168,85,247,0.15);border:1px solid rgba(168,85,247,0.3);border-radius:8px;padding:10px;color:#a855f7;font-weight:700;font-size:0.75rem;cursor:pointer;font-family:inherit;">
-                            <i class="fa-solid fa-rotate-right" style="margin-right:6px;"></i>Retry GPS Detection
-                        </button>
                     </div>
                 </div>
 
@@ -3003,10 +3003,13 @@
             }
             const province = document.getElementById('ob-province').value;
             const municipality = document.getElementById('ob-municipality').value;
+            const areaVal = document.getElementById('ob-area')?.value;
+            const customArea = document.getElementById('ob-custom-area')?.value.trim();
             const wardNo = document.getElementById('ob-ward-no').value;
             const wardId = document.getElementById('ob-ward-id').value;
             const gpsLat = document.getElementById('ob-gps-lat').value;
             const gpsLng = document.getElementById('ob-gps-lng').value;
+
             if (!province) {
                 errEl.textContent = 'Please select your province.';
                 errEl.style.display = 'block'; return;
@@ -3015,10 +3018,24 @@
                 errEl.textContent = 'Please select your municipality.';
                 errEl.style.display = 'block'; return;
             }
-            if (!wardNo) {
-                errEl.textContent = 'Ward not yet detected. Please allow GPS access or tap Retry.';
+            if (!areaVal) {
+                errEl.textContent = 'Please select your Township / Suburb / Extension.';
                 errEl.style.display = 'block'; return;
             }
+            if (areaVal === 'OTHER' && !customArea) {
+                errEl.textContent = 'Please enter your specific suburb or section name.';
+                errEl.style.display = 'block'; return;
+            }
+
+            let areaName = '';
+            if (areaVal === 'OTHER') {
+                areaName = customArea;
+            } else {
+                const areas = MUNICIPALITY_AREAS[municipality] || [];
+                const item = areas[parseInt(areaVal)];
+                areaName = item ? item.name : municipality;
+            }
+
             if (!phone || phone.length < 10) {
                 errEl.textContent = 'Please enter a valid 10-digit phone number.';
                 errEl.style.display = 'block'; return;
@@ -3050,15 +3067,19 @@
 
             // Store ward & coverage zone data
             const wardData = {
-                wardNo: parseInt(wardNo),
-                wardId: wardId,
+                wardNo: parseInt(wardNo) || 1,
+                wardId: wardId || 'ASSIGNED',
+                area: areaName,
+                township: areaName,
                 municipality: municipality,
                 province: province,
-                gpsLat: parseFloat(gpsLat) || null,
-                gpsLng: parseFloat(gpsLng) || null,
+                gpsLat: parseFloat(gpsLat) || -26.204,
+                gpsLng: parseFloat(gpsLng) || 28.047,
                 assignedAt: new Date().toISOString()
             };
             localStorage.setItem('pulse_agent_ward', JSON.stringify(wardData));
+            localStorage.setItem('pulse_agent_area', areaName);
+            localStorage.setItem('pulse_agent_township', areaName);
             localStorage.setItem('pulse_agent_province', province);
             localStorage.setItem('pulse_agent_municipality', municipality);
 
@@ -3075,8 +3096,9 @@
                     const dbPromise = getOrCreateAgent(fullName, phone, address, {
                         firstname, surname, age: parseInt(age), email,
                         province, municipality,
-                        ward_no: parseInt(wardNo),
-                        ward_id: wardId,
+                        township: areaName,
+                        ward_no: parseInt(wardNo) || 1,
+                        ward_id: wardId || 'ASSIGNED',
                         home_gps_lat: parseFloat(gpsLat) || null,
                         home_gps_lng: parseFloat(gpsLng) || null
                     });
@@ -3361,22 +3383,123 @@
         });
 
         // ═══════════════════════════════════════════════════
-        // COVERAGE AREA — Municipality Loader & GPS Ward Detection
+        // COVERAGE AREA — Municipality & Township Area Directory
         // ═══════════════════════════════════════════════════
 
         const MDB_BASE_URL = 'https://services7.arcgis.com/oeoyTUJC8HEeYsRB/arcgis/rest/services/MDBWards2026/FeatureServer/0/query';
 
-        /**
-         * Load municipalities from MDB ArcGIS FeatureServer for the selected province.
-         * Queries distinct MUNICNAME values filtered by Province.
-         */
+        // Pre-mapped township & suburb directory for frictionless ward binding
+        const MUNICIPALITY_AREAS = {
+            "Mogale City": [
+                { name: "Kagiso Ext 8", wardNo: 15, wardId: "74801015", district: "West Rand", lat: -26.1664, lng: 27.7882 },
+                { name: "Kagiso Ext 1 / Central", wardNo: 12, wardId: "74801012", district: "West Rand", lat: -26.1550, lng: 27.7950 },
+                { name: "Kagiso Ext 2 / Ext 4", wardNo: 13, wardId: "74801013", district: "West Rand", lat: -26.1600, lng: 27.7900 },
+                { name: "Kagiso Ext 6", wardNo: 14, wardId: "74801014", district: "West Rand", lat: -26.1620, lng: 27.7850 },
+                { name: "Kagiso Ext 12 / Ext 14", wardNo: 16, wardId: "74801016", district: "West Rand", lat: -26.1700, lng: 27.7820 },
+                { name: "Rietvallei / Azaadville", wardNo: 17, wardId: "74801017", district: "West Rand", lat: -26.1850, lng: 27.7700 },
+                { name: "Munsieville", wardNo: 24, wardId: "74801024", district: "West Rand", lat: -26.0850, lng: 27.7600 },
+                { name: "Krugersdorp CBD / West", wardNo: 20, wardId: "74801020", district: "West Rand", lat: -26.1000, lng: 27.7700 },
+                { name: "Krugersdorp North / Rangeview", wardNo: 21, wardId: "74801021", district: "West Rand", lat: -26.0750, lng: 27.7850 },
+                { name: "Magaliesburg / Tarlton", wardNo: 31, wardId: "74801031", district: "West Rand", lat: -25.9900, lng: 27.5450 },
+                { name: "Muldersdrift / Hekpoort", wardNo: 33, wardId: "74801033", district: "West Rand", lat: -26.0200, lng: 27.8500 }
+            ],
+            "City of Johannesburg": [
+                { name: "Soweto - Orlando East / West", wardNo: 38, wardId: "79800038", district: "City of Johannesburg", lat: -26.2410, lng: 27.9020 },
+                { name: "Soweto - Meadowlands", wardNo: 40, wardId: "79800040", district: "City of Johannesburg", lat: -26.2250, lng: 27.8900 },
+                { name: "Soweto - Dobsonville", wardNo: 47, wardId: "79800047", district: "City of Johannesburg", lat: -26.2200, lng: 27.8650 },
+                { name: "Soweto - Pimville / Klipspruit", wardNo: 22, wardId: "79800022", district: "City of Johannesburg", lat: -26.2650, lng: 27.8950 },
+                { name: "Soweto - Protea Glen / Protea North", wardNo: 13, wardId: "79800013", district: "City of Johannesburg", lat: -26.2950, lng: 27.8100 },
+                { name: "Soweto - Diepkloof", wardNo: 28, wardId: "79800028", district: "City of Johannesburg", lat: -26.2450, lng: 27.9350 },
+                { name: "Soweto - Zola / Jabulani / Naledi", wardNo: 33, wardId: "79800033", district: "City of Johannesburg", lat: -26.2400, lng: 27.8450 },
+                { name: "Soweto - Dlamini / Chiawelo", wardNo: 15, wardId: "79800015", district: "City of Johannesburg", lat: -26.2600, lng: 27.8600 },
+                { name: "Alexandra (East Bank / West Bank)", wardNo: 105, wardId: "79800105", district: "City of Johannesburg", lat: -26.1050, lng: 28.1020 },
+                { name: "Diepsloot (Extensions 1-13)", wardNo: 95, wardId: "79800095", district: "City of Johannesburg", lat: -25.9320, lng: 28.0200 },
+                { name: "Orange Farm / Drieziek", wardNo: 3, wardId: "79800003", district: "City of Johannesburg", lat: -26.4850, lng: 27.8650 },
+                { name: "Ivory Park", wardNo: 78, wardId: "79800078", district: "City of Johannesburg", lat: -25.9850, lng: 28.1820 },
+                { name: "Cosmo City / Zandspruit", wardNo: 100, wardId: "79800100", district: "City of Johannesburg", lat: -26.0150, lng: 27.9300 },
+                { name: "Lenasia / Southgate", wardNo: 9, wardId: "79800009", district: "City of Johannesburg", lat: -26.3300, lng: 27.8350 },
+                { name: "Eldorado Park / Kliptown", wardNo: 17, wardId: "79800017", district: "City of Johannesburg", lat: -26.2900, lng: 27.9050 },
+                { name: "Johannesburg CBD / Braamfontein / Hillbrow", wardNo: 60, wardId: "79800060", district: "City of Johannesburg", lat: -26.2040, lng: 28.0470 }
+            ],
+            "City of Ekurhuleni": [
+                { name: "Tembisa (Winnie Mandela / Hospital View)", wardNo: 3, wardId: "79700003", district: "City of Ekurhuleni", lat: -25.9850, lng: 28.2200 },
+                { name: "Tembisa (Central / Moriting / Tsenelong)", wardNo: 5, wardId: "79700005", district: "City of Ekurhuleni", lat: -26.0050, lng: 28.2350 },
+                { name: "Katlehong (Mokoena / Khumalo)", wardNo: 50, wardId: "79700050", district: "City of Ekurhuleni", lat: -26.3350, lng: 28.1550 },
+                { name: "Vosloorus / Spruitview", wardNo: 44, wardId: "79700044", district: "City of Ekurhuleni", lat: -26.3500, lng: 28.2050 },
+                { name: "Thokoza", wardNo: 55, wardId: "79700055", district: "City of Ekurhuleni", lat: -26.3650, lng: 28.1400 },
+                { name: "Daveyton", wardNo: 67, wardId: "79700067", district: "City of Ekurhuleni", lat: -26.1550, lng: 28.4250 },
+                { name: "Etwatwa", wardNo: 109, wardId: "79700109", district: "City of Ekurhuleni", lat: -26.1850, lng: 28.4200 },
+                { name: "KwaThema", wardNo: 78, wardId: "79700078", district: "City of Ekurhuleni", lat: -26.2800, lng: 28.3900 },
+                { name: "Tsakane / Duduza", wardNo: 81, wardId: "79700081", district: "City of Ekurhuleni", lat: -26.3550, lng: 28.3850 }
+            ],
+            "City of Tshwane": [
+                { name: "Mamelodi East / West", wardNo: 16, wardId: "79900016", district: "City of Tshwane", lat: -25.7200, lng: 28.4000 },
+                { name: "Soshanguve (Block AA, TT, South)", wardNo: 37, wardId: "79900037", district: "City of Tshwane", lat: -25.5350, lng: 28.0950 },
+                { name: "Atteridgeville / Saulsville", wardNo: 63, wardId: "79900063", district: "City of Tshwane", lat: -25.7800, lng: 28.0850 },
+                { name: "Hammanskraal / Temba", wardNo: 74, wardId: "79900074", district: "City of Tshwane", lat: -25.4050, lng: 28.2850 },
+                { name: "Ga-Rankuwa", wardNo: 30, wardId: "79900030", district: "City of Tshwane", lat: -25.6100, lng: 28.0700 },
+                { name: "Mabopane / Winterveld", wardNo: 22, wardId: "79900022", district: "City of Tshwane", lat: -25.4950, lng: 28.0800 }
+            ],
+            "Rand West City": [
+                { name: "Mohlakeng (Ext 1-7)", wardNo: 21, wardId: "74802021", district: "West Rand", lat: -26.2100, lng: 27.7300 },
+                { name: "Bekkersdal (East & West)", wardNo: 33, wardId: "74802033", district: "West Rand", lat: -26.2600, lng: 27.7100 },
+                { name: "Randfontein CBD / Toekomsrus", wardNo: 8, wardId: "74802008", district: "West Rand", lat: -26.1750, lng: 27.7000 }
+            ],
+            "Merafong City": [
+                { name: "Carletonville / Khutsong", wardNo: 4, wardId: "74803004", district: "West Rand", lat: -26.3600, lng: 27.3900 },
+                { name: "Fochville / Kokosi", wardNo: 20, wardId: "74803020", district: "West Rand", lat: -26.4900, lng: 27.4900 }
+            ],
+            "City of Cape Town": [
+                { name: "Khayelitsha - Site B / Site C", wardNo: 89, wardId: "19100089", district: "City of Cape Town", lat: -34.0350, lng: 18.6650 },
+                { name: "Khayelitsha - Harare / Town Two", wardNo: 98, wardId: "19100098", district: "City of Cape Town", lat: -34.0550, lng: 18.6900 },
+                { name: "Khayelitsha - Makhaza / Kuyasa", wardNo: 95, wardId: "19100095", district: "City of Cape Town", lat: -34.0450, lng: 18.7050 },
+                { name: "Mitchells Plain (Tafelsig / Beacon Valley)", wardNo: 82, wardId: "19100082", district: "City of Cape Town", lat: -34.0500, lng: 18.6250 },
+                { name: "Gugulethu / Nyanga", wardNo: 40, wardId: "19100040", district: "City of Cape Town", lat: -33.9850, lng: 18.5750 },
+                { name: "Langa / Joe Slovo", wardNo: 51, wardId: "19100051", district: "City of Cape Town", lat: -33.9500, lng: 18.5350 },
+                { name: "Philippi / Samora Machel", wardNo: 33, wardId: "19100033", district: "City of Cape Town", lat: -34.0100, lng: 18.5900 },
+                { name: "Delft (Suburban / South)", wardNo: 24, wardId: "19100024", district: "City of Cape Town", lat: -33.9750, lng: 18.6350 },
+                { name: "Dunoon / Du Noon", wardNo: 104, wardId: "19100104", district: "City of Cape Town", lat: -33.8300, lng: 18.5500 }
+            ],
+            "eThekwini": [
+                { name: "Umlazi (Sections A-L)", wardNo: 79, wardId: "59200079", district: "eThekwini", lat: -29.9650, lng: 30.8850 },
+                { name: "Umlazi (Sections M-Z)", wardNo: 82, wardId: "59200082", district: "eThekwini", lat: -29.9800, lng: 30.8950 },
+                { name: "KwaMashu (Sections A-K)", wardNo: 40, wardId: "59200040", district: "eThekwini", lat: -29.7550, lng: 30.9700 },
+                { name: "Inanda / Newtown", wardNo: 55, wardId: "59200055", district: "eThekwini", lat: -29.7250, lng: 30.9250 },
+                { name: "Ntuzuma", wardNo: 42, wardId: "59200042", district: "eThekwini", lat: -29.7600, lng: 30.9450 },
+                { name: "Clermont / KwaDabeka", wardNo: 21, wardId: "59200021", district: "eThekwini", lat: -29.8250, lng: 30.8750 },
+                { name: "Chatsworth / Havenside", wardNo: 69, wardId: "59200069", district: "eThekwini", lat: -29.9250, lng: 30.8900 },
+                { name: "Phoenix", wardNo: 50, wardId: "59200050", district: "eThekwini", lat: -29.7200, lng: 31.0100 }
+            ],
+            "Buffalo City": [
+                { name: "Mdantsane (NU 1-18)", wardNo: 12, wardId: "29200012", district: "Buffalo City", lat: -32.9350, lng: 27.7250 },
+                { name: "Duncan Village / Zwelitsha", wardNo: 6, wardId: "29200006", district: "Buffalo City", lat: -33.0250, lng: 27.8700 }
+            ],
+            "Nelson Mandela Bay": [
+                { name: "Ibhayi / Zwide", wardNo: 18, wardId: "29300018", district: "Nelson Mandela Bay", lat: -33.8650, lng: 25.5900 },
+                { name: "Motherwell (NU 1-12)", wardNo: 54, wardId: "29300054", district: "Nelson Mandela Bay", lat: -33.8050, lng: 25.5800 },
+                { name: "New Brighton / KwaZakhele", wardNo: 21, wardId: "29300021", district: "Nelson Mandela Bay", lat: -33.8900, lng: 25.6100 }
+            ],
+            "Mangaung": [
+                { name: "Botshabelo (Sections A-U)", wardNo: 32, wardId: "49400032", district: "Mangaung", lat: -29.2300, lng: 26.7150 },
+                { name: "Thaba Nchu", wardNo: 40, wardId: "49400040", district: "Mangaung", lat: -29.2100, lng: 26.8400 },
+                { name: "Mangaung / Rocklands / Batho", wardNo: 10, wardId: "49400010", district: "Mangaung", lat: -29.1550, lng: 26.2300 }
+            ]
+        };
+
+        let selectedAreaItem = null;
+
         async function loadMunicipalities() {
             const province = document.getElementById('ob-province').value;
             const municSelect = document.getElementById('ob-municipality');
+            const areaContainer = document.getElementById('ob-area-container');
+            const customAreaContainer = document.getElementById('ob-custom-area-container');
+            const wardContainer = document.getElementById('ob-ward-container');
 
-            // Reset municipality and ward
+            if (areaContainer) areaContainer.style.display = 'none';
+            if (customAreaContainer) customAreaContainer.style.display = 'none';
+            if (wardContainer) wardContainer.style.display = 'none';
+
             municSelect.innerHTML = '<option value="">-- Loading municipalities... --</option>';
-            hideAllWardStates();
 
             if (!province) {
                 municSelect.innerHTML = '<option value="">-- Select Province First --</option>';
@@ -3405,170 +3528,161 @@
                         opt.textContent = m;
                         municSelect.appendChild(opt);
                     });
-                    console.log(`[Pulse Ward] Loaded ${munics.length} municipalities for ${province}`);
                 } else {
                     municSelect.innerHTML = '<option value="">-- No municipalities found --</option>';
                 }
             } catch (err) {
                 console.error('[Pulse Ward] Failed to load municipalities:', err);
-                municSelect.innerHTML = '<option value="">-- Error loading. Check connection --</option>';
+                municSelect.innerHTML = '<option value="">-- Select Municipality --</option>';
+                const fallbacks = province === 'Gauteng' ? ['Mogale City', 'City of Johannesburg', 'City of Ekurhuleni', 'City of Tshwane', 'Rand West City', 'Merafong City', 'Sedibeng']
+                    : province === 'Western Cape' ? ['City of Cape Town', 'Stellenbosch', 'Drakenstein', 'George']
+                    : province === 'KwaZulu-Natal' ? ['eThekwini', 'Msunduzi', 'uMhlathuze', 'Newcastle']
+                    : ['Local Municipality 1', 'Local Municipality 2'];
+                fallbacks.forEach(m => {
+                    const opt = document.createElement('option');
+                    opt.value = m;
+                    opt.textContent = m;
+                    municSelect.appendChild(opt);
+                });
             }
         }
 
-        /**
-         * Auto-detect the agent's ward from GPS coordinates.
-         * Uses MDB ArcGIS spatial query (point-in-polygon) to find which ward
-         * boundary contains the agent's current GPS position.
-         */
-        let wardDetectRetries = 0;
-        const MAX_WARD_RETRIES = 3;
-
-        async function detectWardFromGPS() {
+        async function loadTownshipAreas() {
             const municipality = document.getElementById('ob-municipality').value;
-            if (!municipality) return;
+            const areaContainer = document.getElementById('ob-area-container');
+            const areaSelect = document.getElementById('ob-area');
+            const customAreaContainer = document.getElementById('ob-custom-area-container');
+            const wardContainer = document.getElementById('ob-ward-container');
 
-            const container = document.getElementById('ob-ward-container');
-            container.style.display = 'block';
-            showWardState('detecting');
-
-            // Step 1: Capture GPS
-            let gpsCoords = null;
-            try {
-                gpsCoords = await new Promise((resolve, reject) => {
-                    if (!navigator.geolocation) { reject(new Error('No geolocation')); return; }
-                    navigator.geolocation.getCurrentPosition(
-                        pos => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude, accuracy: pos.coords.accuracy }),
-                        err => reject(err),
-                        { enableHighAccuracy: true, timeout: 15000, maximumAge: 30000 }
-                    );
-                });
-            } catch (err) {
-                console.warn('[Pulse Ward] GPS failed:', err.message);
-                wardDetectRetries++;
-                if (wardDetectRetries >= MAX_WARD_RETRIES) {
-                    showWardState('failed');
-                } else {
-                    showWardState('failed');
-                }
+            if (!municipality) {
+                if (areaContainer) areaContainer.style.display = 'none';
+                if (customAreaContainer) customAreaContainer.style.display = 'none';
+                if (wardContainer) wardContainer.style.display = 'none';
                 return;
             }
 
-            console.log(`[Pulse Ward] GPS captured: ${gpsCoords.lat.toFixed(4)}, ${gpsCoords.lng.toFixed(4)} (accuracy: ${Math.round(gpsCoords.accuracy)}m)`);
+            areaSelect.innerHTML = '<option value="">-- Select Township / Suburb / Extension --</option>';
+            areaContainer.style.display = 'block';
+            if (customAreaContainer) customAreaContainer.style.display = 'none';
+            if (wardContainer) wardContainer.style.display = 'none';
 
-            // Step 2: Query MDB for ward at this point
-            try {
-                const queryParams = new URLSearchParams({
-                    geometry: `${gpsCoords.lng},${gpsCoords.lat}`,
-                    geometryType: 'esriGeometryPoint',
-                    spatialRel: 'esriSpatialRelIntersects',
-                    where: `MUNICNAME='${municipality}'`,
-                    outFields: 'WardNo,WardID,MUNICNAME,DISTRICT,Province',
-                    returnGeometry: 'false',
-                    f: 'json'
+            const areas = MUNICIPALITY_AREAS[municipality] || [];
+            if (areas.length > 0) {
+                areas.forEach((item, idx) => {
+                    const opt = document.createElement('option');
+                    opt.value = idx;
+                    opt.textContent = `${item.name} (Ward ${item.wardNo})`;
+                    areaSelect.appendChild(opt);
                 });
+            }
 
-                const resp = await fetch(`${MDB_BASE_URL}?${queryParams}`);
-                const data = await resp.json();
+            // Always add a custom area option
+            const otherOpt = document.createElement('option');
+            otherOpt.value = 'OTHER';
+            otherOpt.textContent = '➕ Other Township / Suburb (Enter manually)';
+            areaSelect.appendChild(otherOpt);
+        }
 
-                if (data.features && data.features.length === 1) {
-                    // Clear match — GPS falls cleanly inside one ward
-                    const ward = data.features[0].attributes;
-                    setWardResult(ward, gpsCoords);
-                    showWardState('result');
-                    wardDetectRetries = 0;
-                    console.log(`[Pulse Ward] Ward detected: Ward ${ward.WardNo} (${ward.WardID})`);
+        function onAreaSelected() {
+            const municipality = document.getElementById('ob-municipality').value;
+            const province = document.getElementById('ob-province').value;
+            const areaVal = document.getElementById('ob-area').value;
+            const customAreaContainer = document.getElementById('ob-custom-area-container');
+            const wardContainer = document.getElementById('ob-ward-container');
 
-                } else if (data.features && data.features.length > 1) {
-                    // Boundary conflict — GPS near the edge of 2+ wards
-                    showBoundaryChoices(data.features, gpsCoords);
-                    showWardState('boundary');
-                    console.log(`[Pulse Ward] Boundary conflict: ${data.features.length} wards detected`);
+            if (!areaVal) {
+                wardContainer.style.display = 'none';
+                return;
+            }
 
-                } else {
-                    // No ward found in selected municipality — try without municipality filter
-                    console.warn('[Pulse Ward] No ward found in selected municipality, trying broader search...');
-                    const broadParams = new URLSearchParams({
-                        geometry: `${gpsCoords.lng},${gpsCoords.lat}`,
-                        geometryType: 'esriGeometryPoint',
-                        spatialRel: 'esriSpatialRelIntersects',
-                        outFields: 'WardNo,WardID,MUNICNAME,DISTRICT,Province',
-                        returnGeometry: 'false',
-                        f: 'json'
-                    });
+            if (areaVal === 'OTHER') {
+                customAreaContainer.style.display = 'block';
+                const defaultWard = {
+                    WardNo: 1,
+                    WardID: 'CUSTOM',
+                    MUNICNAME: municipality,
+                    DISTRICT: province,
+                    Province: province,
+                    lat: -26.204,
+                    lng: 28.047
+                };
+                setWardResult(defaultWard, { lat: defaultWard.lat, lng: defaultWard.lng });
+                document.getElementById('ob-ward-label').textContent = `Assigned Coverage Zone: ${municipality}`;
+                document.getElementById('ob-ward-detail').textContent = `${municipality} • ${province}`;
+                wardContainer.style.display = 'block';
+                return;
+            }
 
-                    const broadResp = await fetch(`${MDB_BASE_URL}?${broadParams}`);
-                    const broadData = await broadResp.json();
+            customAreaContainer.style.display = 'none';
+            const areas = MUNICIPALITY_AREAS[municipality] || [];
+            const item = areas[parseInt(areaVal)];
+            if (!item) return;
 
-                    if (broadData.features && broadData.features.length > 0) {
-                        const ward = broadData.features[0].attributes;
-                        // GPS is in a different municipality than selected — show result but note the mismatch
-                        setWardResult(ward, gpsCoords);
-                        const detailEl = document.getElementById('ob-ward-detail');
-                        detailEl.innerHTML = `${ward.MUNICNAME} • ${ward.DISTRICT || ''} • ${ward.Province}<br><span style="color:#fbbf24;font-size:0.56rem;"><i class="fa-solid fa-triangle-exclamation" style="margin-right:3px;"></i>Note: Your GPS shows ${ward.MUNICNAME}, not the municipality you selected. We've updated your ward to match your actual location.</span>`;
-                        // Auto-update the municipality dropdown to match
-                        document.getElementById('ob-municipality').value = ward.MUNICNAME;
-                        showWardState('result');
-                    } else {
-                        showWardState('failed');
-                    }
-                }
-            } catch (err) {
-                console.error('[Pulse Ward] MDB query failed:', err);
-                showWardState('failed');
+            selectedAreaItem = item;
+
+            const ward = {
+                WardNo: item.wardNo,
+                WardID: item.wardId,
+                MUNICNAME: municipality,
+                DISTRICT: item.district,
+                Province: province,
+                lat: item.lat,
+                lng: item.lng
+            };
+
+            setWardResult(ward, { lat: item.lat, lng: item.lng });
+            document.getElementById('ob-ward-label').textContent = `Ward ${item.wardNo}, ${municipality}`;
+            document.getElementById('ob-ward-detail').textContent = `${item.name} • ${item.district || municipality} • ${province}`;
+            document.getElementById('ob-ward-badge').textContent = `Assigned Coverage Ward`;
+            document.getElementById('ob-ward-gps-status').innerHTML = `<i class="fa-solid fa-circle-check" style="margin-right:4px;color:#22c55e;"></i>Territory assigned for <strong>${item.name}</strong> + surrounding wards (8.5km radius).`;
+            wardContainer.style.display = 'block';
+        }
+
+        function onCustomAreaEntered() {
+            const customText = document.getElementById('ob-custom-area').value.trim();
+            const municipality = document.getElementById('ob-municipality').value;
+            const province = document.getElementById('ob-province').value;
+            if (customText) {
+                document.getElementById('ob-ward-label').textContent = `${customText}, ${municipality}`;
+                document.getElementById('ob-ward-detail').textContent = `${customText} • ${municipality} • ${province}`;
             }
         }
 
-        /**
-         * Set the ward result into the hidden fields and display label.
-         */
+        async function refineWardGPS() {
+            const btn = document.getElementById('btn-refine-gps-text');
+            if (btn) btn.textContent = 'Querying satellite GPS...';
+            try {
+                if (!navigator.geolocation) {
+                    alert('Geolocation is not supported by your browser.');
+                    if (btn) btn.textContent = 'Refine with Live GPS (Optional)';
+                    return;
+                }
+                navigator.geolocation.getCurrentPosition(
+                    pos => {
+                        const lat = pos.coords.latitude;
+                        const lng = pos.coords.longitude;
+                        document.getElementById('ob-gps-lat').value = lat;
+                        document.getElementById('ob-gps-lng').value = lng;
+                        document.getElementById('ob-ward-gps-status').innerHTML = `<i class="fa-solid fa-satellite-dish" style="margin-right:4px;color:#00f2fe;"></i>Live GPS Confirmed: ${lat.toFixed(4)}, ${lng.toFixed(4)} (Accuracy: ${Math.round(pos.coords.accuracy)}m)`;
+                        if (btn) btn.textContent = '✓ GPS Coordinates Synced';
+                    },
+                    err => {
+                        console.warn('[Pulse GPS] Optional GPS refine failed:', err.message);
+                        document.getElementById('ob-ward-gps-status').innerHTML = `<i class="fa-solid fa-circle-check" style="margin-right:4px;color:#22c55e;"></i>Area-based coverage active (GPS skipped — no problem)`;
+                        if (btn) btn.textContent = 'Refine with Live GPS (Optional)';
+                    },
+                    { enableHighAccuracy: true, timeout: 8000, maximumAge: 30000 }
+                );
+            } catch(e) {
+                if (btn) btn.textContent = 'Refine with Live GPS (Optional)';
+            }
+        }
+
         function setWardResult(ward, gpsCoords) {
-            document.getElementById('ob-ward-no').value = ward.WardNo;
+            document.getElementById('ob-ward-no').value = ward.WardNo || '';
             document.getElementById('ob-ward-id').value = ward.WardID || '';
-            document.getElementById('ob-gps-lat').value = gpsCoords.lat;
-            document.getElementById('ob-gps-lng').value = gpsCoords.lng;
-            document.getElementById('ob-ward-label').textContent = `Ward ${ward.WardNo}, ${ward.MUNICNAME}`;
-            document.getElementById('ob-ward-detail').textContent = `${ward.MUNICNAME} • ${ward.DISTRICT || ''} • ${ward.Province}`;
-        }
-
-        /**
-         * Show boundary choice buttons when GPS is between 2 wards.
-         */
-        function showBoundaryChoices(features, gpsCoords) {
-            const container = document.getElementById('ob-ward-choices');
-            container.innerHTML = '';
-            features.forEach(f => {
-                const ward = f.attributes;
-                const btn = document.createElement('button');
-                btn.style.cssText = 'width:100%;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:8px;padding:10px 12px;color:#f0f2ff;font-family:inherit;font-size:0.75rem;font-weight:700;cursor:pointer;text-align:left;';
-                btn.innerHTML = `<i class="fa-solid fa-map-pin" style="color:#fbbf24;margin-right:8px;"></i>Ward ${ward.WardNo} — ${ward.MUNICNAME}`;
-                btn.onclick = () => selectBoundaryWard(ward, gpsCoords);
-                container.appendChild(btn);
-            });
-        }
-
-        /**
-         * User selects a ward from the boundary choices.
-         */
-        function selectBoundaryWard(ward, gpsCoords) {
-            setWardResult(ward, gpsCoords);
-            showWardState('result');
-            console.log(`[Pulse Ward] Agent chose Ward ${ward.WardNo} from boundary options`);
-        }
-
-        /**
-         * Show/hide ward detection state panels.
-         */
-        function showWardState(state) {
-            ['detecting', 'result', 'boundary', 'failed'].forEach(s => {
-                const el = document.getElementById('ob-ward-' + s);
-                if (el) el.style.display = (s === state) ? 'block' : 'none';
-            });
-        }
-
-        function hideAllWardStates() {
-            const container = document.getElementById('ob-ward-container');
-            if (container) container.style.display = 'none';
-            showWardState('none');
+            document.getElementById('ob-gps-lat').value = gpsCoords ? gpsCoords.lat : (ward.lat || '');
+            document.getElementById('ob-gps-lng').value = gpsCoords ? gpsCoords.lng : (ward.lng || '');
         }
 
         // ═══════════════════════════════════════════════════
