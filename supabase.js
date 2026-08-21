@@ -78,13 +78,19 @@ async function getOrCreateAgent(name, phone, address, extras = {}) {
     const payload = {
         name,
         phone,
-        address:   address   || null,
-        firstname: extras.firstname || null,
-        surname:   extras.surname   || null,
-        age:       extras.age       || null,
-        email:     extras.email     || null,
-        pin:       extras.pin       || null,
-        township:  extras.township  || null
+        address:      address          || null,
+        firstname:    extras.firstname || null,
+        surname:      extras.surname   || null,
+        age:          extras.age       || null,
+        email:        extras.email     || null,
+        pin:          extras.pin       || null,
+        township:     extras.township  || null,
+        province:     extras.province     || null,
+        municipality: extras.municipality || null,
+        ward_no:      extras.ward_no      || null,
+        ward_id:      extras.ward_id      || null,
+        home_gps_lat: extras.home_gps_lat || null,
+        home_gps_lng: extras.home_gps_lng || null
     };
 
     // Create new agent
