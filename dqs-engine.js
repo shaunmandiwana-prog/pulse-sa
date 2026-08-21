@@ -185,10 +185,29 @@ function calculateDQS(gigType, rawData, options = {}) {
         } else {
             gpsScore = 80;
         }
+
+        // Velocity Check (ISA 520: Analytical Procedures / Impossible Travel)
+        const velResult = checkVelocity(options.gpsCoords);
+        if (velResult.flagged) {
+            auditFlags.push(velResult.flag);
+            flags.push(`🚨 ${velResult.reason}`);
+            gpsScore = Math.max(0, gpsScore - 40); // Severe penalty for impossible travel velocity
+        }
     } else {
         gpsScore = 0;
         auditFlags.push('NO_GPS_CAPTURED');
         flags.push('No GPS verification — agent location not confirmed');
+    }
+
+    // Anomaly Pattern Detection (ISA 240: Fraud Triangle)
+    const anomalyResult = detectAnomalies(gigType, rawData);
+    if (anomalyResult.hasAnomalies) {
+        anomalyResult.anomalyFlags.forEach(af => {
+            if (!auditFlags.includes(af)) auditFlags.push(af);
+        });
+        anomalyResult.notes.forEach(an => {
+            flags.push(`🔍 Pattern Note: ${an}`);
+        });
     }
 
     // -- 4. Price/value plausibility (15%) --
@@ -508,6 +527,23 @@ function showDQSResult(dqsResult, basePoints) {
     // Auto-dismiss after 8 seconds
     setTimeout(() => { const el = document.getElementById('dqs-overlay'); if (el) el.remove(); }, 8000);
 
+    // Auto-dispatch Fraud Anomaly Alert if 2+ audit flags detected (ISA 240)
+    if (dqsResult.auditFlags && dqsResult.auditFlags.length >= 2) {
+        if (typeof dispatchFraudAnomalyAlert === 'function') {
+            const agentId = (typeof localStorage !== 'undefined' ? localStorage.getItem('pulse_agent_id') : null) || 'PSA-ZA-2026';
+            const agentName = (typeof localStorage !== 'undefined' ? localStorage.getItem('pulse_agent_name') : null) || 'Field Agent';
+            dispatchFraudAnomalyAlert({
+                agentId,
+                agentName,
+                gigType: tierLabel || 'Field Gig Submission',
+                summary: dqsResult.flags.join('; '),
+                auditFlags: dqsResult.auditFlags,
+                dqsScore: dqsResult.score,
+                details: dqsResult.flags.join('\n')
+            });
+        }
+    }
+
     return { bonusPoints, totalPoints };
 }
 
@@ -609,4 +645,151 @@ function verifyGPSInCoverageZone(gpsCoords, agentWard) {
     };
 }
 
-console.log('[Pulse DQS] Engine loaded - v2.0 with Coverage Geofencing');
+/**
+ * Checks for physically impossible travel velocity between successive submissions.
+ * ISA 520: Analytical Procedures — Substantive Testing of Data Integrity.
+ */
+function checkVelocity(currentGPS, currentTimestamp = null, previousSubmissions = null) {
+    if (!currentGPS || !currentGPS.lat || !currentGPS.lng) {
+        return { flagged: false, velocityKmh: 0, distanceKm: 0, timeMinutes: 0 };
+    }
+
+    const subs = previousSubmissions || (typeof localStorage !== 'undefined' ? JSON.parse(localStorage.getItem('pulse_submissions') || '[]') : []);
+    if (!subs || subs.length === 0) {
+        return { flagged: false, velocityKmh: 0, distanceKm: 0, timeMinutes: 0 };
+    }
+
+    // Find the most recent previous submission with a timestamp and GPS
+    const nowTime = currentTimestamp ? new Date(currentTimestamp).getTime() : Date.now();
+    let prevSub = null;
+    for (const sub of subs) {
+        if (sub.date && (sub.data && ((sub.data.gps_lat && sub.data.gps_lng) || (sub.data.gpsLat && sub.data.gpsLng) || sub.gpsCoords))) {
+            prevSub = sub;
+            break;
+        }
+    }
+
+    if (!prevSub) {
+        return { flagged: false, velocityKmh: 0, distanceKm: 0, timeMinutes: 0 };
+    }
+
+    const prevTime = new Date(prevSub.date).getTime();
+    const timeDiffMinutes = (nowTime - prevTime) / (1000 * 60);
+
+    // Ignore if previous submission is older than 6 hours or negative clock skew
+    if (timeDiffMinutes > 360 || timeDiffMinutes <= 0) {
+        return { flagged: false, velocityKmh: 0, distanceKm: 0, timeMinutes: timeDiffMinutes };
+    }
+
+    const pLat = prevSub.data.gps_lat || prevSub.data.gpsLat || (prevSub.gpsCoords && prevSub.gpsCoords.lat);
+    const pLng = prevSub.data.gps_lng || prevSub.data.gpsLng || (prevSub.gpsCoords && prevSub.gpsCoords.lng);
+
+    if (!pLat || !pLng) {
+        return { flagged: false, velocityKmh: 0, distanceKm: 0, timeMinutes: timeDiffMinutes };
+    }
+
+    const distMeters = calculateDistanceMetersDQS(currentGPS.lat, currentGPS.lng, pLat, pLng);
+    const distKm = distMeters !== null ? distMeters / 1000 : 0;
+    const timeHours = timeDiffMinutes / 60;
+    const velocityKmh = timeHours > 0 ? distKm / timeHours : 0;
+
+    // Velocity Threshold 1: Teleportation / rapid submissions from different locations (>65 km/h over >2km)
+    if (distKm > 2.0 && velocityKmh > 65.0) {
+        return {
+            flagged: true,
+            flag: 'IMPOSSIBLE_TRAVEL_VELOCITY',
+            velocityKmh: Math.round(velocityKmh),
+            distanceKm: Math.round(distKm * 10) / 10,
+            timeMinutes: Math.round(timeDiffMinutes),
+            reason: `Impossible travel speed: ${Math.round(velocityKmh)} km/h across ${Math.round(distKm * 10) / 10} km in ${Math.round(timeDiffMinutes)} minutes.`
+        };
+    }
+
+    // Velocity Threshold 2: Instant duplicate spam (< 1 minute between submissions > 500m apart)
+    if (timeDiffMinutes < 1.0 && distKm > 0.5) {
+        return {
+            flagged: true,
+            flag: 'RAPID_LOCATION_LEAP',
+            velocityKmh: Math.round(velocityKmh),
+            distanceKm: Math.round(distKm * 10) / 10,
+            timeMinutes: Math.round(timeDiffMinutes),
+            reason: `Suspiciously fast leap: ${Math.round(distMeters)}m in under 60 seconds.`
+        };
+    }
+
+    return { flagged: false, velocityKmh: Math.round(velocityKmh), distanceKm: Math.round(distKm * 10) / 10, timeMinutes: Math.round(timeDiffMinutes) };
+}
+
+/**
+ * Detects Fraud Triangle patterns in field data collection.
+ * ISA 240: The Auditor's Responsibilities Relating to Fraud in an Audit of Financial Statements.
+ */
+function detectAnomalies(gigType, rawData, currentTimestamp = null, previousSubmissions = null) {
+    const anomalyFlags = [];
+    const notes = [];
+    const subs = previousSubmissions || (typeof localStorage !== 'undefined' ? JSON.parse(localStorage.getItem('pulse_submissions') || '[]') : []);
+
+    // 1. Unusual Hours Check (Midnight to 5:00 AM)
+    const now = currentTimestamp ? new Date(currentTimestamp) : new Date();
+    const hour = now.getHours();
+    if (hour >= 0 && hour < 5) {
+        anomalyFlags.push('UNUSUAL_HOURS_SUBMISSION');
+        notes.push('Logged during unusual night hours (00:00 - 05:00)');
+    }
+
+    // 2. Round-Number / Fabrication Indicator (e.g. exactly R1000, R2000, R5000 with no variance)
+    const revenueFields = ['good_day_revenue', 'bad_day_revenue', 'turnover_good_day', 'turnover_bad_day', 'receipt_amount'];
+    let roundNumberCount = 0;
+    let checkedRevFields = 0;
+    for (const f of revenueFields) {
+        if (rawData && rawData[f]) {
+            const val = parseFloat(rawData[f]);
+            if (!isNaN(val) && val > 0) {
+                checkedRevFields++;
+                if (val >= 500 && val % 500 === 0) {
+                    roundNumberCount++;
+                }
+            }
+        }
+    }
+    if (checkedRevFields >= 2 && roundNumberCount === checkedRevFields) {
+        let priorRoundCount = 0;
+        subs.slice(0, 3).forEach(s => {
+            const d = s.data || {};
+            for (const f of revenueFields) {
+                const v = parseFloat(d[f]);
+                if (!isNaN(v) && v >= 500 && v % 500 === 0) priorRoundCount++;
+            }
+        });
+        if (priorRoundCount >= 3) {
+            anomalyFlags.push('SUSPICIOUS_ROUND_VALUES_PATTERN');
+            notes.push('Repeated perfect round-number estimates without realistic variation');
+        }
+    }
+
+    // 3. Persistent GPS Concealment (>60% submissions without GPS)
+    if (subs.length >= 6) {
+        const recent = subs.slice(0, 10);
+        const noGPSCount = recent.filter(s => !(s.data && (s.data.gps_lat || s.data.gpsLat || s.gpsCoords))).length;
+        if (noGPSCount / recent.length >= 0.6) {
+            anomalyFlags.push('PERSISTENT_GPS_CONCEALMENT');
+            notes.push(`High GPS refusal rate (${Math.round((noGPSCount / recent.length) * 100)}% of recent submissions missing GPS)`);
+        }
+    }
+
+    // 4. Submission Flooding / High-Volume Speed Run (>20 submissions today)
+    const todayStr = new Date().toISOString().split('T')[0];
+    const todaySubs = subs.filter(s => s.date && s.date.startsWith(todayStr));
+    if (todaySubs.length >= 20) {
+        anomalyFlags.push('HIGH_VOLUME_VELOCITY');
+        notes.push(`High daily volume: ${todaySubs.length + 1} submissions logged today`);
+    }
+
+    return {
+        hasAnomalies: anomalyFlags.length > 0,
+        anomalyFlags,
+        notes
+    };
+}
+
+console.log('[Pulse DQS] Engine loaded - v3.0 with ISA 240/520 Velocity & Fraud Analytics');

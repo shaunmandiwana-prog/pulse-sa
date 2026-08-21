@@ -939,3 +939,61 @@ async function requestProfileEdit({ traderId, traderName, agentId, agentName, re
     }
 }
 
+/**
+ * Automatically dispatches a fraud anomaly alert to shaun@pulseintel.co.za
+ * when an agent triggers multiple serious ISA 240 / ISA 520 audit flags.
+ */
+async function dispatchFraudAnomalyAlert({ agentId, agentName, gigType, summary, auditFlags, dqsScore, details }) {
+    if (!auditFlags || auditFlags.length === 0) return false;
+
+    console.warn(`[Pulse Fraud Alert] Triggered for agent ${agentName} (${agentId}) with flags:`, auditFlags);
+
+    const payload = {
+        recipient_email: 'shaun@pulseintel.co.za',
+        subject: `\ud83d\udea8 [FRAUD ANOMALY ALERT] Agent: ${agentName || 'Field Agent'} - ${auditFlags.length} Audit Flags Detected`,
+        agent_id: agentId || 'Unknown',
+        agent_name: agentName || 'Unknown Agent',
+        gig_type: gigType || 'General Gig',
+        submission_summary: summary || 'No summary',
+        dqs_score: dqsScore || 0,
+        audit_flags: auditFlags,
+        anomaly_details: details || '',
+        detected_at: new Date().toISOString(),
+        message_body: `FRAUD & DATA INTEGRITY ANOMALY ALERT\n\n` +
+            `Agent: ${agentName} (ID: ${agentId})\n` +
+            `Gig Type: ${gigType}\n` +
+            `Summary: ${summary}\n` +
+            `DQS Score: ${dqsScore}/100\n` +
+            `Audit Flags Triggered:\n${auditFlags.map(f => '  - ' + f).join('\n')}\n\n` +
+            `Detailed Analysis:\n${details || 'Velocity or data pattern anomalies identified during submission.'}\n\n` +
+            `Detected At: ${new Date().toLocaleString('en-ZA', { timeZone: 'Africa/Johannesburg' })}\n\n` +
+            `ISA 240 Protocol: This submission has been flagged for audit quarantine. Review agent logs in your Supabase admin console.`
+    };
+
+    try {
+        if (isDBReady()) {
+            const db = getDB();
+            try {
+                await db.from('email_notifications').insert([{
+                    recipient: 'shaun@pulseintel.co.za',
+                    template: 'admin_fraud_anomaly_alert',
+                    payload: payload,
+                    status: 'dispatched',
+                    created_at: new Date().toISOString()
+                }]);
+                console.log('[Pulse Admin] Fraud alert logged in database successfully');
+            } catch(e) {
+                console.warn('[Pulse DB] Fraud alert insert error:', e.message);
+            }
+        }
+        // Also save locally in localStorage
+        const existing = JSON.parse(localStorage.getItem('pulse_fraud_alerts') || '[]');
+        existing.push(payload);
+        localStorage.setItem('pulse_fraud_alerts', JSON.stringify(existing));
+        return true;
+    } catch(err) {
+        console.error('[Pulse Fraud] Error dispatching fraud alert:', err);
+        return false;
+    }
+}
+
