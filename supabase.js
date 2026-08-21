@@ -144,7 +144,7 @@ async function syncAgentToDatabase() {
  * Always saves to localStorage first for offline history.
  * Skips DB insert if no real agent_id is available.
  */
-async function saveGigToDatabase({ gigType, pointsEarned, bonusPoints = 0, summary, rawData, traderId = null }) {
+async function saveGigToDatabase({ gigType, pointsEarned, bonusPoints = 0, summary, rawData, traderId = null, gpsLat = null, gpsLng = null, inCoverageZone = true, auditFlags = [] }) {
     console.log('[Pulse DB] saveGigToDatabase called:', { gigType, pointsEarned });
 
     if (!isDBReady()) { console.warn('[Pulse DB] DB not ready'); return null; }
@@ -163,13 +163,17 @@ async function saveGigToDatabase({ gigType, pointsEarned, bonusPoints = 0, summa
         const db = getDB();
         console.log('[Pulse DB] Inserting gig for agent:', agentId);
 
-        // Insert gig completion
+        // Insert gig completion with audit metadata (ISA 500)
         const gigPayload = {
             agent_id:      agentId,
             gig_type:      gigType,
             points_earned: pointsEarned,
             bonus_points:  bonusPoints,
-            summary:       summary
+            summary:       summary,
+            gps_lat:       gpsLat || (rawData && (rawData.gps_lat || rawData.gpsLat)) || null,
+            gps_lng:       gpsLng || (rawData && (rawData.gps_lng || rawData.gpsLng)) || null,
+            gps_in_ward:   typeof inCoverageZone === 'boolean' ? inCoverageZone : true,
+            audit_flags:   (auditFlags && auditFlags.length > 0) ? auditFlags : null
         };
         if (rawData) gigPayload.raw_data = rawData;
 

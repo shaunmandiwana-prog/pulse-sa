@@ -165,12 +165,30 @@ function calculateDQS(gigType, rawData, options = {}) {
         optionalScore = 100;
     }
 
-    // -- 3. GPS verification (15%) --
-    if (options.hasGPS) {
-        gpsScore = 100;
+    // -- 3. GPS & Coverage Zone Geofencing (15%) --
+    let geoResult = { inZone: true, status: 'unassigned', distKm: 0 };
+    const auditFlags = [];
+
+    if (options.hasGPS && options.gpsCoords) {
+        const agentWard = options.agentWard || (typeof localStorage !== 'undefined' ? JSON.parse(localStorage.getItem('pulse_agent_ward') || 'null') : null);
+        geoResult = verifyGPSInCoverageZone(options.gpsCoords, agentWard);
+
+        if (geoResult.inZone) {
+            gpsScore = 100;
+            if (agentWard && agentWard.wardNo) {
+                flags.push(`📍 GPS verified in assigned coverage zone (Ward ${agentWard.wardNo}, ${agentWard.municipality || 'Assigned Area'})`);
+            }
+        } else if (geoResult.status === 'out_of_zone') {
+            gpsScore = 20; // Major GPS penalty for logging outside assigned area
+            auditFlags.push('OUT_OF_ZONE_SUBMISSION');
+            flags.push(`⚠️ OUT OF ASSIGNED ZONE: Logged ${geoResult.distKm}km from assigned Ward ${geoResult.assignedWardNo} (${geoResult.municipality})`);
+        } else {
+            gpsScore = 80;
+        }
     } else {
         gpsScore = 0;
-        flags.push('No GPS verification - agent location not confirmed');
+        auditFlags.push('NO_GPS_CAPTURED');
+        flags.push('No GPS verification — agent location not confirmed');
     }
 
     // -- 4. Price/value plausibility (15%) --
@@ -263,11 +281,24 @@ function calculateDQS(gigType, rawData, options = {}) {
         tier = 'Standard'; tierEmoji = ''; bonusPct = 0;
     }
 
+    // Out-of-zone penalty / verified-zone boost
+    const isOutOfZone = !geoResult.inZone && geoResult.status === 'out_of_zone';
+    if (isOutOfZone) {
+        bonusPct = Math.max(0, bonusPct - 0.15); // Forfeit quality bonus
+    } else if (geoResult.inZone && options.hasGPS) {
+        bonusPct = Math.min(0.35, bonusPct + 0.05); // +5% Verified Zone bonus
+    }
+
     return {
         score,
         tier,
         tierEmoji,
         bonusPct,
+        isOutOfZone,
+        coverageStatus: geoResult.status,
+        coverageDistanceKm: geoResult.distKm || 0,
+        assignedWardNo: geoResult.assignedWardNo || null,
+        auditFlags,
         breakdown: {
             mandatory: Math.round(mandatoryScore),
             optional: Math.round(optionalScore),
@@ -440,6 +471,16 @@ function showDQSResult(dqsResult, basePoints) {
         ? `<div style="color:#10b981;font-weight:700;font-size:1.1rem;margin-top:6px;">+${bonusPoints} quality bonus! (${Math.round(dqsResult.bonusPct * 100)}%)</div>`
         : '';
 
+    // Out of coverage zone alert banner
+    let zoneAlertHTML = '';
+    if (dqsResult.isOutOfZone) {
+        zoneAlertHTML = `
+            <div style="background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.3);border-radius:8px;padding:8px 10px;margin-top:10px;font-size:0.7rem;color:#fbbf24;text-align:left;line-height:1.4;">
+                <i class="fa-solid fa-triangle-exclamation" style="margin-right:4px;"></i><strong>Coverage Zone Notice:</strong> Logged ${dqsResult.coverageDistanceKm}km outside your assigned Ward ${dqsResult.assignedWardNo || ''}. Tagged for Head Office quality review.
+            </div>
+        `;
+    }
+
     // Use the existing toast or create a modal overlay
     const overlay = document.createElement('div');
     overlay.id = 'dqs-overlay';
@@ -457,6 +498,7 @@ function showDQSResult(dqsResult, basePoints) {
                 <div><div style="font-weight:700;color:var(--text, #fff);">${dqsResult.breakdown.consistency}%</div>Logic</div>
             </div>
             ${bonusHTML}
+            ${zoneAlertHTML}
             ${breakdownHTML}
             <button onclick="document.getElementById('dqs-overlay').remove()" style="margin-top:16px;padding:10px 32px;background:var(--teal, #00d4aa);color:#000;border:none;border-radius:8px;font-weight:700;font-size:0.95rem;cursor:pointer;">Got it</button>
         </div>
@@ -469,4 +511,102 @@ function showDQSResult(dqsResult, basePoints) {
     return { bonusPoints, totalPoints };
 }
 
-console.log('[Pulse DQS] Engine loaded - v1.0');
+// ═══════════════════════════════════════════════════
+// COVERAGE ZONE GEOFENCING (ISA 315 / 500)
+// ═══════════════════════════════════════════════════
+
+/**
+ * Calculates distance between two GPS coordinates in meters.
+ */
+function calculateDistanceMetersDQS(lat1, lon1, lat2, lon2) {
+    if (!lat1 || !lon1 || !lat2 || !lon2) return null;
+    const R = 6371e3;
+    const phi1 = Number(lat1) * Math.PI / 180;
+    const phi2 = Number(lat2) * Math.PI / 180;
+    const deltaPhi = (Number(lat2) - Number(lat1)) * Math.PI / 180;
+    const deltaLambda = (Number(lon2) - Number(lon1)) * Math.PI / 180;
+
+    const a = Math.sin(deltaPhi / 2) * Math.sin(deltaPhi / 2) +
+              Math.cos(phi1) * Math.cos(phi2) *
+              Math.sin(deltaLambda / 2) * Math.sin(deltaLambda / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+}
+
+/**
+ * Verifies whether the submission GPS coordinates fall within the agent's
+ * assigned home ward and adjacent coverage zone (typically ~8.5km radius).
+ * Implements ISA 315 preventive control and ISA 500 audit verification.
+ */
+function verifyGPSInCoverageZone(gpsCoords, agentWard) {
+    if (!agentWard || !agentWard.wardNo) {
+        return { verified: true, inZone: true, status: 'unassigned', distKm: 0 };
+    }
+
+    if (!gpsCoords || !gpsCoords.lat || !gpsCoords.lng) {
+        return {
+            verified: false,
+            inZone: false,
+            status: 'no_gps',
+            distKm: 0,
+            assignedWardNo: agentWard.wardNo,
+            municipality: agentWard.municipality || 'Assigned Area'
+        };
+    }
+
+    // Check distance from agent's registered home GPS coordinates
+    const hLat = agentWard.gpsLat || agentWard.lat;
+    const hLng = agentWard.gpsLng || agentWard.lng;
+
+    if (hLat && hLng) {
+        const distMeters = calculateDistanceMetersDQS(gpsCoords.lat, gpsCoords.lng, hLat, hLng);
+        const distKm = distMeters !== null ? Math.round((distMeters / 1000) * 10) / 10 : 0;
+
+        // Home ward zone: <= 5.0km
+        if (distKm <= 5.0) {
+            return {
+                verified: true,
+                inZone: true,
+                status: 'home_ward_zone',
+                distKm,
+                assignedWardNo: agentWard.wardNo,
+                municipality: agentWard.municipality || 'Assigned Area'
+            };
+        }
+
+        // Adjacent ward coverage zone: <= 8.5km
+        if (distKm <= 8.5) {
+            return {
+                verified: true,
+                inZone: true,
+                status: 'adjacent_ward_zone',
+                distKm,
+                assignedWardNo: agentWard.wardNo,
+                municipality: agentWard.municipality || 'Assigned Area'
+            };
+        }
+
+        // Out of coverage zone: > 8.5km
+        return {
+            verified: false,
+            inZone: false,
+            status: 'out_of_zone',
+            distKm,
+            assignedWardNo: agentWard.wardNo,
+            municipality: agentWard.municipality || 'Assigned Area',
+            flag: 'OUT_OF_ZONE_SUBMISSION'
+        };
+    }
+
+    // Fallback if home GPS coordinates were not saved
+    return {
+        verified: true,
+        inZone: true,
+        status: 'unverified_home_gps',
+        distKm: 0,
+        assignedWardNo: agentWard.wardNo,
+        municipality: agentWard.municipality || 'Assigned Area'
+    };
+}
+
+console.log('[Pulse DQS] Engine loaded - v2.0 with Coverage Geofencing');

@@ -2321,7 +2321,7 @@
 
             if (!navigator.onLine) { if (typeof queueOffline === 'function') queueOffline({ gigType: 'kota_profile', pointsEarned: basePoints, bonusPoints: qualityBonus, summary, rawData }); }
             else {
-                try { if (typeof saveGigToDatabase === 'function') await saveGigToDatabase({ gigType: 'kota_profile', pointsEarned: basePoints, bonusPoints: qualityBonus, summary, rawData }); } catch(e) { console.error('[Submit] Gig DB error:', e); }
+                try { if (typeof saveGigToDatabase === 'function') await saveGigToDatabase({ gigType: 'kota_profile', pointsEarned: basePoints, bonusPoints: qualityBonus, summary, rawData, gpsLat: gps ? gps.lat : null, gpsLng: gps ? gps.lng : null, inCoverageZone: dqs ? !dqs.isOutOfZone : true, auditFlags: dqs ? dqs.auditFlags : [] }); } catch(e) { console.error('[Submit] Gig DB error:', e); }
                 try { if (typeof saveKotaProfile === 'function') await saveKotaProfile(rawData); } catch(e) { console.error('[Submit] Kota DB error:', e); }
             }
         }
@@ -2378,7 +2378,7 @@
 
             if (!navigator.onLine) { if (typeof queueOffline === 'function') queueOffline({ gigType: 'tavern_profile', pointsEarned: basePoints, bonusPoints: qualityBonus, summary, rawData }); }
             else {
-                try { if (typeof saveGigToDatabase === 'function') await saveGigToDatabase({ gigType: 'tavern_profile', pointsEarned: basePoints, bonusPoints: qualityBonus, summary, rawData }); } catch(e) { console.error('[Submit] Gig DB error:', e); }
+                try { if (typeof saveGigToDatabase === 'function') await saveGigToDatabase({ gigType: 'tavern_profile', pointsEarned: basePoints, bonusPoints: qualityBonus, summary, rawData, gpsLat: gps ? gps.lat : null, gpsLng: gps ? gps.lng : null, inCoverageZone: dqs ? !dqs.isOutOfZone : true, auditFlags: dqs ? dqs.auditFlags : [] }); } catch(e) { console.error('[Submit] Gig DB error:', e); }
                 try { if (typeof saveTavernProfile === 'function') await saveTavernProfile(rawData); } catch(e) { console.error('[Submit] Tavern DB error:', e); }
             }
         }
@@ -2449,7 +2449,7 @@
 
             if (!navigator.onLine) { if (typeof queueOffline === 'function') queueOffline({ gigType: 'trader_profile', pointsEarned: basePoints, bonusPoints: qualityBonus, summary, rawData }); }
             else {
-                try { if (typeof saveGigToDatabase === 'function') await saveGigToDatabase({ gigType: 'trader_profile', pointsEarned: basePoints, bonusPoints: qualityBonus, summary, rawData }); } catch(e) { console.error('[Submit] Gig DB error:', e); }
+                try { if (typeof saveGigToDatabase === 'function') await saveGigToDatabase({ gigType: 'trader_profile', pointsEarned: basePoints, bonusPoints: qualityBonus, summary, rawData, gpsLat: gps ? gps.lat : null, gpsLng: gps ? gps.lng : null, inCoverageZone: dqs ? !dqs.isOutOfZone : true, auditFlags: dqs ? dqs.auditFlags : [] }); } catch(e) { console.error('[Submit] Gig DB error:', e); }
                 // Also save to dedicated traders table
                 if (typeof saveTraderProfile === 'function') {
                     saveTraderProfile(rawData, localStorage.getItem('pulse_agent_id'));
@@ -2498,7 +2498,7 @@
 
             if (!navigator.onLine) { if (typeof queueOffline === 'function') queueOffline({ gigType: 'price_basket', pointsEarned: basePoints, bonusPoints: qualityBonus, summary, rawData }); }
             else {
-                try { if (typeof saveGigToDatabase === 'function') await saveGigToDatabase({ gigType: 'price_basket', pointsEarned: basePoints, bonusPoints: qualityBonus, summary, rawData }); } catch(e) { console.error('[Submit] Gig DB error:', e); }
+                try { if (typeof saveGigToDatabase === 'function') await saveGigToDatabase({ gigType: 'price_basket', pointsEarned: basePoints, bonusPoints: qualityBonus, summary, rawData, gpsLat: gps ? gps.lat : null, gpsLng: gps ? gps.lng : null, inCoverageZone: dqs ? !dqs.isOutOfZone : true, auditFlags: dqs ? dqs.auditFlags : [] }); } catch(e) { console.error('[Submit] Gig DB error:', e); }
                 try { if (typeof savePriceBasket === 'function') await savePriceBasket(rawData); } catch(e) { console.error('[Submit] Basket DB error:', e); }
             }
         }
@@ -2540,7 +2540,7 @@
 
             if (!navigator.onLine) { if (typeof queueOffline === 'function') queueOffline({ gigType: 'foot_traffic', pointsEarned: basePoints, bonusPoints: qualityBonus, summary, rawData }); }
             else {
-                try { if (typeof saveGigToDatabase === 'function') await saveGigToDatabase({ gigType: 'foot_traffic', pointsEarned: basePoints, bonusPoints: qualityBonus, summary, rawData }); } catch(e) { console.error('[Submit] Gig DB error:', e); }
+                try { if (typeof saveGigToDatabase === 'function') await saveGigToDatabase({ gigType: 'foot_traffic', pointsEarned: basePoints, bonusPoints: qualityBonus, summary, rawData, gpsLat: gps ? gps.lat : null, gpsLng: gps ? gps.lng : null, inCoverageZone: dqs ? !dqs.isOutOfZone : true, auditFlags: dqs ? dqs.auditFlags : [] }); } catch(e) { console.error('[Submit] Gig DB error:', e); }
             }
         }
 
@@ -2586,7 +2586,7 @@
 
             if (!navigator.onLine) { if (typeof queueOffline === 'function') queueOffline({ gigType: 'infrastructure', pointsEarned: basePoints, bonusPoints: qualityBonus, summary, rawData }); }
             else {
-                try { if (typeof saveGigToDatabase === 'function') await saveGigToDatabase({ gigType: 'infrastructure', pointsEarned: basePoints, bonusPoints: qualityBonus, summary, rawData }); } catch(e) { console.error('[Submit] Gig DB error:', e); }
+                try { if (typeof saveGigToDatabase === 'function') await saveGigToDatabase({ gigType: 'infrastructure', pointsEarned: basePoints, bonusPoints: qualityBonus, summary, rawData, gpsLat: gps ? gps.lat : null, gpsLng: gps ? gps.lng : null, inCoverageZone: dqs ? !dqs.isOutOfZone : true, auditFlags: dqs ? dqs.auditFlags : [] }); } catch(e) { console.error('[Submit] Gig DB error:', e); }
                 try { if (typeof saveInfraReport === 'function') await saveInfraReport(rawData); } catch(e) { console.error('[Submit] Infra DB error:', e); }
             }
         }
@@ -2623,10 +2623,10 @@
             if (typeof getAIAnswersForGig === 'function') getAIAnswersForGig('receipt_snap');
 
             const gpsCoords = await getGPSPosition();
-            const dqs = calculateDQS('receipt_snap', rawData);
+            const dqs = calculateDQS('receipt_snap', rawData, { hasGPS: !!gpsCoords, gpsCoords: gpsCoords });
             const qualityBonus = dqs.score >= 80 ? Math.round((dqs.score - 70) / 3) : 0;
 
-            await saveGigToDatabase({ gigType: 'receipt_snap', pointsEarned: 50, bonusPoints: qualityBonus, summary: `Receipt: ${rawData.supplier} R${rawData.receipt_amount} for ${name}`, rawData });
+            await saveGigToDatabase({ gigType: 'receipt_snap', pointsEarned: 50, bonusPoints: qualityBonus, summary: `Receipt: ${rawData.supplier} R${rawData.receipt_amount} for ${name}`, rawData, gpsLat: gpsCoords ? gpsCoords.lat : null, gpsLng: gpsCoords ? gpsCoords.lng : null, inCoverageZone: dqs ? !dqs.isOutOfZone : true, auditFlags: dqs ? dqs.auditFlags : [] });
             addLocalSubmission({ gigType: 'receipt_snap', pointsEarned: 50 + qualityBonus, summary: `Receipt: ${rawData.supplier} R${rawData.receipt_amount}`, rawData });
             award(50, `📸 Receipt Snap - ${name}`, qualityBonus);
             showDQSResult(dqs);
