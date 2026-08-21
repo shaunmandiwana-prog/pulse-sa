@@ -746,3 +746,192 @@ async function dispatchAdminNewAgentAlert(agentData) {
     }
 }
 
+// ═══════════════════════════════════════════════════
+// TRADER DEDUPLICATION & PROFILE IMMUTABILITY ENGINE
+// ═══════════════════════════════════════════════════
+
+/**
+ * Haversine formula to calculate distance between two GPS points in meters.
+ */
+function calculateDistanceMeters(lat1, lon1, lat2, lon2) {
+    if (!lat1 || !lon1 || !lat2 || !lon2) return null;
+    const R = 6371e3; // Earth radius in meters
+    const phi1 = Number(lat1) * Math.PI / 180;
+    const phi2 = Number(lat2) * Math.PI / 180;
+    const deltaPhi = (Number(lat2) - Number(lat1)) * Math.PI / 180;
+    const deltaLambda = (Number(lon2) - Number(lon1)) * Math.PI / 180;
+
+    const a = Math.sin(deltaPhi / 2) * Math.sin(deltaPhi / 2) +
+              Math.cos(phi1) * Math.cos(phi2) *
+              Math.sin(deltaLambda / 2) * Math.sin(deltaLambda / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+}
+
+/**
+ * Fuzzy name matching score (0 to 1).
+ */
+function calculateNameSimilarity(str1, str2) {
+    if (!str1 || !str2) return 0;
+    const clean = (s) => String(s).toLowerCase()
+        .replace(/['’]s\b/g, '')
+        .replace(/\b(spaza|shop|store|tuck|corner|fast food|salon|barber|tavern|shebeen|the|a|an)\b/g, '')
+        .replace(/[^a-z0-9]/g, ' ')
+        .trim().replace(/\s+/g, ' ');
+    
+    const c1 = clean(str1);
+    const c2 = clean(str2);
+    if (!c1 || !c2) return 0;
+    if (c1 === c2) return 1.0;
+    if (c1.includes(c2) || c2.includes(c1)) return 0.85;
+
+    // Dice coefficient on character bigrams
+    const getBigrams = (str) => {
+        const bigrams = new Set();
+        for (let i = 0; i < str.length - 1; i++) {
+            bigrams.add(str.slice(i, i + 2));
+        }
+        return bigrams;
+    };
+    const b1 = getBigrams(c1);
+    const b2 = getBigrams(c2);
+    if (b1.size === 0 || b2.size === 0) return 0;
+    let intersection = 0;
+    for (const bg of b1) {
+        if (b2.has(bg)) intersection++;
+    }
+    return (2 * intersection) / (b1.size + b2.size);
+}
+
+/**
+ * Find an existing trader by GPS proximity (<= 200m) and fuzzy name matching (Option A).
+ * Implements ISA 500 audit standards for data integrity and deduplication.
+ */
+async function findExistingTrader(queryName, township = '', gpsLat = null, gpsLng = null, radiusMeters = 200) {
+    if (!queryName || queryName.trim().length < 2) return { found: false, trader: null };
+    
+    const qName = queryName.trim();
+    let candidateTraders = [];
+
+    try {
+        const stats = await getDashboardStats();
+        if (stats && stats.liveTraders && stats.liveTraders.length > 0) {
+            candidateTraders = [...stats.liveTraders];
+        }
+    } catch(e) {
+        console.warn('[Pulse Deduplication] Dashboard stats fetch fallback:', e);
+    }
+
+    // Also check default ontology seed nodes if available
+    if (typeof ontologyData !== 'undefined' && ontologyData.nodes) {
+        ontologyData.nodes.filter(n => n.type === 'business').forEach(n => {
+            const p = n.properties || {};
+            const coords = p['GPS'] ? p['GPS'].split(',').map(s => parseFloat(s.trim())) : null;
+            if (!candidateTraders.some(c => (c.name || '').toLowerCase() === (p['Name'] || n.label).toLowerCase())) {
+                candidateTraders.push({
+                    id: n.id,
+                    dbId: n.id,
+                    name: p['Name'] || n.label,
+                    township: p['Township'] || 'Soweto',
+                    type: p['Type'] || 'Spaza Shop',
+                    gps_lat: coords ? coords[0] : null,
+                    gps_lng: coords ? coords[1] : null,
+                    raw: p,
+                    agent_id: 'PSA-ZA-01',
+                    submitted_at: '2026-08-15T10:00:00Z',
+                    source: 'seed_ontology'
+                });
+            }
+        });
+    }
+
+    for (const candidate of candidateTraders) {
+        const candName = candidate.name || (candidate.raw && (candidate.raw.name || candidate.raw.business_name)) || '';
+        const nameSim = calculateNameSimilarity(qName, candName);
+        
+        let distMeters = null;
+        let cLat = candidate.gps_lat || (candidate.raw && (candidate.raw.gps_lat || candidate.raw.gpsLat));
+        let cLng = candidate.gps_lng || (candidate.raw && (candidate.raw.gps_lng || candidate.raw.gpsLng));
+        
+        if (gpsLat && gpsLng && cLat && cLng) {
+            distMeters = calculateDistanceMeters(parseFloat(gpsLat), parseFloat(gpsLng), parseFloat(cLat), parseFloat(cLng));
+        }
+
+        // Option A (User Approved): GPS within 200m AND name similarity >= 0.45
+        if (distMeters !== null && distMeters <= radiusMeters && nameSim >= 0.45) {
+            return {
+                found: true,
+                trader: candidate,
+                matchType: 'proximity_and_name',
+                distanceMeters: Math.round(distMeters),
+                nameSimilarity: Math.round(nameSim * 100),
+                reason: `Existing verified business "${candName}" located ${Math.round(distMeters)}m away (${Math.round(nameSim * 100)}% name match).`
+            };
+        }
+
+        // Fallback: Strong name match in same township if GPS not provided or far
+        if (township && candidate.township && candidate.township.toLowerCase().includes(township.toLowerCase()) && nameSim >= 0.8) {
+            return {
+                found: true,
+                trader: candidate,
+                matchType: 'township_and_exact_name',
+                distanceMeters: distMeters ? Math.round(distMeters) : null,
+                nameSimilarity: Math.round(nameSim * 100),
+                reason: `Existing verified business "${candName}" already registered in ${township}.`
+            };
+        }
+    }
+
+    return { found: false, trader: null };
+}
+
+/**
+ * Submit an edit permission request to Head Office (shaun@pulseintel.co.za).
+ * Under ISA 500 audit standards, verified business profiles remain locked until authorized.
+ */
+async function requestProfileEdit({ traderId, traderName, agentId, agentName, reason, fieldChanges }) {
+    const payload = {
+        recipient_email: 'shaun@pulseintel.co.za',
+        subject: `\ud83d\udd12 [EDIT PERMISSION REQUEST] Trader: ${traderName} (ID: ${traderId})`,
+        trader_id: traderId,
+        trader_name: traderName,
+        agent_id: agentId || 'Unknown',
+        agent_name: agentName || 'Unknown Agent',
+        reason: reason || 'Information update required',
+        field_changes: fieldChanges || 'General review requested',
+        requested_at: new Date().toISOString(),
+        message_body: `TRADER PROFILE EDIT PERMISSION REQUEST\n\n` +
+            `Trader: ${traderName} (ID: ${traderId})\n` +
+            `Requesting Agent: ${agentName} (${agentId})\n` +
+            `Reason for Edit: ${reason}\n` +
+            `Timestamp: ${new Date().toLocaleString('en-ZA', { timeZone: 'Africa/Johannesburg' })}\n\n` +
+            `Under ISA 500 audit standards, verified business profiles remain locked until authorized by Head Office.\n` +
+            `To approve or deny this request, manage in your Supabase admin dashboard.`
+    };
+
+    try {
+        if (isDBReady()) {
+            const db = getDB();
+            try {
+                await db.from('email_notifications').insert([{
+                    recipient: 'shaun@pulseintel.co.za',
+                    template: 'trader_profile_edit_request',
+                    payload: payload,
+                    status: 'pending',
+                    created_at: new Date().toISOString()
+                }]);
+            } catch(e) {
+                console.warn('[Pulse DB] Edit request log failed:', e.message);
+            }
+        }
+        // Also save locally in localStorage for offline resilience
+        const existing = JSON.parse(localStorage.getItem('pulse_edit_requests') || '[]');
+        existing.push(payload);
+        localStorage.setItem('pulse_edit_requests', JSON.stringify(existing));
+        return { success: true };
+    } catch(err) {
+        console.error('[Pulse DB] Error in requestProfileEdit:', err);
+        return { success: false, error: err.message };
+    }
+}
+

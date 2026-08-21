@@ -746,9 +746,101 @@
                 ✓ Credentials &amp; POPIA packet dispatched to your email!
             </div>
 
-            <button onclick="closeBadgeModal()" style="width:100%;background:linear-gradient(135deg,#a855f7,#7c3aed);border:none;border-radius:12px;padding:14px;color:#fff;font-size:0.88rem;font-weight:800;cursor:pointer;box-shadow:0 6px 20px rgba(168,85,247,0.4);">
-                🚀 Start Mapping &amp; Earning
-            </button>
+    <!-- LOCKED TRADER PROFILE MODAL (ISA 500 IMMUTABILITY & DEDUPLICATION) -->
+    <div id="trader-locked-modal" style="display:none;position:fixed;inset:0;z-index:10000;background:rgba(8,10,18,0.96);backdrop-filter:blur(14px);flex-direction:column;align-items:center;justify-content:center;padding:16px;overflow-y:auto;">
+        <div style="width:100%;max-width:440px;background:linear-gradient(145deg,#131628,#0c0e1a);border:2px solid rgba(245,158,11,0.4);border-radius:20px;padding:22px;box-shadow:0 16px 48px rgba(0,0,0,0.6);text-align:center;position:relative;margin:auto;">
+            <!-- Header -->
+            <div style="display:flex;align-items:center;justify-content:center;gap:6px;font-size:0.6rem;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:#fbbf24;margin-bottom:8px;">
+                <i class="fa-solid fa-lock"></i> Verified Immutable Record (ISA 500)
+            </div>
+            
+            <div style="width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,rgba(245,158,11,0.2),rgba(168,85,247,0.2));border:1px solid rgba(245,158,11,0.4);margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;">
+                🏪
+            </div>
+
+            <h3 id="locked-trader-title" style="font-size:1.15rem;font-weight:800;color:#f0f2ff;margin-bottom:2px;">Sizwe's Spaza Shop</h3>
+            <div id="locked-trader-meta" style="font-size:0.65rem;color:#8b8fa8;margin-bottom:12px;">Soweto • Spaza Shop • Captured by Agent PSA-ZA-01</div>
+
+            <div id="locked-match-alert" style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.25);border-radius:10px;padding:10px 12px;margin-bottom:14px;text-align:left;">
+                <div style="font-size:0.66rem;color:#fbbf24;font-weight:700;margin-bottom:3px;"><i class="fa-solid fa-triangle-exclamation" style="margin-right:4px;"></i>Business Profile Already Exists</div>
+                <div id="locked-match-reason" style="font-size:0.62rem;color:#cbd5e1;line-height:1.4;">This business was already profiled by another verified field agent. In accordance with ISA 500 audit standards, KYC profiles cannot be duplicated.</div>
+            </div>
+
+            <!-- Read-Only Profile Highlights -->
+            <div id="locked-profile-fields" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:12px;text-align:left;font-size:0.68rem;margin-bottom:16px;display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                <!-- Populated dynamically by JS -->
+            </div>
+
+            <!-- Ongoing Actions Section -->
+            <div style="text-align:left;margin-bottom:16px;">
+                <div style="font-size:0.6rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#00f2fe;margin-bottom:6px;">
+                    <i class="fa-solid fa-chart-line" style="margin-right:4px;"></i>Collect Ongoing Data for This Business
+                </div>
+                <div style="display:flex;flex-direction:column;gap:6px;">
+                    <button onclick="startOngoingGigFromLocked('basket')" style="display:flex;align-items:center;justify-content:space-between;background:rgba(0,242,254,0.08);border:1px solid rgba(0,242,254,0.25);border-radius:10px;padding:9px 12px;color:#f0f2ff;font-size:0.72rem;font-weight:700;cursor:pointer;font-family:inherit;">
+                        <span><i class="fa-solid fa-basket-shopping" style="color:#00f2fe;margin-right:8px;"></i>Log Price Basket</span>
+                        <span style="color:#00f2fe;font-size:0.65rem;">+150 pts →</span>
+                    </button>
+                    <button onclick="startOngoingGigFromLocked('verify')" style="display:flex;align-items:center;justify-content:space-between;background:rgba(168,85,247,0.08);border:1px solid rgba(168,85,247,0.25);border-radius:10px;padding:9px 12px;color:#f0f2ff;font-size:0.72rem;font-weight:700;cursor:pointer;font-family:inherit;">
+                        <span><i class="fa-solid fa-person-walking" style="color:#a855f7;margin-right:8px;"></i>Log Foot-Traffic Count</span>
+                        <span style="color:#a855f7;font-size:0.65rem;">+80 pts →</span>
+                    </button>
+                    <button onclick="startOngoingGigFromLocked('receipt')" style="display:flex;align-items:center;justify-content:space-between;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.25);border-radius:10px;padding:9px 12px;color:#f0f2ff;font-size:0.72rem;font-weight:700;cursor:pointer;font-family:inherit;">
+                        <span><i class="fa-solid fa-receipt" style="color:#22c55e;margin-right:8px;"></i>Snap Purchase Receipt</span>
+                        <span style="color:#22c55e;font-size:0.65rem;">+50 pts →</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Permission & Close Buttons -->
+            <div style="display:flex;gap:8px;">
+                <button onclick="openEditRequestModal()" style="flex:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);border-radius:10px;padding:11px;color:#cbd5e1;font-size:0.72rem;font-weight:700;cursor:pointer;font-family:inherit;">
+                    <i class="fa-solid fa-key" style="margin-right:4px;"></i>Request Edit
+                </button>
+                <button onclick="closeLockedModal()" style="flex:1;background:linear-gradient(135deg,#a855f7,#7c3aed);border:none;border-radius:10px;padding:11px;color:#fff;font-size:0.75rem;font-weight:800;cursor:pointer;font-family:inherit;">
+                    Back to Gigs
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- EDIT REQUEST MODAL -->
+    <div id="trader-edit-modal" style="display:none;position:fixed;inset:0;z-index:10001;background:rgba(8,10,18,0.96);backdrop-filter:blur(14px);flex-direction:column;align-items:center;justify-content:center;padding:16px;">
+        <div style="width:100%;max-width:420px;background:linear-gradient(145deg,#131628,#0c0e1a);border:2px solid rgba(168,85,247,0.4);border-radius:20px;padding:22px;box-shadow:0 16px 48px rgba(0,0,0,0.6);text-align:left;position:relative;">
+            <div style="font-size:0.6rem;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:#a855f7;margin-bottom:6px;">
+                <i class="fa-solid fa-shield-halved" style="margin-right:4px;"></i>Head Office Authorization (ISA 500)
+            </div>
+            <h3 style="font-size:1.05rem;font-weight:800;color:#f0f2ff;margin-bottom:4px;">Request Profile Edit Permission</h3>
+            <p style="font-size:0.64rem;color:#8b8fa8;line-height:1.45;margin-bottom:14px;">
+                Verified KYC records require Head Office approval before modifications to preserve audit integrity. Shaun Mandiwana will review your submission.
+            </p>
+
+            <div style="margin-bottom:12px;">
+                <label style="font-size:0.6rem;font-weight:700;text-transform:uppercase;color:#8b8fa8;display:block;margin-bottom:4px;">Reason for Modification</label>
+                <select id="edit-req-reason" style="width:100%;background:#0f1120;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px;color:#f0f2ff;font-size:0.75rem;outline:none;">
+                    <option value="New Card Machine / Terminal Installed">New Card Machine / Terminal Installed</option>
+                    <option value="Ownership / Management Changed">Ownership / Management Changed</option>
+                    <option value="Business Relocated or Expanded Premises">Business Relocated or Expanded Premises</option>
+                    <option value="Registered for CIPC / SARS / VAT">Registered for CIPC / SARS / VAT</option>
+                    <option value="Significant Revenue or Sourcing Shift">Significant Revenue or Sourcing Shift</option>
+                    <option value="Correction of Previously Logged Information">Correction of Previously Logged Information</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <div style="margin-bottom:16px;">
+                <label style="font-size:0.6rem;font-weight:700;text-transform:uppercase;color:#8b8fa8;display:block;margin-bottom:4px;">Specific Changes / Motivation</label>
+                <textarea id="edit-req-details" rows="3" placeholder="e.g. Trader now uses Yoco Go card machine and registered for Turnover Tax with SARS..." style="width:100%;background:#0f1120;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px;color:#f0f2ff;font-size:0.75rem;outline:none;font-family:inherit;resize:none;"></textarea>
+            </div>
+
+            <div style="display:flex;gap:8px;">
+                <button onclick="closeEditRequestModal()" style="flex:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:11px;color:#cbd5e1;font-size:0.72rem;font-weight:700;cursor:pointer;font-family:inherit;">
+                    Cancel
+                </button>
+                <button onclick="submitEditRequest()" id="btn-submit-edit-req" style="flex:1.4;background:linear-gradient(135deg,#a855f7,#7c3aed);border:none;border-radius:10px;padding:11px;color:#fff;font-size:0.75rem;font-weight:800;cursor:pointer;font-family:inherit;">
+                    Submit to Head Office
+                </button>
+            </div>
         </div>
     </div>
 
@@ -1027,7 +1119,7 @@
                             <div id="turnover-tax-recommendation" style="display:none;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);border-radius:8px;padding:8px 10px;font-size:0.62rem;color:#86efac;margin-bottom:6px;"></div>
                         </div>
 
-                        <button class="btn btn-primary" onclick="profileStep(2)">Next → Financial Infrastructure</button>
+                        <button class="btn btn-primary" onclick="proceedFromStep1()">Next → Financial Infrastructure</button>
                     </div>
                     <!-- Step 2 -->
                     <!-- Step 2: Financial Infrastructure -->
@@ -3477,6 +3569,206 @@
             const container = document.getElementById('ob-ward-container');
             if (container) container.style.display = 'none';
             showWardState('none');
+        }
+
+        // ═══════════════════════════════════════════════════
+        // TRADER DEDUPLICATION & IMMUTABILITY (ISA 500)
+        // ═══════════════════════════════════════════════════
+
+        let currentLockedTrader = null;
+
+        /**
+         * Intercepts Step 1 Next button to perform GPS + Fuzzy Name Deduplication.
+         * Prevents duplicate KYC profiles from being created.
+         */
+        async function proceedFromStep1() {
+            const nameInput = document.getElementById('a-name');
+            const townshipInput = document.getElementById('a-township');
+            const name = nameInput ? nameInput.value.trim() : '';
+            const township = townshipInput ? townshipInput.value : '';
+
+            if (!name) {
+                alert('Please enter the Business Name (Trading As) before continuing.');
+                if (nameInput) nameInput.focus();
+                return;
+            }
+
+            // Capture GPS for proximity check
+            let gps = null;
+            try {
+                if (typeof getGPSPosition === 'function') {
+                    gps = await getGPSPosition();
+                }
+            } catch(e) {
+                console.warn('[Deduplication] GPS capture fallback:', e);
+            }
+
+            // Check database and local ontology for matching trader
+            if (typeof findExistingTrader === 'function') {
+                const matchResult = await findExistingTrader(name, township, gps ? gps.lat : null, gps ? gps.lng : null, 200);
+                if (matchResult.found && matchResult.trader) {
+                    console.log('[Pulse Deduplication] Duplicate trader detected:', matchResult);
+                    showLockedTraderProfile(matchResult.trader, matchResult.reason);
+                    return;
+                }
+            }
+
+            // No duplicate found — proceed to Step 2
+            profileStep(2);
+        }
+
+        /**
+         * Renders the immutable Read-Only Profile modal for an existing trader.
+         */
+        function showLockedTraderProfile(trader, matchReason) {
+            currentLockedTrader = trader;
+            const r = trader.raw || {};
+            const traderName = trader.name || r.name || r['Name'] || 'Verified Business';
+            const traderType = trader.type || r.type || r['Type'] || 'Spaza Shop';
+            const township = trader.township || r.township || r['Township'] || 'Township Area';
+            const agentId = trader.agent_id || r.agent_id || 'PSA-ZA-01';
+            const dateStr = trader.submitted_at ? new Date(trader.submitted_at).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short', year: 'numeric' }) : '15 Aug 2026';
+
+            document.getElementById('locked-trader-title').textContent = traderName;
+            document.getElementById('locked-trader-meta').textContent = `${township} • ${traderType} • Captured by ${agentId} (${dateStr})`;
+            document.getElementById('locked-match-reason').textContent = matchReason || 'This business has already completed its one-time KYC profile. Under ISA 500 audit standards, verified records cannot be duplicated.';
+
+            // Render detailed KYC summary fields
+            const fieldsContainer = document.getElementById('locked-profile-fields');
+            const owner = r.owner_name || r['Owner Name'] || 'Verified on file';
+            const cipc = r.cipc_registered || (r['CIPC'] ? 'Yes' : 'No');
+            const sars = r.sars_registered || (r['SARS'] ? 'Yes' : 'No');
+            const bank = r.bank_account || r['Bank Account'] || 'Capitec Savings';
+            const cardMachine = r.card_machine || (r.accepts_card === 'Yes' ? 'Active Terminal' : 'Cash Only');
+            const products = r.top_products || r['Top Products'] || 'Staple Groceries, Airtime';
+            const turnover = r.turnover_good_day ? `R${r.turnover_good_day}/day` : (r['Monthly Turnover (Reconciled)'] || 'R24,000/mo');
+
+            fieldsContainer.innerHTML = `
+                <div style="background:rgba(255,255,255,0.02);padding:6px 8px;border-radius:6px;border-left:2px solid #a855f7;">
+                    <span style="color:#8b8fa8;font-size:0.56rem;display:block;">Owner / Operator</span>
+                    <strong style="color:#f0f2ff;font-size:0.68rem;">${owner}</strong>
+                </div>
+                <div style="background:rgba(255,255,255,0.02);padding:6px 8px;border-radius:6px;border-left:2px solid #00f2fe;">
+                    <span style="color:#8b8fa8;font-size:0.56rem;display:block;">Category</span>
+                    <strong style="color:#f0f2ff;font-size:0.68rem;">${traderType}</strong>
+                </div>
+                <div style="background:rgba(255,255,255,0.02);padding:6px 8px;border-radius:6px;border-left:2px solid #22c55e;">
+                    <span style="color:#8b8fa8;font-size:0.56rem;display:block;">CIPC / SARS Status</span>
+                    <strong style="color:#f0f2ff;font-size:0.68rem;">CIPC: ${cipc} | SARS: ${sars}</strong>
+                </div>
+                <div style="background:rgba(255,255,255,0.02);padding:6px 8px;border-radius:6px;border-left:2px solid #fbbf24;">
+                    <span style="color:#8b8fa8;font-size:0.56rem;display:block;">Primary Bank</span>
+                    <strong style="color:#f0f2ff;font-size:0.68rem;">${bank}</strong>
+                </div>
+                <div style="background:rgba(255,255,255,0.02);padding:6px 8px;border-radius:6px;border-left:2px solid #a855f7;">
+                    <span style="color:#8b8fa8;font-size:0.56rem;display:block;">Payment Terminal</span>
+                    <strong style="color:#f0f2ff;font-size:0.68rem;">${cardMachine}</strong>
+                </div>
+                <div style="background:rgba(255,255,255,0.02);padding:6px 8px;border-radius:6px;border-left:2px solid #00f2fe;">
+                    <span style="color:#8b8fa8;font-size:0.56rem;display:block;">Reported Revenue</span>
+                    <strong style="color:#f0f2ff;font-size:0.68rem;">${turnover}</strong>
+                </div>
+            `;
+
+            const modal = document.getElementById('trader-locked-modal');
+            if (modal) modal.style.display = 'flex';
+        }
+
+        function closeLockedModal() {
+            const modal = document.getElementById('trader-locked-modal');
+            if (modal) modal.style.display = 'none';
+            goTo('home');
+        }
+
+        function openEditRequestModal() {
+            const modal = document.getElementById('trader-edit-modal');
+            if (modal) modal.style.display = 'flex';
+        }
+
+        function closeEditRequestModal() {
+            const modal = document.getElementById('trader-edit-modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        /**
+         * Submits an edit permission request to Head Office.
+         */
+        async function submitEditRequest() {
+            const reason = document.getElementById('edit-req-reason').value;
+            const details = document.getElementById('edit-req-details').value.trim();
+            const btn = document.getElementById('btn-submit-edit-req');
+
+            if (!details) {
+                alert('Please provide a brief explanation for why this profile requires modifications.');
+                return;
+            }
+
+            btn.textContent = 'Submitting to Head Office...';
+            btn.disabled = true;
+
+            const traderId = currentLockedTrader ? (currentLockedTrader.id || currentLockedTrader.dbId || 'unknown') : 'trader_id';
+            const traderName = currentLockedTrader ? (currentLockedTrader.name || 'Verified Trader') : 'Verified Trader';
+            const agentId = localStorage.getItem('pulse_agent_id') || 'PSA-ZA-2026';
+            const agentName = localStorage.getItem('pulse_agent_name') || 'Field Agent';
+
+            try {
+                if (typeof requestProfileEdit === 'function') {
+                    await requestProfileEdit({
+                        traderId,
+                        traderName,
+                        agentId,
+                        agentName,
+                        reason,
+                        fieldChanges: details
+                    });
+                }
+            } catch(e) {
+                console.warn('[Pulse] Edit request dispatch:', e);
+            }
+
+            btn.textContent = 'Submit to Head Office';
+            btn.disabled = false;
+
+            closeEditRequestModal();
+            closeLockedModal();
+            showToast('🔒 Edit request sent to Shaun Mandiwana (Head Office). You will be notified once reviewed.');
+        }
+
+        /**
+         * Redirects the agent to an ongoing intelligence gig with pre-populated trader data.
+         */
+        function startOngoingGigFromLocked(gigType) {
+            if (!currentLockedTrader) return;
+            const tName = currentLockedTrader.name || 'Verified Trader';
+            const tTownship = currentLockedTrader.township || 'Soweto';
+
+            // Close locked modal first
+            const modal = document.getElementById('trader-locked-modal');
+            if (modal) modal.style.display = 'none';
+
+            if (gigType === 'basket') {
+                const nameEl = document.getElementById('bk-name');
+                const townEl = document.getElementById('bk-township');
+                if (nameEl) nameEl.value = tName;
+                if (townEl) townEl.value = tTownship;
+                goTo('gig-basket');
+                showToast(`🛒 Logging Price Basket for ${tName}`);
+            } else if (gigType === 'verify') {
+                const nameEl = document.getElementById('ft-name');
+                const locEl = document.getElementById('ft-location');
+                if (nameEl) nameEl.value = tName;
+                if (locEl) locEl.value = tTownship;
+                goTo('gig-verify');
+                showToast(`👥 Verifying Foot Traffic for ${tName}`);
+            } else if (gigType === 'receipt') {
+                goTo('gig-receipt');
+                showToast(`🧾 Snapping Receipt for ${tName}`);
+            } else if (gigType === 'infra') {
+                const locEl = document.getElementById('ir-location');
+                if (locEl) locEl.value = tTownship;
+                goTo('gig-infra');
+                showToast(`⚡ Reporting Infrastructure in ${tTownship}`);
+            }
         }
 
     </script>
