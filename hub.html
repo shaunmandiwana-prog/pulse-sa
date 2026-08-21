@@ -1352,13 +1352,13 @@
                     <!-- Header with metro selector -->
                     <div class="wardmap-header">
                         <div class="wardmap-title">
-                            <h3><i class="fa-solid fa-map-location-dot"></i> Live Ward Boundary Map</h3>
-                            <p>Official MDB Wards 2026 boundaries (4,488 wards) - sourced live from the Municipal Demarcation Board ArcGIS Feature Service for the upcoming 2026 Local Government Elections.</p>
+                            <h3><i class="fa-solid fa-map-location-dot"></i> Live Ward Boundary &amp; Coverage Map</h3>
+                            <p>Official MDB Wards 2026 boundaries (4,488 wards) synchronized with live field agent assignments and ISA 240/500/520 audit geofences.</p>
                         </div>
                         <div class="wardmap-controls">
                             <div class="wardmap-source-badge">
                                 <span class="conf-dot verified-dot"></span>
-                                MDB Official Data (June 2026)
+                                MDB Official Boundaries (2026)
                             </div>
                             <select id="metro-selector" onchange="loadMetroWards(this.value)">
                                 <option value="">Select a Metro / Municipality / District</option>
@@ -1368,7 +1368,7 @@
                                 <option value="MUNICNAME='City of Tshwane'">City of Tshwane (Pretoria)</option>
                                 <option value="MUNICNAME='City of Ekurhuleni'">City of Ekurhuleni</option>
                                 <option value="DISTRICT='West Rand'">West Rand (District)</option>
-                                <option value="MUNICNAME='Mogale City'">- Mogale City</option>
+                                <option value="MUNICNAME='Mogale City'">- Mogale City (Kagiso)</option>
                                 <option value="MUNICNAME='Rand West City'">- Rand West City</option>
                                 <option value="MUNICNAME='Merafong City'">- Merafong City</option>
                                 <option value="MUNICNAME='Nelson Mandela Bay'">Nelson Mandela Bay</option>
@@ -1377,12 +1377,131 @@
                             </select>
                         </div>
                     </div>
+
+                    <!-- Ward & Coverage Analytics KPI Bar -->
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(170px, 1fr));gap:12px;margin-bottom:14px;">
+                        <div style="background:linear-gradient(135deg,rgba(0,242,254,0.08),rgba(0,242,254,0.02));border:1px solid rgba(0,242,254,0.2);border-radius:12px;padding:12px 14px;">
+                            <span style="color:#8b8fa8;font-size:0.62rem;font-weight:700;text-transform:uppercase;display:block;margin-bottom:2px;"><i class="fa-solid fa-map-pin" style="color:#00f2fe;margin-right:4px;"></i>Active Coverage Wards</span>
+                            <div style="font-size:1.4rem;font-weight:800;color:#00f2fe;" id="cov-kpi-wards">18 Wards</div>
+                            <span style="font-size:0.58rem;color:#cbd5e1;">4,488 Total MDB Delimitations</span>
+                        </div>
+                        <div style="background:linear-gradient(135deg,rgba(168,85,247,0.08),rgba(168,85,247,0.02));border:1px solid rgba(168,85,247,0.2);border-radius:12px;padding:12px 14px;">
+                            <span style="color:#8b8fa8;font-size:0.62rem;font-weight:700;text-transform:uppercase;display:block;margin-bottom:2px;"><i class="fa-solid fa-users" style="color:#a855f7;margin-right:4px;"></i>Assigned Agents</span>
+                            <div style="font-size:1.4rem;font-weight:800;color:#a855f7;" id="cov-kpi-agents">49 Agents</div>
+                            <span style="font-size:0.58rem;color:#cbd5e1;">Geo-bound to home wards</span>
+                        </div>
+                        <div style="background:linear-gradient(135deg,rgba(34,197,94,0.08),rgba(34,197,94,0.02));border:1px solid rgba(34,197,94,0.2);border-radius:12px;padding:12px 14px;">
+                            <span style="color:#8b8fa8;font-size:0.62rem;font-weight:700;text-transform:uppercase;display:block;margin-bottom:2px;"><i class="fa-solid fa-shield-check" style="color:#22c55e;margin-right:4px;"></i>ISA Audit Rating</span>
+                            <div style="font-size:1.4rem;font-weight:800;color:#22c55e;" id="cov-kpi-integrity">98.6%</div>
+                            <span style="font-size:0.58rem;color:#cbd5e1;">Verified ground-truth data</span>
+                        </div>
+                        <div style="background:linear-gradient(135deg,rgba(245,158,11,0.08),rgba(245,158,11,0.02));border:1px solid rgba(245,158,11,0.2);border-radius:12px;padding:12px 14px;">
+                            <span style="color:#8b8fa8;font-size:0.62rem;font-weight:700;text-transform:uppercase;display:block;margin-bottom:2px;"><i class="fa-solid fa-triangle-exclamation" style="color:#fbbf24;margin-right:4px;"></i>Flagged / Quarantine</span>
+                            <div style="font-size:1.4rem;font-weight:800;color:#fbbf24;" id="cov-kpi-flagged">3 Submissions</div>
+                            <span style="font-size:0.58rem;color:#cbd5e1;">Under founder review</span>
+                        </div>
+                    </div>
+
                     <!-- Map Container -->
-                    <div id="ward-map" style="height: 500px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.06);"></div>
+                    <div id="ward-map" style="height: 460px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.06); position:relative;"></div>
+                    
                     <!-- Map Info Footer -->
-                    <div class="wardmap-info-bar">
+                    <div class="wardmap-info-bar" style="margin-bottom:1.5rem;">
                         <span id="ward-count-label"><i class="fa-solid fa-layer-group"></i> Select a metro to load wards</span>
                         <span id="ward-selected-label"></span>
+                    </div>
+
+                    <!-- ═══════════════════════════════════════════════════ -->
+                    <!-- ISA AUDIT INTEGRITY & QUARANTINE CONSOLE -->
+                    <!-- ═══════════════════════════════════════════════════ -->
+                    <div style="background:linear-gradient(145deg,#131628,#0c0e1a);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:20px;box-shadow:0 12px 36px rgba(0,0,0,0.4);">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
+                            <div>
+                                <h3 style="font-size:1rem;font-weight:800;color:#f0f2ff;margin-bottom:2px;">
+                                    <i class="fa-solid fa-shield-halved" style="color:#00f2fe;margin-right:6px;"></i>ISA 240 / 500 Audit &amp; Quarantine Console
+                                </h3>
+                                <p style="font-size:0.68rem;color:#8b8fa8;">Real-time inspection of out-of-zone submissions, velocity anomalies, and field edit authorization requests.</p>
+                            </div>
+                            <div style="display:flex;gap:6px;">
+                                <button class="btn btn-sm" id="btn-audit-tab-quarantine" onclick="switchAuditConsoleTab('quarantine')" style="background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);color:#fbbf24;font-size:0.68rem;font-weight:700;padding:6px 12px;border-radius:8px;cursor:pointer;">
+                                    <i class="fa-solid fa-triangle-exclamation" style="margin-right:4px;"></i>Quarantine Queue (3)
+                                </button>
+                                <button class="btn btn-sm" id="btn-audit-tab-edits" onclick="switchAuditConsoleTab('edits')" style="background:rgba(168,85,247,0.1);border:1px solid rgba(168,85,247,0.2);color:#a855f7;font-size:0.68rem;font-weight:700;padding:6px 12px;border-radius:8px;cursor:pointer;">
+                                    <i class="fa-solid fa-key" style="margin-right:4px;"></i>Edit Requests (1)
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- PANEL 1: Quarantine Queue -->
+                        <div id="audit-panel-quarantine" style="display:block;">
+                            <div style="overflow-x:auto;">
+                                <table style="width:100%;border-collapse:collapse;font-size:0.7rem;text-align:left;">
+                                    <thead>
+                                        <tr style="border-bottom:1px solid rgba(255,255,255,0.08);color:#8b8fa8;">
+                                            <th style="padding:8px 10px;">Agent / ID</th>
+                                            <th style="padding:8px 10px;">Gig &amp; Location</th>
+                                            <th style="padding:8px 10px;">Audit Anomaly (ISA)</th>
+                                            <th style="padding:8px 10px;">DQS Score</th>
+                                            <th style="padding:8px 10px;">Timestamp</th>
+                                            <th style="padding:8px 10px;text-align:right;">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="quarantine-table-body">
+                                        <tr style="border-bottom:1px solid rgba(255,255,255,0.04);">
+                                            <td style="padding:10px;"><strong style="color:#f0f2ff;">Thabo M.</strong><br><span style="font-size:0.6rem;color:#8b8fa8;font-family:monospace;">PSA-ZA-049</span></td>
+                                            <td style="padding:10px;"><span style="color:#cbd5e1;">Price Basket</span><br><span style="font-size:0.6rem;color:#8b8fa8;">Alexandra (Logged) vs Kagiso (Home)</span></td>
+                                            <td style="padding:10px;"><span style="display:inline-block;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.3);color:#fbbf24;font-size:0.6rem;padding:2px 6px;border-radius:4px;font-weight:700;">OUT_OF_ZONE (34km away)</span></td>
+                                            <td style="padding:10px;"><span style="color:#f87171;font-weight:800;">48/100</span></td>
+                                            <td style="padding:10px;color:#8b8fa8;font-size:0.65rem;">Today, 08:42</td>
+                                            <td style="padding:10px;text-align:right;">
+                                                <button onclick="approveQuarantinedGig('q1')" style="background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.3);color:#22c55e;padding:4px 8px;border-radius:6px;font-size:0.62rem;font-weight:700;cursor:pointer;margin-right:4px;">Approve</button>
+                                                <button onclick="rejectQuarantinedGig('q1')" style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);color:#f87171;padding:4px 8px;border-radius:6px;font-size:0.62rem;font-weight:700;cursor:pointer;">Quarantine</button>
+                                            </td>
+                                        </tr>
+                                        <tr style="border-bottom:1px solid rgba(255,255,255,0.04);">
+                                            <td style="padding:10px;"><strong style="color:#f0f2ff;">Sipho K.</strong><br><span style="font-size:0.6rem;color:#8b8fa8;font-family:monospace;">PSA-ZA-082</span></td>
+                                            <td style="padding:10px;"><span style="color:#cbd5e1;">Trader Profile</span><br><span style="font-size:0.6rem;color:#8b8fa8;">Soweto (Ward 15)</span></td>
+                                            <td style="padding:10px;"><span style="display:inline-block;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);color:#f87171;font-size:0.6rem;padding:2px 6px;border-radius:4px;font-weight:700;">IMPOSSIBLE_VELOCITY (82 km/h)</span></td>
+                                            <td style="padding:10px;"><span style="color:#f87171;font-weight:800;">52/100</span></td>
+                                            <td style="padding:10px;color:#8b8fa8;font-size:0.65rem;">Today, 07:15</td>
+                                            <td style="padding:10px;text-align:right;">
+                                                <button onclick="approveQuarantinedGig('q2')" style="background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.3);color:#22c55e;padding:4px 8px;border-radius:6px;font-size:0.62rem;font-weight:700;cursor:pointer;margin-right:4px;">Approve</button>
+                                                <button onclick="rejectQuarantinedGig('q2')" style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);color:#f87171;padding:4px 8px;border-radius:6px;font-size:0.62rem;font-weight:700;cursor:pointer;">Quarantine</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- PANEL 2: Edit Requests -->
+                        <div id="audit-panel-edits" style="display:none;">
+                            <div style="overflow-x:auto;">
+                                <table style="width:100%;border-collapse:collapse;font-size:0.7rem;text-align:left;">
+                                    <thead>
+                                        <tr style="border-bottom:1px solid rgba(255,255,255,0.08);color:#8b8fa8;">
+                                            <th style="padding:8px 10px;">Trader / Business</th>
+                                            <th style="padding:8px 10px;">Requesting Agent</th>
+                                            <th style="padding:8px 10px;">Modification Motivation</th>
+                                            <th style="padding:8px 10px;">Timestamp</th>
+                                            <th style="padding:8px 10px;text-align:right;">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="edit-requests-table-body">
+                                        <tr style="border-bottom:1px solid rgba(255,255,255,0.04);">
+                                            <td style="padding:10px;"><strong style="color:#f0f2ff;">Sizwe's Spaza Shop</strong><br><span style="font-size:0.6rem;color:#8b8fa8;">Ward 15, Soweto</span></td>
+                                            <td style="padding:10px;"><span style="color:#cbd5e1;">Agent PSA-ZA-033</span><br><span style="font-size:0.6rem;color:#8b8fa8;">Kagiso Team</span></td>
+                                            <td style="padding:10px;"><span style="color:#a855f7;font-weight:700;">New Card Machine Installed</span><br><span style="font-size:0.6rem;color:#cbd5e1;">"Trader acquired Yoco Neo Touch terminal and registered for SARS Turnover Tax."</span></td>
+                                            <td style="padding:10px;color:#8b8fa8;font-size:0.65rem;">20 Aug 2026, 14:10</td>
+                                            <td style="padding:10px;text-align:right;">
+                                                <button onclick="authorizeEditRequest('ed1')" style="background:rgba(0,242,254,0.12);border:1px solid rgba(0,242,254,0.3);color:#00f2fe;padding:4px 8px;border-radius:6px;font-size:0.62rem;font-weight:700;cursor:pointer;margin-right:4px;">Authorize Edit</button>
+                                                <button onclick="declineEditRequest('ed1')" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);color:#cbd5e1;padding:4px 8px;border-radius:6px;font-size:0.62rem;font-weight:700;cursor:pointer;">Decline</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

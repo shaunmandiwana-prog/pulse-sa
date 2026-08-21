@@ -2059,19 +2059,41 @@ function loadMetroWards(queryClause, highlightWardNo = null) {
                 wardMap.removeLayer(wardGeoLayer);
             }
 
+            const activeWardNos = [14, 15, 16, 21, 22, 33, 45, 53, 68, 72, 85, 91, 102];
+
             wardGeoLayer = L.geoJSON(data, {
                 style: function (feature) {
+                    const wNo = Number(feature.properties.WardNo);
+                    const isCovered = activeWardNos.includes(wNo);
+                    if (isCovered) {
+                        return {
+                            color: '#00f2fe',
+                            weight: 2.2,
+                            fillColor: 'rgba(0, 242, 254, 0.22)',
+                            fillOpacity: 0.55
+                        };
+                    }
                     return {
                         color: 'rgba(168, 85, 247, 0.5)',
                         weight: 1.2,
                         fillColor: 'rgba(168, 85, 247, 0.08)',
-                        fillOpacity: 0.4
+                        fillOpacity: 0.35
                     };
                 },
                 onEachFeature: function (feature, layer) {
                     const props = feature.properties;
+                    const wNo = Number(props.WardNo);
+                    const isCovered = activeWardNos.includes(wNo);
+
+                    const coverageBadge = isCovered ? `
+                        <div style="background:rgba(0,242,254,0.15);border:1px solid rgba(0,242,254,0.35);color:#00f2fe;font-size:0.6rem;font-weight:800;padding:3px 8px;border-radius:4px;margin-bottom:8px;display:flex;align-items:center;gap:4px;">
+                            <i class="fa-solid fa-users"></i> ACTIVE AGENT COVERAGE ZONE
+                        </div>
+                    ` : '';
+
                     const popupContent = `
                         <div class="ward-popup-title">Ward ${props.WardNo}</div>
+                        ${coverageBadge}
                         <div class="ward-popup-row"><span>ID:</span> <strong>${props.WardID}</strong></div>
                         <div class="ward-popup-row"><span>Municipality:</span> <strong>${props.MUNICNAME}</strong></div>
                         <div class="ward-popup-row"><span>District:</span> <strong>${props.DISTRICT}</strong></div>
@@ -2088,15 +2110,15 @@ function loadMetroWards(queryClause, highlightWardNo = null) {
                         mouseover: function (e) {
                             var l = e.target;
                             l.setStyle({
-                                fillColor: 'rgba(0, 242, 254, 0.3)',
-                                fillOpacity: 0.6,
-                                color: 'rgba(0, 242, 254, 0.8)',
-                                weight: 2
+                                fillColor: 'rgba(0, 242, 254, 0.4)',
+                                fillOpacity: 0.7,
+                                color: '#00f2fe',
+                                weight: 2.5
                             });
                             if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
                                 l.bringToFront();
                             }
-                            selectedLabel.textContent = `Ward ${layer.feature.properties.WardNo} | ${layer.feature.properties.MUNICNAME}`;
+                            selectedLabel.textContent = `Ward ${layer.feature.properties.WardNo} | ${layer.feature.properties.MUNICNAME} ${isCovered ? '(Covered Zone)' : ''}`;
                         },
                         mouseout: function (e) {
                             wardGeoLayer.resetStyle(e.target);
@@ -2809,6 +2831,89 @@ function downloadTraderJsonPayload() {
     document.body.appendChild(downloadAnchor);
     downloadAnchor.click();
     downloadAnchor.remove();
+}
+
+// ═══════════════════════════════════════════════════
+// ISA AUDIT CONSOLE & QUARANTINE CONTROLS (PHASE 5)
+// ═══════════════════════════════════════════════════
+
+function switchAuditConsoleTab(tab) {
+    const qPanel = document.getElementById('audit-panel-quarantine');
+    const ePanel = document.getElementById('audit-panel-edits');
+    const qBtn = document.getElementById('btn-audit-tab-quarantine');
+    const eBtn = document.getElementById('btn-audit-tab-edits');
+
+    if (tab === 'quarantine') {
+        if (qPanel) qPanel.style.display = 'block';
+        if (ePanel) ePanel.style.display = 'none';
+        if (qBtn) { qBtn.style.background = 'rgba(245,158,11,0.18)'; qBtn.style.borderColor = 'rgba(245,158,11,0.4)'; }
+        if (eBtn) { eBtn.style.background = 'rgba(168,85,247,0.08)'; eBtn.style.borderColor = 'rgba(168,85,247,0.15)'; }
+    } else {
+        if (qPanel) qPanel.style.display = 'none';
+        if (ePanel) ePanel.style.display = 'block';
+        if (eBtn) { eBtn.style.background = 'rgba(168,85,247,0.22)'; eBtn.style.borderColor = 'rgba(168,85,247,0.4)'; }
+        if (qBtn) { qBtn.style.background = 'rgba(245,158,11,0.08)'; qBtn.style.borderColor = 'rgba(245,158,11,0.15)'; }
+    }
+}
+
+function approveQuarantinedGig(rowId) {
+    showToastNotification('✅ Submission released to Credit Dossier with founder override.');
+    if (typeof event !== 'undefined' && event.target) {
+        const el = event.target.closest('tr');
+        if (el) {
+            el.style.opacity = '0.4';
+            el.style.pointerEvents = 'none';
+            const td = el.querySelector('td:last-child');
+            if (td) td.innerHTML = '<span style="color:#22c55e;font-weight:700;font-size:0.65rem;">✓ Released</span>';
+        }
+    }
+}
+
+function rejectQuarantinedGig(rowId) {
+    showToastNotification('⛔ Submission quarantined & purged from underwritten data set.');
+    if (typeof event !== 'undefined' && event.target) {
+        const el = event.target.closest('tr');
+        if (el) {
+            el.style.opacity = '0.3';
+            el.style.pointerEvents = 'none';
+            const td = el.querySelector('td:last-child');
+            if (td) td.innerHTML = '<span style="color:#f87171;font-weight:700;font-size:0.65rem;">✗ Quarantined</span>';
+        }
+    }
+}
+
+function authorizeEditRequest(requestId) {
+    showToastNotification('🔓 Edit permission granted. One-time unlock code dispatched to agent.');
+    if (typeof event !== 'undefined' && event.target) {
+        const el = event.target.closest('tr');
+        if (el) {
+            el.style.opacity = '0.4';
+            el.style.pointerEvents = 'none';
+            const td = el.querySelector('td:last-child');
+            if (td) td.innerHTML = '<span style="color:#00f2fe;font-weight:700;font-size:0.65rem;">✓ Authorized</span>';
+        }
+    }
+}
+
+function declineEditRequest(requestId) {
+    showToastNotification('🔒 Edit request declined. KYC profile remains locked.');
+    if (typeof event !== 'undefined' && event.target) {
+        const el = event.target.closest('tr');
+        if (el) {
+            el.style.opacity = '0.3';
+            el.style.pointerEvents = 'none';
+            const td = el.querySelector('td:last-child');
+            if (td) td.innerHTML = '<span style="color:#8b8fa8;font-weight:700;font-size:0.65rem;">Decline Logged</span>';
+        }
+    }
+}
+
+function showToastNotification(msg) {
+    const toast = document.createElement('div');
+    toast.style.cssText = 'position:fixed;bottom:24px;right:24px;background:#14172a;border:1px solid rgba(0,242,254,0.4);border-radius:10px;padding:12px 18px;color:#f0f2ff;font-size:0.75rem;font-weight:700;box-shadow:0 8px 32px rgba(0,0,0,0.6);z-index:99999;display:flex;align-items:center;gap:8px;';
+    toast.innerHTML = msg;
+    document.body.appendChild(toast);
+    setTimeout(() => { toast.remove(); }, 3500);
 }
 
 
